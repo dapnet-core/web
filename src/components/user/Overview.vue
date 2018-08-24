@@ -92,7 +92,6 @@
 
 						// add actions (if admin or owner)
 						user.actions = false;
-						console.log(this.$store.getters.permissions);
 						if (this.$store.getters.permissions.includes('user.update')) {
 							user.actions = true;
 						}

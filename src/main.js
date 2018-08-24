@@ -112,7 +112,6 @@ L.Icon.Default.mergeOptions({
 // output version and links onto console
 const pkg = require('../package.json');
 console.log('%c DAPNET Web v' + pkg.version + ' ', 'background: #112a2d; color: #bada55; font-size: large;');
-console.log('Latest commit:    https://github.com/DecentralizedAmateurPagingNetwork/Web/commit/' + process.env.GITCOMMITHASH);
 console.log('More information: https://github.com/DecentralizedAmateurPagingNetwork/Web');
 
 // init Vue-instance

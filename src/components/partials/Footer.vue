@@ -20,7 +20,7 @@
 							<router-link to="/privacy">{{ $t('footer.contact.privacy') }}</router-link>
 						</li>
 					</ul>
-					<p><b>{{ $t('footer.versions.title') }}:</b> Core: {{ version.core }} / Web: {{ version.web }} ({{ version.webCommit }}) / <router-link to="/version">{{ $t('footer.versions.check') }}</router-link></p>
+					<p><b>{{ $t('footer.versions.title') }}:</b> Core: {{ version.core }} / Web: {{ version.web }} / <router-link to="/version">{{ $t('footer.versions.check') }}</router-link></p>
 				</div>
 			</div>
 			<cookie-law theme="dark-lime" :button-text="$t('footer.cookieconsent.button')">
@@ -52,7 +52,6 @@
 				version: {
 					core: 'Unknown',
 					web: 'Unknown',
-					webCommit: process.env.GITCOMMITHASH.substring(0, 7)
 				}
 			};
 		},
