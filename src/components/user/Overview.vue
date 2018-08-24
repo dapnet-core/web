@@ -20,7 +20,7 @@
 			</div>
 			<div class="col-lg-3">
 				<div class="actions well">
-					<template v-if="this.$store.getters.user.admin">
+					<template v-if="this.$store.getters.permissions.includes('user.create')">
 						<legend>{{ $t('general.actions') }}</legend>
 						<ul>
 							<li><router-link to="/users/new">{{ $t('users.general.newuser') }}</router-link></li>
@@ -31,7 +31,6 @@
 					<template v-if="table.rows">
 						<legend>{{ $t('general.statistics') }}</legend>
 						<ul class="list-group">
-							<li class="list-group-item"><b>{{ $t('users.overview.totaladmins') }}</b><span class="badge">{{ statAdministrators }}</span></li>
 							<li class="list-group-item"><b>{{ $t('users.overview.totalusers') }}</b><span class="badge">{{ statTotal }}</span></li>
 						</ul>
 					</template>
@@ -55,20 +54,16 @@
 				table: {
 					columns: [
 						{
-							id: 'name',
+							id: '_id',
 							title: 'general.name'
 						},
 						{
-							id: 'mail',
+							id: 'email',
 							title: 'users.general.email'
 						},
 						{
-							id: 'admin',
-							title: 'users.general.admin'
-						},
-						{
-							id: 'callsigns',
-							title: 'navigation.subscribers'
+							id: 'roles',
+							title: 'users.general.roles'
 						},
 						{
 							id: 'actions',
@@ -80,9 +75,6 @@
 			};
 		},
 		computed: {
-			statAdministrators() {
-				return this.table.rows.filter(value => value.admin).length;
-			},
 			statTotal() {
 				return this.table.rows.length;
 			}
@@ -92,46 +84,26 @@
 				this.running = true;
 				this.$http.get('users').then(response => {
 					// success --> save new data
-					response.body.forEach(user => {
+					response.body.rows.forEach(user => {
 						// add email address (if available)
-						if (user.mail === undefined) {
-							user.mail = '---';
+						if (user.email === undefined) {
+							user.email = '---';
 						}
 
 						// add actions (if admin or owner)
 						user.actions = false;
-						if (this.$store.getters.user.admin || user.name === this.$store.getters.user.name) {
+						console.log(this.$store.getters.permissions);
+						if (this.$store.getters.permissions.includes('user.update')) {
 							user.actions = true;
 						}
 					});
 
-					this.matchCallsigns(response.body);
+					this.table.rows = response.body.rows;
+					this.running = false;
 				}, response => {
 					// error --> show error message
 					this.running = false;
 					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
-				});
-			},
-			matchCallsigns(data) {
-				this.running = true;
-				this.$http.get('callsigns').then(response => {
-					data.forEach(user => {
-						user.callsigns = [];
-						response.body.forEach(callsign => {
-							if (callsign.ownerNames.includes(user.name)) {
-								user.callsigns.push(callsign.name);
-							}
-						});
-					});
-
-					this.table.rows = data;
-
-					this.running = false;
-					this.errorMessage = false;
-				}, response => {
-					// error --> fail silently
-					this.running = false;
-					this.table.rows = data;
 				});
 			},
 			mailToOwner(element) {
@@ -158,9 +130,9 @@
 			mailToAll() {
 				let mailTo = [];
 				this.table.rows.forEach(user => {
-					if (!mailTo.includes(user.mail)) {
+					if (!mailTo.includes(user.email)) {
 						// add user's mail-address if it is not already in the list
-						mailTo.push(user.mail);
+						mailTo.push(user.email);
 					}
 				});
 				window.location.href = 'mailto:' + mailTo.join(',') + '?subject=DAPNET%20User';

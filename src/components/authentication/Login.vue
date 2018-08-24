@@ -65,17 +65,15 @@
 				event.preventDefault();
 
 				// request given users data to validate credentials
-				this.$http.get('users/' + this.username, {
-					headers: {
-						// use a customized header because the credentials are not yet saved in the store
-						Authorization: 'Basic ' + btoa(this.username + ':' + this.password)
-					}
+				this.$http.post('auth/users/login', {
+					username: this.username,
+					password: this.password
 				}).then(response => {
 					// success --> save credentials and go to home
 					this.$store.commit('login', {
-						name: response.body.name,
-						auth: btoa(this.username + ':' + this.password),
-						admin: response.body.admin
+						user: response.body.user,
+						permissions: response.body.permissions,
+						auth: btoa(this.username + ':' + this.password)
 					});
 
 					this.$router.push('/');

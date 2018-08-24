@@ -73,8 +73,8 @@
 				this.$http.get('users/' + this.$route.params.id).then(response => {
 					this.editing = true;
 
-					this.form.name = response.body.name;
-					this.form.email = response.body.mail;
+					this.form.name = response.body._id;
+					this.form.email = response.body.email;
 					this.form.admin = response.body.admin;
 				}, response => {
 					this.$router.push('/users');

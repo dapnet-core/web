@@ -4,15 +4,9 @@ dist/
 # npm
 node_modules/
 npm-debug.log*
-package-lock.json
 
 # IntelliJ IDEA
 .idea/
-
-# default url stores (see README)
-src/store/config/defaultMap.json
-src/store/config/defaultText.json
-src/store/config/defaultUrls.json
 
 # map coverage (see README)
 static/coverage/

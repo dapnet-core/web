@@ -11,11 +11,9 @@ let defaultMap = require('./config/defaultMap.json');
 export default new Vuex.Store({
 	state: {
 		url: defaultUrls,
-		user: {
-			name: 'Guest',
-			auth: '',
-			admin: false
-		},
+		user: null,
+		auth: null,
+		permissions: [],
 		language: 'en',
 		customText: defaultText,
 		map: defaultMap
@@ -27,8 +25,17 @@ export default new Vuex.Store({
 		user: state => {
 			return state.user;
 		},
+		username: state => {
+			return state.user ? state.user._id : 'Guest';
+		},
+		auth: state => {
+			return state.auth;
+		},
+		permissions: state => {
+			return state.permissions;
+		},
 		isUserLoggedIn: state => {
-			return (state.user.name !== 'Guest' && state.user.auth !== '');
+			return (state.user !== null && state.user.auth !== null);
 		},
 		language: state => {
 			return state.language;
@@ -46,16 +53,16 @@ export default new Vuex.Store({
 	},
 	mutations: {
 		login(state, payload) {
-			state.user.name = payload.name;
-			state.user.auth = payload.auth;
-			state.user.admin = payload.admin;
+			state.user = payload.user;
+			state.auth = payload.auth;
+			state.permissions = payload.permissions;
 
 			Vue.http.headers.common['Authorization'] = 'Basic ' + payload.auth;
 		},
 		logout(state) {
-			state.user.name = 'Guest';
-			state.user.auth = '';
-			state.user.admin = false;
+			state.user = null;
+			state.auth = null;
+			state.permissions = [];
 
 			Vue.http.headers.common['Authorization'] = '';
 		},
@@ -68,6 +75,8 @@ export default new Vuex.Store({
 			key: 'dapnet-web',
 			paths: [
 				'user',
+				'auth',
+				'permissions',
 				'language'
 			]
 		})
