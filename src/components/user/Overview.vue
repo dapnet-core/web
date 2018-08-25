@@ -20,7 +20,7 @@
 			</div>
 			<div class="col-lg-3">
 				<div class="actions well">
-					<template v-if="this.$store.getters.permissions.includes('user.create')">
+					<template v-if="this.$store.getters.permission('user.create')">
 						<legend>{{ $t('general.actions') }}</legend>
 						<ul>
 							<li><router-link to="/users/new">{{ $t('users.general.newuser') }}</router-link></li>
@@ -92,8 +92,14 @@
 
 						// add actions (if admin or owner)
 						user.actions = false;
-						if (this.$store.getters.permissions.includes('user.update')) {
+
+						switch (this.$store.getters.permission('user.delete')) {
+						case 'all':
 							user.actions = true;
+							break;
+						case 'if_owner':
+							user.actions = user._id === this.$store.getters.user._id;
+							break;
 						}
 					});
 
@@ -106,14 +112,14 @@
 				});
 			},
 			mailToOwner(element) {
-				window.location.href = 'mailto:' + element.mail + '?subject=DAPNET%20User%3A%20' + element.name;
+				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20User%3A%20' + element._id;
 			},
 			editElement(element) {
-				this.$router.push({name: 'Edit User', params: {id: element.name}});
+				this.$router.push({name: 'Edit User', params: {id: element._id}});
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {
-					this.$http.delete('users/' + element.name, {
+					this.$http.delete('users/' + element._id, {
 						before(request) {
 							request.headers.delete('Content-Type');
 						}

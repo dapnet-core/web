@@ -34,6 +34,9 @@ export default new Vuex.Store({
 		permissions: state => {
 			return state.permissions;
 		},
+		permission: (state, getters) => (name) => {
+			return state.permissions[name];
+		},
 		isUserLoggedIn: state => {
 			return (state.user !== null && state.user.auth !== null);
 		},

@@ -17,8 +17,7 @@
 						<div class="form-group">
 							<label class="col-lg-2 control-label">{{ $t('general.name') }}</label>
 							<div class="col-lg-10">
-								<input type="text" v-model="form.name" class="form-control">
-								<span v-if="editing" v-html="this.$i18n.t('general.duplication')" class="help-block"></span>
+								<input type="text" v-model="form._id" class="form-control" :disabled="editing">
 							</div>
 						</div>
 						<div class="form-group">
@@ -40,12 +39,12 @@
 								<input type="text" v-model="form.email" class="form-control">
 							</div>
 						</div>
-						<div class="form-group" v-if="this.$store.getters.user.admin">
-							<label class="col-lg-2 control-label">{{ $t('users.general.admin') }}</label>
-							<div class="col-lg-10 checkbox">
-								<label>
-									<input type="checkbox" v-model="form.admin">
-								</label>
+						<div class="form-group" v-if="this.$store.getters.permission('user.change_role')">
+							<label class="col-lg-2 control-label">{{ $t('users.general.roles') }}</label>
+							<div class="col-lg-10">
+								<multiselect v-model="form.roles" :options="formData.roles" :multiple="true" :searchable="false"
+														:close-on-select="false" :hide-selected="true" :clear-on-select="true"
+														placeholder="Type to search"></multiselect>
 							</div>
 						</div>
 						<div class="form-group">
@@ -68,27 +67,36 @@
 <script>
 	export default {
 		created() {
+			this.$http.get('auth/users/roles').then(response => {
+				this.formData.roles = response.body;
+			});
+
 			// load data of given id
 			if (this.$route.params.id) {
 				this.$http.get('users/' + this.$route.params.id).then(response => {
 					this.editing = true;
 
-					this.form.name = response.body._id;
+					this.form._id = response.body._id;
+					this.form._rev = response.body._rev;
 					this.form.email = response.body.email;
-					this.form.admin = response.body.admin;
+					this.form.roles = response.body.roles;
 				}, response => {
 					this.$router.push('/users');
 				});
+
 			}
 		},
 		data() {
 			return {
 				editing: false,
 				form: {
-					name: '',
+					_id: '',
 					password: '',
 					email: '',
-					admin: false
+					roles: ['user']
+				},
+				formData: {
+					roles: []
 				},
 				passwordVisible: false
 			};
@@ -118,22 +126,9 @@
 					this.form.password = '';
 				}
 
-				let body = {
-					hash: this.form.password,
-					mail: this.form.email,
-					admin: this.form.admin
-				};
+				this.$helpers.sendData(this, 'users', this.form, '/users');
 
-				this.$helpers.checkForOverwritingAndSend(this, this.$route.params.id, 'users/' + this.form.name, body, '/users');
-
-				// changed own password --> change auth-data
-				if (this.form.name === this.$store.getters.user.name && this.form.password !== '') {
-					this.$store.commit('login', {
-						name: this.form.name,
-						auth: btoa(this.form.name + ':' + this.form.password),
-						admin: this.form.admin
-					});
-				}
+				// TODO: Update auth if a user change their own password
 			}
 		}
 	};

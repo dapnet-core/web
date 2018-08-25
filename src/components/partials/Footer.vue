@@ -51,7 +51,7 @@
 			return {
 				version: {
 					core: 'Unknown',
-					web: 'Unknown',
+					web: 'Unknown'
 				}
 			};
 		},
