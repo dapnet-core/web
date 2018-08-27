@@ -89,7 +89,7 @@
 				table: {
 					columns: [
 						{
-							id: 'name',
+							id: '_id',
 							title: 'transmitter.overview.table.callsign'
 						},
 						{
@@ -101,11 +101,11 @@
 							title: 'transmitter.overview.table.ipaddress'
 						},
 						{
-							id: 'ownerNames',
+							id: 'owners',
 							title: 'general.owner'
 						},
 						{
-							id: 'deviceType',
+							id: 'device',
 							title: 'transmitter.overview.table.device'
 						},
 						{
@@ -113,7 +113,7 @@
 							title: 'transmitter.overview.table.status'
 						},
 						{
-							id: 'connectedSince',
+							id: 'connected_since',
 							title: 'transmitter.overview.table.connectedsince'
 						},
 						{
@@ -133,15 +133,15 @@
 			stats() {
 				return {
 					widerange: {
-						online: this.table.rows.filter(value => value.status.includes('ONLINE') && value.usage === 'WIDERANGE').length,
-						total: this.table.rows.filter(value => value.usage === 'WIDERANGE').length
+						online: this.table.rows.filter(value => value.status.includes('online') && value.usage === 'widerange').length,
+						total: this.table.rows.filter(value => value.usage === 'widerange').length
 					},
 					personal: {
-						online: this.table.rows.filter(value => value.status.includes('ONLINE') && value.usage === 'PERSONAL').length,
-						total: this.table.rows.filter(value => value.usage === 'PERSONAL').length
+						online: this.table.rows.filter(value => value.status.includes('online') && value.usage === 'personal').length,
+						total: this.table.rows.filter(value => value.usage === 'personal').length
 					},
 					total: {
-						online: this.table.rows.filter(value => value.status.includes('ONLINE')).length,
+						online: this.table.rows.filter(value => value.status.includes('online')).length,
 						total: this.table.rows.length
 					}
 				};
@@ -161,16 +161,16 @@
 				let returnData = {};
 				this.table.rows.forEach(transmitter => {
 					// use only transmitters which are currently online
-					if (!transmitter.status.includes('ONLINE')) {
+					if (!transmitter.status.includes('online')) {
 						return true;
 					}
 
 					// hide non-widerange transmitters if checkbox is set
-					if (this.settings.widerangeOnly && transmitter.usage !== 'WIDERANGE') {
+					if (this.settings.widerangeOnly && transmitter.usage !== 'widerange') {
 						return true;
 					}
 
-					let deviceTypeSplitted = transmitter.deviceType.split(' ');
+					let deviceTypeSplitted = transmitter.device.split(' ');
 					let deviceType = deviceTypeSplitted[deviceTypeSplitted.length - 2];
 
 					if (!deviceType || deviceType === '---') {
@@ -217,31 +217,24 @@
 				this.$http.get('transmitters').then(response => {
 					// success --> save new data
 
-					response.body.forEach(transmitter => {
+					response.body.rows.forEach(transmitter => {
 						// add ip (if available)
-						if (transmitter.address !== undefined && transmitter.address !== null) {
-							transmitter.address = transmitter.address.ip_addr;
-						} else {
+						if (!transmitter.address) {
 							transmitter.address = '---';
 						}
 
 						// add icon to device
-						if (transmitter.deviceType === null) transmitter.deviceType = '---';
-						if (transmitter.deviceVersion === null) {
-							transmitter.deviceVersion = '';
-						} else {
-							transmitter.deviceVersion = ' v' + transmitter.deviceVersion;
-						}
-						if (transmitter.usage === 'WIDERANGE') {
-							transmitter.deviceType = '<img src="./assets/img/transmitter_widerange.png" title="Widerange"> ' + transmitter.deviceType + transmitter.deviceVersion;
-						} else if (transmitter.usage === 'PERSONAL') {
-							transmitter.deviceType = '<img src="./assets/img/transmitter_personal.png" title="Personal"> ' + transmitter.deviceType + transmitter.deviceVersion;
+						if (transmitter.device === null) transmitter.device = '---';
+						if (transmitter.usage === 'widerange') {
+							transmitter.device = '<img src="./assets/img/transmitter_widerange.png" title="Widerange"> ' + transmitter.device;
+						} else if (transmitter.usage === 'personal') {
+							transmitter.device = '<img src="./assets/img/transmitter_personal.png" title="Personal"> ' + transmitter.device;
 						}
 
 						// make status more colorful
-						if (transmitter.status === 'ONLINE') {
+						if (transmitter.status === 'online') {
 							transmitter.status = '<span class="label label-success">ONLINE</span>';
-						} else if (transmitter.status === 'OFFLINE') {
+						} else if (transmitter.status === 'offline') {
 							transmitter.status = '<span class="label label-primary">OFFLINE</span>';
 						} else {
 							transmitter.status = '<span class="label label-warning">' + transmitter.status + '</span>';
@@ -249,12 +242,12 @@
 
 						// add actions (if admin or owner)
 						transmitter.actions = false;
-						if (this.$store.getters.user.admin || transmitter.ownerNames.includes(this.$store.getters.user.name)) {
+						if (this.$store.getters.user.admin || transmitter.owners.includes(this.$store.getters.user._id)) {
 							transmitter.actions = true;
 						}
 					});
 
-					this.table.rows = response.body;
+					this.table.rows = response.body.rows;
 
 					this.running = false;
 					this.errorMessage = false;
@@ -265,7 +258,7 @@
 				});
 			},
 			prepareWebsocket() {
-				this.ws = new WebSocket(this.$store.getters.url.telemetry + '/transmitters');
+				this.ws = new WebSocket('ws://' + location.hostname + '/telemetry/transmitters');
 				this.ws.addEventListener('message', e => {
 					let data = JSON.parse(e.data);
 					console.log(data);
@@ -278,21 +271,21 @@
 				let mailTo = [];
 				this.$http.get('users').then(response => {
 					response.body.forEach(user => {
-						if (element.ownerNames.includes(user.name)) {
+						if (element.owners.includes(user.name)) {
 							mailTo.push(user.mail);
 						}
 					});
-					window.location.href = 'mailto:' + mailTo.join(',') + '?subject=DAPNET%20Transmitter%3A%20' + element.name;
+					window.location.href = 'mailto:' + mailTo.join(',') + '?subject=DAPNET%20Transmitter%3A%20' + element._id;
 				}, response => {
 					this.$dialogs.ajaxError(this, response);
 				});
 			},
 			editElement(element) {
-				this.$router.push({name: 'Edit Transmitter', params: {id: element.name}});
+				this.$router.push({name: 'Edit Transmitter', params: {id: element._id}});
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {
-					this.$http.delete('transmitters/' + element.name, {
+					this.$http.delete('transmitters/' + element._id, {
 						before(request) {
 							request.headers.delete('Content-Type');
 						}
@@ -306,10 +299,10 @@
 				});
 			},
 			openMonitoring(element) {
-				this.$router.push({name: 'Transmitter Monitoring', params: {id: element.name}});
+				this.$router.push({name: 'Transmitter Monitoring', params: {id: element._id}});
 			},
 			sendRubrics(element) {
-				this.$http.get('transmitterControl/sendRubricNames/' + element.name).then(() => {
+				this.$http.get('transmitterControl/sendRubricNames/' + element._id).then(() => {
 					// success
 					this.$dialogs.success(this);
 				}, response => {
@@ -323,7 +316,7 @@
 					response.body.forEach(user => {
 						// check if user owns a transmitter
 						this.table.rows.forEach(row => {
-							if (row.ownerNames.includes(user.name) && !mailTo.includes(user.mail)) {
+							if (row.owners.includes(user.name) && !mailTo.includes(user.mail)) {
 								// add user's mail-address if it is not already in the list
 								mailTo.push(user.mail);
 							}

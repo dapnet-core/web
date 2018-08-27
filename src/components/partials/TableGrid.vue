@@ -40,7 +40,7 @@
 									---
 								</template>
 							</template>
-							<template v-else-if="key.id === 'status' || key.id === 'deviceType'">
+							<template v-else-if="key.id === 'status' || key.id === 'device'">
 								<span v-html="entry[key.id]"></span>
 							</template>
 							<template v-else-if="key.id === 'timestamp' || key.id === 'connectedSince'">

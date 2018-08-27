@@ -127,7 +127,7 @@
 		created() {
 			if (!this.$route.params.id) return;
 
-			this.ws = new WebSocket(this.$store.getters.url.telemetry + '/transmitters/' + this.$route.params.id);
+			this.ws = new WebSocket('ws://' + location.hostname + '/telemetry/transmitters/' + this.$route.params.id);
 			this.ws.addEventListener('message', e => {
 				let data = JSON.parse(e.data);
 

@@ -83,7 +83,6 @@
 				}, response => {
 					this.$router.push('/users');
 				});
-
 			}
 		},
 		data() {
