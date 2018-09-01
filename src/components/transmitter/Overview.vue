@@ -93,11 +93,11 @@
 							title: 'transmitter.overview.table.callsign'
 						},
 						{
-							id: 'nodeName',
+							id: 'node',
 							title: 'transmitter.overview.table.node'
 						},
 						{
-							id: 'address',
+							id: 'addr',
 							title: 'transmitter.overview.table.ipaddress'
 						},
 						{
@@ -105,11 +105,11 @@
 							title: 'general.owner'
 						},
 						{
-							id: 'device',
+							id: 'device_text',
 							title: 'transmitter.overview.table.device'
 						},
 						{
-							id: 'status',
+							id: 'status_text',
 							title: 'transmitter.overview.table.status'
 						},
 						{
@@ -133,15 +133,15 @@
 			stats() {
 				return {
 					widerange: {
-						online: this.table.rows.filter(value => value.status.includes('online') && value.usage === 'widerange').length,
+						online: this.table.rows.filter(value => value.status.online && value.usage === 'widerange').length,
 						total: this.table.rows.filter(value => value.usage === 'widerange').length
 					},
 					personal: {
-						online: this.table.rows.filter(value => value.status.includes('online') && value.usage === 'personal').length,
+						online: this.table.rows.filter(value => value.status.online && value.usage === 'personal').length,
 						total: this.table.rows.filter(value => value.usage === 'personal').length
 					},
 					total: {
-						online: this.table.rows.filter(value => value.status.includes('online')).length,
+						online: this.table.rows.filter(value => value.status.online).length,
 						total: this.table.rows.length
 					}
 				};
@@ -161,7 +161,7 @@
 				let returnData = {};
 				this.table.rows.forEach(transmitter => {
 					// use only transmitters which are currently online
-					if (!transmitter.status.includes('online')) {
+					if (!transmitter.status.online) {
 						return true;
 					}
 
@@ -170,8 +170,7 @@
 						return true;
 					}
 
-					let deviceTypeSplitted = transmitter.device.split(' ');
-					let deviceType = deviceTypeSplitted[deviceTypeSplitted.length - 2];
+					let deviceType = transmitter.status.software.name;
 
 					if (!deviceType || deviceType === '---') {
 						deviceType = 'Unknown';
@@ -224,20 +223,25 @@
 						}
 
 						// add icon to device
-						if (transmitter.device === null) transmitter.device = '---';
+						if (transmitter.status && transmitter.status.online) {
+							transmitter.addr = transmitter.status.addr;
+							transmitter.connected_since = transmitter.status.connected_since;
+							transmitter.node = transmitter.status.node;
+							transmitter.device_text = transmitter.status.software.name + ' ' + transmitter.status.software.version;
+						} else {
+							transmitter.device_text = '---';
+						}
 						if (transmitter.usage === 'widerange') {
-							transmitter.device = '<img src="./assets/img/transmitter_widerange.png" title="Widerange"> ' + transmitter.device;
+							transmitter.device_text = '<img src="./assets/img/transmitter_widerange.png" title="Widerange"> ' + transmitter.device_text;
 						} else if (transmitter.usage === 'personal') {
-							transmitter.device = '<img src="./assets/img/transmitter_personal.png" title="Personal"> ' + transmitter.device;
+							transmitter.device_text = '<img src="./assets/img/transmitter_personal.png" title="Personal"> ' + transmitter.device_text;
 						}
 
 						// make status more colorful
-						if (transmitter.status === 'online') {
-							transmitter.status = '<span class="label label-success">ONLINE</span>';
-						} else if (transmitter.status === 'offline') {
-							transmitter.status = '<span class="label label-primary">OFFLINE</span>';
+						if (transmitter.status.online) {
+							transmitter.status_text = '<span class="label label-success">ONLINE</span>';
 						} else {
-							transmitter.status = '<span class="label label-warning">' + transmitter.status + '</span>';
+							transmitter.status_text = '<span class="label label-primary">OFFLINE</span>';
 						}
 
 						// add actions (if admin or owner)

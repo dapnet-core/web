@@ -225,24 +225,20 @@
 					popupAnchor: [16, -12]
 				});
 
-				this.$http.get('transmitters').then(response => {
-					const transmitters = response.body;
+				this.$http.get('transmitters/_map').then(response => {
+					const transmitters = response.body.rows;
 
 					transmitters.forEach(transmitter => {
-						if (transmitter.status !== 'ONLINE' || transmitter.usage !== 'WIDERANGE') return true;
+						if (transmitter.status !== 'online' || transmitter.usage !== 'widerange') return true;
 
 						// build marker
 						this.map.markers.push({
-							name: 't_' + transmitter.name,
+							name: 't_' + transmitter.id,
 							position: {
-								lat: transmitter.latitude,
-								lng: transmitter.longitude
+								lat: transmitter.value.coordinates[0],
+								lng: transmitter.value.coordinates[1]
 							},
-							popup: '<b>' + transmitter.name + '</a></b><br>' +
-								'Transmission Power (W): ' + transmitter.power + '<br>' +
-								'Height (m): ' + transmitter.antennaAboveGroundLevel + '<br>' +
-								'Timeslot: ' + transmitter.timeSlot + '<br>' +
-								'Owner: ' + transmitter.ownerNames.join(', '),
+							popup: '<b>' + transmitter.id + '</b>',
 							icon: icon
 						});
 					});
