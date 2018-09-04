@@ -246,7 +246,7 @@
 
 						// add actions (if admin or owner)
 						transmitter.actions = false;
-						if (this.$store.getters.user.admin || transmitter.owners.includes(this.$store.getters.user._id)) {
+						if (this.$store.getters.permission('transmitter.update')) {
 							transmitter.actions = true;
 						}
 					});

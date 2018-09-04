@@ -17,7 +17,7 @@
 						<div class="form-group">
 							<label class="col-lg-2 control-label">{{ $t('transmitter.new.callsign.title') }}</label>
 							<div class="col-lg-5">
-								<input type="text" v-model="form.name" class="form-control">
+								<input type="text" v-model="form.id" class="form-control">
 								<span class="help-block">{{ $t('transmitter.new.callsign.help') }}</span>
 								<span v-if="editing" v-html="this.$i18n.t('general.duplication')" class="help-block"></span>
 							</div>
@@ -30,11 +30,11 @@
 							<label class="col-lg-2 control-label">{{ $t('transmitter.new.password.title') }}</label>
 							<div class="col-lg-10">
 								<div class="input-group">
-									<input :type="passwordVisible ? 'text' : 'password'" v-model="form.password" class="form-control" :class="passwordVisible ? 'password-readable' : ''">
+									<input :type="passwordVisible ? 'text' : 'password'" v-model="form.auth_key" class="form-control" :class="passwordVisible ? 'password-readable' : ''">
 									<span class="input-group-btn">
-										<button type="button" @click="passwordVisible = !passwordVisible" title="Toggle password visibility" class="btn btn-info" data-toggle="tooltip" data-placement="bottom" data-container="body"><i class="fa" v-bind:class="{ 'fa-eye': passwordVisible, 'fa-eye-slash': !passwordVisible }"></i></button>
-										<button type="button" v-clipboard:copy="form.password" v-clipboard:success="() => {this.$dialogs.success(this)}" title="Copy password to clipboard" class="btn btn-info" data-toggle="tooltip" data-placement="bottom" data-container="body"><i class="fa fa-clipboard"></i></button>
-										<button type="button" @click="form.password = $helpers.generatePassword(); passwordVisible = true;" title="Generate random password" class="btn btn-info" data-toggle="tooltip" data-placement="bottom" data-container="body"><i class="fa fa-repeat"></i></button>
+										<button type="button" @click="passwordVisible = !passwordVisible" title="Toggle AuthKey visibility" class="btn btn-info" data-toggle="tooltip" data-placement="bottom" data-container="body"><i class="fa" v-bind:class="{ 'fa-eye': passwordVisible, 'fa-eye-slash': !passwordVisible }"></i></button>
+										<button type="button" v-clipboard:copy="form.auth_key" v-clipboard:success="() => {this.$dialogs.success(this)}" title="Copy password to clipboard" class="btn btn-info" data-toggle="tooltip" data-placement="bottom" data-container="body"><i class="fa fa-clipboard"></i></button>
+										<button type="button" @click="form.auth_key = $helpers.generatePassword(); passwordVisible = true;" title="Generate random AuthKey" class="btn btn-info" data-toggle="tooltip" data-placement="bottom" data-container="body"><i class="fa fa-repeat"></i></button>
 									</span>
 								</div>
 								<span class="help-block">{{ $t('transmitter.new.password.help') }}</span>
@@ -74,8 +74,8 @@
 							<label class="col-lg-2 control-label">{{ $t('transmitter.new.usage.title') }}</label>
 							<div class="col-lg-10">
 								<select class="form-control" v-model="form.usage">
-									<option value="PERSONAL">{{ $t('transmitter.new.usage.personal') }}</option>
-									<option value="WIDERANGE">{{ $t('transmitter.new.usage.widerange') }}</option>
+									<option value="personal">{{ $t('transmitter.new.usage.personal') }}</option>
+									<option value="widerange">{{ $t('transmitter.new.usage.widerange') }}</option>
 								</select>
 								<span class="help-block">{{ $t('transmitter.new.usage.help') }}</span>
 							</div>
@@ -83,14 +83,14 @@
 						<div class="form-group">
 							<label class="col-lg-2 control-label">{{ $t('transmitter.new.antennatype.title') }}</label>
 							<div class="col-lg-5">
-								<select class="form-control" v-model="form.antennatype">
-									<option value="OMNI">{{ $t('transmitter.new.antennatype.omni') }}</option>
-									<option value="DIRECTIONAL">{{ $t('transmitter.new.antennatype.directional') }}</option>
+								<select class="form-control" v-model="form.antenna.type">
+									<option value="omni">{{ $t('transmitter.new.antennatype.omni') }}</option>
+									<option value="directional">{{ $t('transmitter.new.antennatype.directional') }}</option>
 								</select>
 								<span class="help-block">{{ $t('transmitter.new.antennatype.help') }}</span>
 							</div>
 							<div class="col-lg-5">
-								<input type="number" v-model.number="form.antennadirection" :disabled="form.antennatype === 'OMNI'" min="0" max="359" placeholder="0 - 359" class="form-control">
+								<input type="number" v-model.number="form.antenna.direction" :disabled="form.antenna.type === 'omni'" min="0" max="359" placeholder="0 - 359" class="form-control">
 								<span class="help-block"><p v-html="$t('transmitter.new.antennadirection.help')"></p></span>
 							</div>
 						</div>
@@ -101,13 +101,13 @@
 								<span class="help-block"><p v-html="$t('transmitter.new.other.power.help')"></p></span>
 							</div>
 							<div class="col-lg-5">
-								<input type="number" v-model.number="form.antennalevel" min="0" max="1000" placeholder="0 - 1000" class="form-control">
+								<input type="number" v-model.number="form.antenna.agl" min="0" max="1000" placeholder="0 - 1000" class="form-control">
 								<span class="help-block"><p v-html="$t('transmitter.new.other.antennalevel.help')"></p></span>
 							</div>
 						</div>
 						<div class="form-group">
 							<div class="col-lg-5 col-lg-offset-2">
-								<input type="number" v-model.number="form.antennagain" min="-50" max="80" placeholder="-50 - 80" class="form-control">
+								<input type="number" v-model.number="form.antenna.gain" min="-50" max="80" placeholder="-50 - 80" class="form-control">
 								<span class="help-block"><p v-html="$t('transmitter.new.other.antennagain.help')"></p></span>
 							</div>
 							<div class="col-lg-5">
@@ -139,22 +139,22 @@
 											<td>F</td>
 										</tr>
 										<tr>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="0"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="1"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="2"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="3"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="4"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="5"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="6"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="7"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="8"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="9"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="A"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="B"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="C"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="D"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="E"></td>
-											<td><input type="checkbox" v-model="form.timeslot" class="timeslotCheckBox" value="F"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="0"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="1"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="2"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="3"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="4"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="5"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="6"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="7"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="8"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="9"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="a"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="b"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="c"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="d"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="e"></td>
+											<td><input type="checkbox" v-model="form.timeslots" class="timeslotCheckBox" value="f"></td>
 										</tr>
 									</tbody>
 								</table>
@@ -164,7 +164,7 @@
 						<div class="form-group">
 							<label class="col-lg-2 control-label">{{ $t('general.owner') }}</label>
 							<div class="col-lg-10">
-								<multiselect v-model="form.owners" :options="formData.users" :multiple="true" :close-on-select="false" :hide-selected="true" :clear-on-select="true" placeholder="Type to search" label="name" track-by="name"></multiselect>
+								<multiselect v-model="form.owners" :options="formData.users" :multiple="true" :close-on-select="false" :hide-selected="true" :clear-on-select="true" placeholder="Type to search"></multiselect>
 								<span class="help-block">{{ $t('transmitter.new.owner.help') }}</span>
 							</div>
 						</div>
@@ -178,23 +178,6 @@
 						</div>
 					</fieldset>
 				</form>
-			</div>
-			<div class="col-lg-3">
-				<h2>{{ $t('general.information') }}</h2>
-				<ul class="list-group">
-					<li v-if="nodeInformation.device.type" class="list-group-item"><b>Device</b><span class="badge">{{ nodeInformation.device.type }}</span></li>
-					<li v-if="nodeInformation.device.version" class="list-group-item"><b>Version</b><span class="badge">{{ nodeInformation.device.version }}</span></li>
-					<li v-if="nodeInformation.nodeName" class="list-group-item"><b>Node</b><span class="badge">{{ nodeInformation.nodeName }}</span></li>
-					<li v-if="nodeInformation.address.ip_addr" class="list-group-item"><b>IP-Address</b><span class="badge">{{ nodeInformation.address.ip_addr }}</span></li>
-					<li v-if="nodeInformation.address.port" class="list-group-item"><b>Port</b><span class="badge">{{ nodeInformation.address.port }}</span></li>
-					<li v-if="nodeInformation.connection.last || nodeInformation.connection.since" class="list-group-item"><b>Connection</b>
-						<ul>
-							<li v-if="nodeInformation.connection.last">Last: <span style="float: right">{{ nodeInformation.connection.last }}</span></li>
-							<li v-if="nodeInformation.connection.since">Since: <span style="float: right">{{ nodeInformation.connection.since }}</span></li>
-						</ul>
-					</li>
-				</ul>
-				<p v-html="$t('transmitter.new.table.description')"></p>
 			</div>
 		</div>
 	</div>
@@ -225,10 +208,8 @@
 				});
 			});
 
-			this.$http.get('users').then(response => {
-				response.body.forEach(user => {
-					this.formData.users.push({name: user.name});
-				});
+			this.$http.get('users/_usernames').then(response => {
+				this.formData.users = response.body;
 			});
 
 			// load data of given id
@@ -236,46 +217,31 @@
 				this.$http.get('transmitters/' + this.$route.params.id).then(response => {
 					this.editing = true;
 
-					let timeSlot = [];
-					for (let i = 0; i < response.body.timeSlot.length; i++) {
-						timeSlot.push(response.body.timeSlot.charAt(i));
+					let timeslots = [];
+					if (response.body.timeslots && response.body.timeslots.length == 16) {
+						for (let i = 0; i < 16; i++) {
+							if (response.body.timeslots[i]) {
+								timeslots.push(i.toString(16));
+							}
+						}
 					}
 
-					let ownerNames = [];
-					response.body.ownerNames.forEach(owner => {
-						ownerNames.push({name: owner});
+					let owners = [];
+					response.body.owners.forEach(owner => {
+						owners.push(owner);
 					});
 
-					this.form.name = response.body.name;
-					this.form.password = response.body.authKey;
-					this.form.latitude.value = Math.abs(response.body.latitude);
-					this.form.latitude.orientation = (response.body.latitude >= 0 ? 1 : -1);
-					this.form.longitude.value = Math.abs(response.body.longitude);
-					this.form.longitude.orientation = (response.body.longitude >= 0 ? 1 : -1);
+					this.form.id = response.body._id;
+					this.form.auth_key = response.body.auth_key;
+					this.form.latitude.value = Math.abs(response.body.coordinates[0]);
+					this.form.latitude.orientation = (response.body.coordinates[0] >= 0 ? 1 : -1);
+					this.form.longitude.value = Math.abs(response.body.coordinates[1]);
+					this.form.longitude.orientation = (response.body.coordinates[1] >= 0 ? 1 : -1);
 					this.form.power = response.body.power;
 					this.form.usage = response.body.usage;
-					this.form.antennatype = response.body.antennaType;
-					this.form.antennalevel = response.body.antennaAboveGroundLevel;
-					this.form.antennadirection = response.body.antennaDirection;
-					this.form.antennagain = response.body.antennaGainDbi;
-					this.form.identificationAddress = response.body.identificationAddress;
-					this.form.timeslot = timeSlot;
-					this.form.owners = ownerNames;
-
-					this.nodeInformation.nodeName = response.body.nodeName;
-
-					this.nodeInformation.device.type = response.body.deviceType;
-					this.nodeInformation.device.version = response.body.deviceVersion;
-					if (response.body.address !== null) {
-						this.nodeInformation.address = response.body.address;
-					}
-
-					if (response.body.lastConnected !== null) {
-						this.nodeInformation.connection.last = new Date(response.body.lastConnected).toLocaleString();
-					}
-					if (response.body.connectedSince !== null) {
-						this.nodeInformation.connection.since = new Date(response.body.connectedSince).toLocaleString();
-					}
+					this.form.antenna = response.body.antenna;
+					this.form.timeslots = timeslots;
+					this.form.owners = owners;
 
 					// center location picker to transmitter
 					this.map.center = [this.form.latitude.value * this.form.latitude.orientation, this.form.longitude.value * this.form.longitude.orientation];
@@ -288,8 +254,8 @@
 			return {
 				editing: false,
 				form: {
-					name: '',
-					password: '',
+					id: '',
+					auth_key: '',
 					latitude: {
 						value: 0,
 						orientation: 1
@@ -299,13 +265,15 @@
 						orientation: 1
 					},
 					power: 0,
-					usage: 'PERSONAL',
-					antennatype: 'OMNI',
-					antennalevel: 0,
-					antennadirection: 0,
-					antennagain: 0,
-					identificationAddress: 8,
-					timeslot: [],
+					usage: 'personal',
+					antenna: {
+						type: 'omni',
+						agl: 0,
+						direction: 0,
+						gain: 0,
+					},
+					id_ric: 8,
+					timeslots: [],
 					owners: []
 				},
 				passwordVisible: false,
@@ -325,21 +293,6 @@
 						lat: 0,
 						lng: 0
 					}
-				},
-				nodeInformation: {
-					nodeName: '',
-					device: {
-						type: '',
-						version: ''
-					},
-					address: {
-						ip_addr: '',
-						port: ''
-					},
-					connection: {
-						last: '',
-						since: ''
-					}
 				}
 			};
 		},
@@ -353,7 +306,7 @@
 				}
 
 				// prevent anything but A-Z, a-z, 0-9 as password
-				if (this.form.password.match(/[^A-Za-z0-9]/g)) {
+				if (this.form.auth_key.match(/[^A-Za-z0-9]/g)) {
 					this.$dialogs.passwordError(this);
 					return false;
 				}
@@ -370,18 +323,22 @@
 				});
 
 				let body = {
-					authKey: this.form.password,
-					latitude: this.form.latitude.value * this.form.latitude.orientation,
-					longitude: this.form.longitude.value * this.form.longitude.orientation,
+					auth_key: this.form.auth_key,
+					coordinates: [
+						this.form.latitude.value * this.form.latitude.orientation,
+						this.form.longitude.value * this.form.longitude.orientation,
+					],
 					power: this.form.power,
 					usage: this.form.usage,
-					antennaAboveGroundLevel: this.form.antennalevel,
-					antennaType: this.form.antennatype,
-					antennaDirection: this.form.antennadirection,
-					antennaGainDbi: this.form.antennagain,
-					identificationAddress: this.form.identificationAddress,
-					timeSlot: this.form.timeslot.sort().join(''),
-					ownerNames: ownerNames
+					antenna: {
+						agl: this.form.antenna.agl,
+						type: this.form.antenna.type,
+						direction: this.form.antenna.direction,
+						gain: this.form.antenna.gain,
+					},
+					id_ric: this.form.identificationAddress,
+					timeslots: this.form.timeslot.sort().join(''),
+					owners: ownerNames
 				};
 
 				this.$helpers.checkForOverwritingAndSend(this, this.$route.params.id, 'transmitters/' + this.form.name, body, '/transmitters');

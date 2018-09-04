@@ -30,8 +30,6 @@
 						<ul class="dropdown-menu" role="menu">
 							<li><router-link to="/transmitters">{{ $t('navigation.transmitters.all') }}</router-link></li>
 							<li><router-link to="/transmitters/map">{{ $t('navigation.transmitters.map') }}</router-link></li>
-							<div class="divider"></div>
-							<li><router-link to="/transmitters/groups">{{ $t('navigation.transmitters.groups') }}</router-link></li>
 						</ul>
 					</li>
 					<li class="divider-vertical"></li>

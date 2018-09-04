@@ -14,8 +14,6 @@ import TransmitterOverview from '@/components/transmitter/Overview';
 import TransmitterNew from '@/components/transmitter/New';
 import TransmitterMap from '@/components/transmitter/Map';
 import TransmitterMonitoring from '@/components/transmitter/Monitoring';
-import TransmitterGroupOverview from '@/components/transmitter/group/Overview';
-import TransmitterGroupNew from '@/components/transmitter/group/New';
 import NodeOverview from '@/components/node/Overview';
 import NodeNew from '@/components/node/New';
 import NodeMonitoring from '@/components/node/Monitoring';
@@ -191,33 +189,6 @@ export default new Router({
 			component: TransmitterMonitoring,
 			meta: {
 				titleTranslationKey: 'pagetitle.transmitter.monitoring',
-				requireAuthentication: true
-			}
-		},
-		{
-			path: '/transmitters/groups',
-			name: 'Transmitter Group Overview',
-			component: TransmitterGroupOverview,
-			meta: {
-				titleTranslationKey: 'pagetitle.transmittergroup.overview',
-				requireAuthentication: true
-			}
-		},
-		{
-			path: '/transmitters/groups/new',
-			name: 'New Transmitter Group',
-			component: TransmitterGroupNew,
-			meta: {
-				titleTranslationKey: 'pagetitle.transmittergroup.new',
-				requireAuthentication: true
-			}
-		},
-		{
-			path: '/transmitters/groups/edit/:id',
-			name: 'Edit Transmitter Group',
-			component: TransmitterGroupNew,
-			meta: {
-				titleTranslationKey: 'pagetitle.transmittergroup.edit',
 				requireAuthentication: true
 			}
 		},
