@@ -39,20 +39,21 @@
 								<template v-else>
 									---
 								</template> </template>
-							<template v-else-if="key.id === 'status_text' || key.id === 'device_text'">
-								<span v-html="entry[key.id]"></span>
-							</template>
-							<template v-else-if="key.id === 'timestamp' || key.id === 'connectedSince'">
-								<template v-if="entry[key.id] === null">
-									---
+								<template v-else-if="key.id === 'status_text' || key.id === 'device_text'">
+									<span v-html="entry[key.id]"></span>
+								</template>
+								<template v-else-if="key.id === 'created_on'
+									|| key.id === 'connectedSince'">
+									<template v-if="entry[key.id] === null">
+										---
+									</template>
+									<template v-else>
+										{{ entry[key.id] | timestampToLocaleString }}
+									</template>
 								</template>
 								<template v-else>
-									{{ entry[key.id] | timestampToLocaleString }}
+									{{ booleanToString(arrayToString(entry[key.id])) }}
 								</template>
-							</template>
-							<template v-else>
-								{{ booleanToString(arrayToString(entry[key.id])) }}
-							</template>
 						</td>
 					</tr>
 				</tbody>

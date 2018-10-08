@@ -28,7 +28,6 @@
 					<template v-if="table.rows">
 						<legend>{{ $t('general.statistics') }}</legend>
 						<ul class="list-group">
-							<li class="list-group-item"><b>{{ $t('calls.overview.emergencies') }}</b><span class="badge">{{ statEmergencies }}</span></li>
 							<li class="list-group-item"><b>{{ $t('calls.overview.totalcalls') }}</b><span class="badge">{{ statTotal }}</span></li>
 						</ul>
 					</template>
@@ -52,27 +51,27 @@
 				table: {
 					columns: [
 						{
-							id: 'timestamp',
+							id: 'created_on',
 							title: 'calls.overview.table.timestamp'
 						},
 						{
-							id: 'callSignNames',
+							id: 'subscribers',
 							title: 'navigation.subscribers'
 						},
 						{
-							id: 'transmitterGroupNames',
-							title: 'calls.overview.table.txgroups'
+							id: 'transmitters',
+							title: 'calls.overview.table.transmitters'
 						},
 						{
-							id: 'text',
+							id: 'data',
 							title: 'calls.overview.table.message'
 						},
 						{
-							id: 'emergency',
-							title: 'calls.overview.table.emergency'
+							id: 'priority',
+							title: 'calls.overview.table.priority'
 						},
 						{
-							id: 'ownerName',
+							id: 'created_by',
 							title: 'general.owner'
 						}
 					],
@@ -81,9 +80,6 @@
 			};
 		},
 		computed: {
-			statEmergencies() {
-				return this.table.rows.filter(value => value.emergency).length;
-			},
 			statTotal() {
 				return this.table.rows.length;
 			}
@@ -91,16 +87,16 @@
 		methods: {
 			loadData() {
 				// load user's calls if user is not an admin
-				let apiEndpoint = 'calls';
-				if (!this.$store.getters.user.admin) {
-					apiEndpoint = 'calls?ownerName=' + this.$store.getters.user.name;
-				}
-
 				this.running = true;
-				this.$http.get(apiEndpoint).then(response => {
+				this.$http.get('calls').then(response => {
 					// success --> save new data
-
 					this.table.rows = response.body;
+
+					this.table.rows.forEach(call => {
+						call.subscribers = [].concat(call.recipients.subscribers).concat(call.recipients.subscriber_groups).join(', ');
+
+						call.transmitters = [].concat(call.distribution.transmitters).concat(call.distribution.transmitter_groups).join(', ');
+					});
 
 					this.running = false;
 					this.errorMessage = false;

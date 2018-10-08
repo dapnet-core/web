@@ -218,7 +218,7 @@
 					this.editing = true;
 
 					let timeslots = [];
-					if (response.body.timeslots && response.body.timeslots.length == 16) {
+					if (response.body.timeslots && response.body.timeslots.length === 16) {
 						for (let i = 0; i < 16; i++) {
 							if (response.body.timeslots[i]) {
 								timeslots.push(i.toString(16));
@@ -270,7 +270,7 @@
 						type: 'omni',
 						agl: 0,
 						direction: 0,
-						gain: 0,
+						gain: 0
 					},
 					id_ric: 8,
 					timeslots: [],
@@ -326,7 +326,7 @@
 					auth_key: this.form.auth_key,
 					coordinates: [
 						this.form.latitude.value * this.form.latitude.orientation,
-						this.form.longitude.value * this.form.longitude.orientation,
+						this.form.longitude.value * this.form.longitude.orientation
 					],
 					power: this.form.power,
 					usage: this.form.usage,
@@ -334,7 +334,7 @@
 						agl: this.form.antenna.agl,
 						type: this.form.antenna.type,
 						direction: this.form.antenna.direction,
-						gain: this.form.antenna.gain,
+						gain: this.form.antenna.gain
 					},
 					id_ric: this.form.identificationAddress,
 					timeslots: this.form.timeslot.sort().join(''),

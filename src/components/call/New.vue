@@ -16,31 +16,45 @@
 						<div class="form-group">
 							<label class="col-lg-2 control-label">{{ $t('calls.new.message.title') }}</label>
 							<div class="col-lg-10">
-								<textarea class="form-control" rows="2" maxlength="80" v-model="form.message"></textarea>
+								<textarea class="form-control" rows="2" maxlength="80" v-model="form.data"></textarea>
 								<span class="help-block" v-html="$t('calls.new.message.charactersremaining', { remaining: messageCharsRemaining })"></span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-lg-2 control-label">{{ $t('navigation.subscribers') }}</label>
 							<div class="col-lg-10">
-								<multiselect v-model="form.callsigns" :options="formData.callsigns" :multiple="true" :close-on-select="false" :hide-selected="true" :clear-on-select="true" placeholder="Type to search" label="name" track-by="name"></multiselect>
+								<multiselect v-model="form.recipients.subscribers" :options="formData.subscribers" :multiple="true" :close-on-select="false" :hide-selected="true" :clear-on-select="true" placeholder="Type to search"></multiselect>
 								<span class="help-block">{{ $t('calls.new.subscribers.help') }}</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-lg-2 control-label">{{ $t('navigation.transmitters.groups') }}</label>
+							<label class="col-lg-2 control-label">{{ $t('calls.new.subscriber_groups.title') }}</label>
 							<div class="col-lg-10">
-								<multiselect v-model="form.transmittergroups" :options="formData.transmittergroups" :multiple="true" :close-on-select="false" :hide-selected="true" :clear-on-select="true" placeholder="Type to search" label="name" track-by="name"></multiselect>
-								<span class="help-block">{{ $t('calls.new.subscribers.help') }}</span>
+								<multiselect v-model="form.recipients.subscriber_groups" :options="formData.subscriber_groups" :multiple="true" :close-on-select="false" :hide-selected="true" :clear-on-select="true" placeholder="Type to search"></multiselect>
+								<span class="help-block">{{ $t('calls.new.subscriber_groups.help') }}</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-lg-2 control-label">{{ $t('calls.new.emergency.title') }}</label>
-							<div class="col-lg-10 checkbox">
+							<label class="col-lg-2 control-label">{{ $t('navigation.transmitters.title') }}</label>
+							<div class="col-lg-10">
+								<multiselect v-model="form.distribution.transmitters" :options="formData.transmitters" :multiple="true" :close-on-select="false" :hide-selected="true" :clear-on-select="true" placeholder="Type to search"></multiselect>
+								<span class="help-block">{{ $t('calls.new.transmitters.help') }}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label">{{ $t('calls.new.transmitter_groups.title') }}</label>
+							<div class="col-lg-10">
+								<multiselect v-model="form.distribution.transmitter_groups" :options="formData.transmitter_groups" :multiple="true" :close-on-select="false" :hide-selected="true" :clear-on-select="true" placeholder="Type to search"></multiselect>
+								<span class="help-block">{{ $t('calls.new.transmitter_groups.help') }}</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label">{{ $t('calls.new.priority.title') }}</label>
+							<div class="col-lg-10">
 								<label>
-									<input type="checkbox" v-model="form.emergency">
+									<input type="number" v-model.number="form.priority" min="1" max="5" step="1" class="form-control">
 								</label>
-								<span class="help-block">{{ $t('calls.new.emergency.help') }}</span>
+								<span class="help-block">{{ $t('calls.new.priority.help') }}</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -63,40 +77,47 @@
 <script>
 	export default {
 		created() {
-			this.$http.get('callsigns').then(response => {
-				response.body.forEach(callsign => {
-					this.formData.callsigns.push({name: callsign.name});
-				});
+			this.$http.get('subscribers/_names').then(response => {
+				this.formData.subscribers = response.body;
 			});
 
-			this.$http.get('transmitterGroups').then(response => {
-				response.body.forEach(transmittergroup => {
-					this.formData.transmittergroups.push({name: transmittergroup.name});
+			this.$http.get('subscribers/_groups').then(response => {
+				this.formData.subscriber_groups = response.body;
+			});
 
-					// add 'all'-group (if present)
-					if (transmittergroup.name === 'all') {
-						this.form.transmittergroups.push({name: 'all'});
-					}
-				});
+			this.$http.get('transmitters/_names').then(response => {
+				this.formData.transmitters = response.body;
+			});
+
+			this.$http.get('transmitters/_groups').then(response => {
+				this.formData.transmitter_groups = response.body;
 			});
 		},
 		data() {
 			return {
 				form: {
-					message: this.$store.getters.user.name.toUpperCase() + ': ',
-					callsigns: [],
-					transmittergroups: [],
-					emergency: false
+					data: this.$store.getters.user._id.toUpperCase() + ': ',
+					recipients: {
+						subscribers: [],
+						subscriber_groups: []
+					},
+					distribution: {
+						transmitters: [],
+						transmitter_groups: []
+					},
+					priority: 3
 				},
 				formData: {
-					callsigns: [],
-					transmittergroups: []
+					subscribers: [],
+					subscriber_groups: [],
+					transmitters: [],
+					transmitter_groups: []
 				}
 			};
 		},
 		computed: {
 			messageCharsRemaining() {
-				return 80 - this.form.message.length;
+				return 80 - this.form.data.length;
 			}
 		},
 		methods: {
@@ -108,24 +129,7 @@
 					return false;
 				}
 
-				let callSignNames = [];
-				this.form.callsigns.forEach(callsign => {
-					callSignNames.push(callsign.name);
-				});
-
-				let transmitterGroupNames = [];
-				this.form.transmittergroups.forEach(transmittergroup => {
-					transmitterGroupNames.push(transmittergroup.name);
-				});
-
-				let body = {
-					text: this.form.message,
-					callSignNames: callSignNames,
-					transmitterGroupNames: transmitterGroupNames,
-					emergency: this.form.emergency
-				};
-
-				this.$http.post('calls', body).then(response => {
+				this.$http.post('calls', this.form).then(response => {
 					this.$router.push('/calls');
 				}, response => {
 					this.$dialogs.ajaxError(this, response);
