@@ -55,7 +55,7 @@
 				table: {
 					columns: [
 						{
-							id: 'name',
+							id: '_id',
 							title: 'subscribers.overview.table.subscriber'
 						},
 						{
@@ -67,7 +67,7 @@
 							title: 'subscribers.overview.table.pager'
 						},
 						{
-							id: 'ownerNames',
+							id: 'owners',
 							title: 'general.owner'
 						},
 						{
@@ -87,14 +87,14 @@
 		methods: {
 			loadData() {
 				this.running = true;
-				this.$http.get('callsigns').then(response => {
+				this.$http.get('subscribers').then(response => {
 					// success --> save new data
 
-					response.body.forEach(callsign => {
+					response.body.rows.forEach(callsign => {
 						// add pager list
-						if (this.$store.getters.user.admin) {
+						if (this.$store.getters.permission('subscriber.update')) {
 							let pagerText = [];
-							callsign.pagers.forEach(pager => pagerText.push(pager.name + ' (' + this.$helpers.zeroPad(pager.number, 7) + ')'));
+							callsign.pagers.forEach(pager => pagerText.push(pager.name + ' (' + this.$helpers.zeroPad(pager.ric, 7) + ')'));
 							callsign.pagers = pagerText.join(', ');
 						} else {
 							callsign.pagers = '---';
@@ -102,12 +102,12 @@
 
 						// add actions (if admin or owner)
 						callsign.actions = false;
-						if (this.$store.getters.user.admin || callsign.ownerNames.includes(this.$store.getters.user.name)) {
+						if (this.$store.getters.permission('subscriber.update')) {
 							callsign.actions = true;
 						}
 					});
 
-					this.table.rows = response.body;
+					this.table.rows = response.body.rows;
 
 					this.running = false;
 					this.errorMessage = false;
@@ -118,11 +118,11 @@
 				});
 			},
 			editElement(element) {
-				this.$router.push({name: 'Edit Subscriber', params: {id: element.name}});
+				this.$router.push({name: 'Edit Subscriber', params: {id: element._id}});
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {
-					this.$http.delete('callsigns/' + element.name, {
+					this.$http.delete('callsigns/' + element._id, {
 						before(request) {
 							request.headers.delete('Content-Type');
 						}

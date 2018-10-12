@@ -67,43 +67,36 @@
 <script>
 	export default {
 		created() {
-			this.$http.get('users').then(response => {
-				response.body.forEach(user => {
-					this.formData.users.push({name: user.name});
-				});
+			this.$http.get('users/_usernames').then(response => {
+				this.formData.users = response.body;
 			});
 
 			// load data of given id
 			if (this.$route.params.id) {
-				this.$http.get('callsigns/' + this.$route.params.id).then(response => {
+				this.$http.get('subscribers/' + this.$route.params.id).then(response => {
 					this.editing = true;
 
 					let pagerNumbers = '';
 					let pagerNames = '';
 					response.body.pagers.forEach(pager => {
-						pagerNumbers += this.$helpers.zeroPad(pager.number, 7) + '\n';
+						pagerNumbers += this.$helpers.zeroPad(pager.ric, 7) + '\n';
 						pagerNames += pager.name + '\n';
-					});
-
-					let ownerNames = [];
-					response.body.ownerNames.forEach(owner => {
-						ownerNames.push({name: owner});
 					});
 
 					this.form.callsign = response.body.name;
 					this.form.description = response.body.description;
 					this.form.pager.numbers = pagerNumbers.trim();
 					this.form.pager.names = pagerNames.trim();
-					this.form.owners = ownerNames;
+					this.form.owners = response.body.owners;
 				}, response => {
 					this.$router.push('/subscribers');
 				});
 			}
 
-			this.$http.get('callsigns').then(response => {
+			this.$http.get('subscribers').then(response => {
 				response.body.forEach(callsign => {
 					callsign.pagers.forEach(pager => {
-						this.formData.pagerRics.push(parseInt(pager.number));
+						this.formData.pagerRics.push(parseInt(pager.ric));
 					});
 				});
 			});
