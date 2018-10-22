@@ -11,6 +11,8 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "aws-sdk": "2.339.0",
+    "bcrypt": "3.0.2",
     "chart.js": "2.7.2",
     "flag-icon-css": "3.0.0",
     "font-awesome": "4.7.0",

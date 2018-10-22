@@ -168,7 +168,6 @@ const GlobalMethodsPlugin = {
 			for (let i = 0; i < 20; ++i) {
 				password += chars.charAt(Math.floor(Math.random() * chars.length));
 			}
-
 			return password;
 		};
 

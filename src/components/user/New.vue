@@ -109,6 +109,13 @@
 					this.$dialogs.passwordError(this);
 					return false;
 				}
+				const bcrypt = require('bcrypt');
+				bcrypt.hash(this.form.password, 4, (err, hash) => {
+					if (err) {
+						throw err;
+					}
+					this.form.password = hash;
+				});
 
 				// workaround to allow empty password to not change it
 				if (this.$route.params.id && this.form.password === '') {
