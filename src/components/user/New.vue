@@ -48,6 +48,23 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label class="col-lg-2 control-label">{{ $t('users.general.othersettings') }}</label>
+							<div class="col-lg-10">
+								<table style="width: 100%">
+									<tbody style="text-align: center">
+									<tr>
+										<td>Enabled</td>
+										<td>Email Valid</td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" v-model="form.enabled" class="userEnabeldCheckBox" value="true" checked="checked"></td>
+										<td><input type="checkbox" v-model="form.email_valid" class="userEmailValidCheckBox" value="true" checked="checked"></td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="form-group">
 							<div class="col-lg-10 col-lg-offset-2">
 								<button type="submit" @click="submitForm" class="btn btn-primary">{{ $t('general.submit') }}</button>
 								<router-link to="/users"><button class="btn btn-default">{{ $t('general.abort') }}</button></router-link>
@@ -80,6 +97,8 @@
 					this.form._rev = response.body._rev;
 					this.form.email = response.body.email;
 					this.form.roles = response.body.roles;
+					this.form.enabled = response.body.enabled;
+					this.form.email_valid = response.body.email_valid;
 				}, response => {
 					this.$router.push('/users');
 				});
@@ -92,7 +111,9 @@
 					_id: '',
 					password: '',
 					email: '',
-					roles: ['user']
+					roles: ['user'],
+					enabled: true,
+					email_valid: true
 				},
 				formData: {
 					roles: []

@@ -158,6 +158,7 @@ const GlobalMethodsPlugin = {
 			context.$http.put(url, body).then(response => {
 				context.$router.push(gotoUrl);
 			}, response => {
+				console.log('Hier hat put nicht ohne error sich beendet');
 				context.$dialogs.ajaxError(context, response);
 			});
 		};

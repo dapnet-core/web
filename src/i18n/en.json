@@ -539,7 +539,10 @@
 		"general": {
 			"email": "Email",
 			"admin": "Admin?",
-			"newuser": "New User"
+			"newuser": "New User",
+			"roles": "Roles",
+			"enabled": "Enabled?",
+			"email_valid": "Email valid?"
 		},
 		"overview": {
 			"allusers": "All Users",

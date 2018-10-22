@@ -12,7 +12,7 @@ module.exports = {
 		assetsPublicPath: '/',
 		proxyTable: {
 			'/': {
-				target: 'http://localhost',
+				target: 'http://dapnetdc2.db0sda.ampr.org',
 				changeOrigin: true,
 			}
 		},
