@@ -157,7 +157,7 @@ const GlobalMethodsPlugin = {
 		Vue.prototype.$helpers.sendData = function(context, url, body, gotoUrl) {
 			context.$http.put(url, body).then(response => {
 				if (response.ok) {
-					console.log('Response ok')
+					console.log('Response ok');
 				}
 				context.$router.push(gotoUrl);
 			}, response => {
