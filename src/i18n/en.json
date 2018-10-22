@@ -542,7 +542,8 @@
 			"newuser": "New User",
 			"roles": "Roles",
 			"enabled": "Enabled?",
-			"email_valid": "Email valid?"
+			"email_valid": "Email valid?",
+			"othersettings": "Other settings"
 		},
 		"overview": {
 			"allusers": "All Users",
