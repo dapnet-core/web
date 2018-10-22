@@ -82,24 +82,25 @@
 </template>
 
 <script>
+	import axios from 'axios';
 	export default {
 		created() {
-			this.$http.get('auth/users/roles').then(response => {
-				this.formData.roles = response.body;
-			});
+			axios.get('auth/users/roles')
+				.then(response => {
+					this.formData.roles = response.data;
+				});
 
 			// load data of given id
 			if (this.$route.params.id) {
-				this.$http.get('users/' + this.$route.params.id).then(response => {
+				axios.get('users/' + this.$route.params.id).then(response => {
 					this.editing = true;
-
 					this.form._id = response.body._id;
 					this.form._rev = response.body._rev;
 					this.form.email = response.body.email;
 					this.form.roles = response.body.roles;
 					this.form.enabled = response.body.enabled;
 					this.form.email_valid = response.body.email_valid;
-				}, response => {
+				}).catch(e => {
 					this.$router.push('/users');
 				});
 			}
@@ -145,9 +146,9 @@
 				if (this.$route.params.id && this.form.password === '~~~DO_NOT_CHANGE_PASSWORD~~~') {
 					this.form.password = '';
 				}
-				var bcrypt = require('bcryptjs');
-				var hash = bcrypt.hashSync(this.form.password, 10);
-				this.form.password = hash;
+				// var bcrypt = require('bcryptjs');
+				// var hash = bcrypt.hashSync(this.form.password, 10);
+				// this.form.password = hash;
 				this.$helpers.sendData(this, 'users', this.form, '/users');
 
 				// TODO: Update auth if a user change their own password

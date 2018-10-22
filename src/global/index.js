@@ -1,3 +1,4 @@
+import axios from 'axios';
 const GlobalMethodsPlugin = {
 	install(Vue) {
 		Vue.prototype.$dialogs = {};
@@ -155,14 +156,12 @@ const GlobalMethodsPlugin = {
 
 		// actually sends the given data to the server
 		Vue.prototype.$helpers.sendData = function(context, url, body, gotoUrl) {
-			context.$http.put(url, body).then(response => {
-				if (response.ok) {
-					console.log('Response ok');
-				}
+			axios.put(url, body).then(response => {
+				console.log('Response ok');
 				context.$router.push(gotoUrl);
-			}, response => {
+			}).catch(e => {
 				console.log('Hier hat put nicht ohne error sich beendet');
-				context.$dialogs.ajaxError(context, response);
+				context.$dialogs.ajaxError(context, e);
 			});
 		};
 
