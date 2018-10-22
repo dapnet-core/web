@@ -156,6 +156,9 @@ const GlobalMethodsPlugin = {
 		// actually sends the given data to the server
 		Vue.prototype.$helpers.sendData = function(context, url, body, gotoUrl) {
 			context.$http.put(url, body).then(response => {
+				if (response.ok) {
+					console.log('Response ok')
+				}
 				context.$router.push(gotoUrl);
 			}, response => {
 				console.log('Hier hat put nicht ohne error sich beendet');
