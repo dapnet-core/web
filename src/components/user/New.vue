@@ -116,6 +116,14 @@
 					enabled: true,
 					email_valid: true
 				},
+				form2send: {
+					_id: '',
+					password: '',
+					email: '',
+					roles: ['user'],
+					enabled: true,
+					email_valid: true
+				},
 				formData: {
 					roles: []
 				},
@@ -146,10 +154,11 @@
 				if (this.$route.params.id && this.form.password === '~~~DO_NOT_CHANGE_PASSWORD~~~') {
 					this.form.password = '';
 				}
-				// var bcrypt = require('bcryptjs');
-				// var hash = bcrypt.hashSync(this.form.password, 10);
-				// this.form.password = hash;
-				this.$helpers.sendData(this, 'users', this.form, '/users');
+				var bcrypt = require('bcryptjs');
+				var hash = bcrypt.hashSync(this.form.password, 10);
+				this.form2send = Object.assign({}, this.form);
+				this.form2send.password = hash;
+				this.$helpers.sendData(this, 'users', this.form2send, '/users');
 
 				// TODO: Update auth if a user change their own password
 			}

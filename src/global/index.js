@@ -29,7 +29,9 @@ const GlobalMethodsPlugin = {
 			});
 		};
 
+		// TODO: After moving to axois not all tested
 		Vue.prototype.$dialogs.ajaxError = function(context, err) {
+			console.log(err.response);
 			if (err.status === 0) {
 				// no connection
 				context.$swal({
@@ -37,8 +39,9 @@ const GlobalMethodsPlugin = {
 					html: context.$i18n.t('rest.errors.api-unreachable'),
 					type: 'error'
 				});
-			} else if (err.status === 400) {
+			} else if (err.response.status === 400) {
 				// constraint violation
+				// TODO: Adapt to new version
 				let errorText = err.body.message + ':<br>';
 				if (err.body.code === 4001) {
 					let jsonErrors = '<ul style="text-align:left">';
@@ -49,24 +52,39 @@ const GlobalMethodsPlugin = {
 				}
 
 				context.$swal({
-					title: err.body.name + ' (' + err.body.code + ')',
+					title: err.response.data + ' (' + err.response.status + ')',
 					html: errorText,
 					type: 'error'
 				});
-			} else if (err.status === 403) {
+			} else if (err.response.status === 403) {
 				// forbidden
 				context.$swal({
 					title: context.$i18n.t('rest.errors.403.title'),
 					html: context.$i18n.t('rest.errors.403.text'),
 					type: 'error'
 				});
-			} else if (err.status === 404) {
+			} else if (err.response.status === 404) {
 				// not found
 				context.$swal({
 					title: context.$i18n.t('rest.errors.404.title'),
 					html: context.$i18n.t('rest.errors.404.text'),
 					type: 'error'
 				});
+			} else if (err.response.status === 500) {
+				// not found or conflict
+				if (err.response.data.error.substring(0, 3) === '409') {
+					context.$swal({
+						title: context.$i18n.t('rest.errors.409.title'),
+						html: context.$i18n.t('rest.errors.409.text'),
+						type: 'error'
+					});
+				} else {
+					context.$swal({
+						title: context.$i18n.t('rest.errors.500.title'),
+						html: context.$i18n.t('rest.errors.500.text') + ' (' + err.response.data.error + ')',
+						type: 'error'
+					});
+				}
 			} else {
 				// general error
 				context.$swal({
@@ -155,13 +173,12 @@ const GlobalMethodsPlugin = {
 		};
 
 		// actually sends the given data to the server
+		// Moved to axios
 		Vue.prototype.$helpers.sendData = function(context, url, body, gotoUrl) {
-			axios.put(url, body).then(response => {
-				console.log('Response ok');
+			axios.put('/users', body).then(function(response) {
 				context.$router.push(gotoUrl);
-			}).catch(e => {
-				console.log('Hier hat put nicht ohne error sich beendet');
-				context.$dialogs.ajaxError(context, e);
+			}).catch(function(error) {
+				context.$dialogs.ajaxError(context, error);
 			});
 		};
 

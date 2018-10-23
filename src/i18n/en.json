@@ -267,7 +267,12 @@
 			"404": {
 				"title": "Not Found",
 				"text": "Unable to find the requested resource."
+			},
+			"409": {
+				"title": "Conflict",
+				"text": "This resource is already present."
 			}
+
 		}
 	},
 	"alerts": {
