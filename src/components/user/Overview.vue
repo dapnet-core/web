@@ -66,6 +66,10 @@
 							title: 'users.general.roles'
 						},
 						{
+							id: 'enabled',
+							title: 'users.general.enabled'
+						},
+						{
 							id: 'actions',
 							title: 'general.actions'
 						}
