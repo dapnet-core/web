@@ -11,13 +11,34 @@
 		<div class="row">
 			<div class="col-lg-9">
 				<h2>{{ $t('users.overview.allusers') }}
-					<i class="fa fa-refresh fa-fw" :class="{ 'fa-spin': running }" @click="loadData"></i>
+					<i class="fa fa-refresh fa-fw" :class="{ 'fa-spin': loadingdata }" @click="loadData"></i>
 				</h2>
 
-				<info-error :message="errorMessage"></info-error>
+<!--				<info-error :message="errorMessage"></info-error>
 
 				<tablegrid v-if="table.rows" :columns="table.columns" :data="table.rows" :mail-action="mailToOwner" :edit-action="editElement" :delete-action="deleteElement"></tablegrid>
+-->
+				<v-data-table
+					:headers="headers"
+					:items="userrows"
+					:loading="loadingdata"
+					class="elevation-1"
+				>
+					<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+					<template slot="items" slot-scope="props">
+						<td>{{ props.item._id }}</td>
+						<td class="text-xs-center">{{ props.item.email }}</td>
+						<td class="text-xs-center">
+							<span v-html="props.item.roles"></span>
+						</td>
+						<td class="text-xs-right">
+							<span v-if="props.item.enabled" class="label label-success">{{ $t('general.yes') }}</span>
+							<span v-else class="label label-primary">{{ $t('general.no') }}</span>
+						</td>
+					</template>
+				</v-data-table>
 			</div>
+
 			<div class="col-lg-3">
 				<div class="actions well">
 					<template v-if="this.$store.getters.permission('user.create')">
@@ -43,38 +64,55 @@
 </template>
 
 <script>
+	import axios from 'axios';
+	// import moment from 'moment';
+	import 'vuetify/dist/vuetify.min.css';
+	import Vue from 'vue';
+	import Vuetify from 'vuetify';
+
+	Vue.use(Vuetify, {
+		iconfont: 'fa4'
+	});
 	export default {
 		created() {
 			this.loadData();
 		},
 		data() {
 			return {
+				total_rows: '',
+				userrows: false,
+				headers: [
+					{
+						text: this.$i18n.t('general.name'),
+						align: 'left',
+						sortable: true,
+						value: '_id'
+					},
+					{
+						text: this.$i18n.t('users.general.email'),
+						align: 'center',
+						value: 'email'
+					},
+					{
+						text: this.$i18n.t('users.general.roles'),
+						align: 'center',
+						value: 'roles'
+					},
+					{
+						text: this.$i18n.t('users.general.enabled'),
+						align: 'right',
+						value: 'enabled'
+					}
+				],
 				errorMessage: false,
-				running: false,
+				loadingdata: false,
 				table: {
 					columns: [
-						{
-							id: '_id',
-							title: 'general.name'
-						},
-						{
-							id: 'email',
-							title: 'users.general.email'
-						},
-						{
-							id: 'roles',
-							title: 'users.general.roles'
-						},
-						{
-							id: 'enabled',
-							title: 'users.general.enabled'
-						},
 						{
 							id: 'actions',
 							title: 'general.actions'
 						}
-					],
-					rows: false
+					]
 				}
 			};
 		},
@@ -85,33 +123,35 @@
 		},
 		methods: {
 			loadData() {
-				this.running = true;
-				this.$http.get('users').then(response => {
+				this.loadingdata = true;
+				axios.get('users').then(response => {
 					// success --> save new data
-					response.body.rows.forEach(user => {
-						// add email address (if available)
-						if (user.email === undefined) {
-							user.email = '---';
-						}
 
-						// add actions (if admin or owner)
-						user.actions = false;
+					// save total rows
+					if (response.data.total_rows) {
+						this.total_rows = response.data.total_rows;
+					}
 
-						switch (this.$store.getters.permission('user.delete')) {
-						case 'all':
-							user.actions = true;
-							break;
-						case 'if_owner':
-							user.actions = user._id === this.$store.getters.user._id;
-							break;
-						}
-					});
-
-					this.table.rows = response.body.rows;
-					this.running = false;
+					// save rows
+					if (response.data.rows) {
+						response.data.rows.forEach(user => {
+							// add email address (if available)
+							if (user.email === undefined) {
+								user.email = '---';
+							}
+							let rolesRenderd = '';
+							// Render Roles in a beautiful way
+							user.roles.forEach(role => {
+								rolesRenderd = rolesRenderd + '<span class="badge">' + role + '</span><br />';
+							});
+							user.roles = rolesRenderd;
+						});
+						this.userrows = response.data.rows;
+					}
+					this.loadingdata = false;
 				}, response => {
 					// error --> show error message
-					this.running = false;
+					this.loadingdata = false;
 					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
 				});
 			},
