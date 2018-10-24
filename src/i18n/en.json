@@ -280,6 +280,10 @@
 			"title": "Success",
 			"text": "Operation successfully executed."
 		},
+		"rolesempty": {
+			"title": "No roles selected",
+			"text": "There must be at least one role selected."
+		},
 		"delete": {
 			"title": "Are you sure?",
 			"text": "You will not be able to recover this data once it is deleted."
@@ -325,7 +329,10 @@
 		"no": "No",
 		"permalink": "Permalink",
 		"duplication": "Changing this name will create a duplication and <i>not</i> change the element's name.",
-		"news": "News"
+		"news": "News",
+		"changed_on": "Changed on",
+		"created_on": "Created on",
+		"byUser": "by"
 	},
 	"rubric": {
 		"overview": {
@@ -548,7 +555,8 @@
 			"roles": "Roles",
 			"enabled": "Enabled?",
 			"email_valid": "Email valid?",
-			"othersettings": "Other settings"
+			"othersettings": "Other settings",
+			"metainfo": "Meta-Information"
 		},
 		"overview": {
 			"allusers": "All Users",

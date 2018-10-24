@@ -15,6 +15,15 @@ const GlobalMethodsPlugin = {
 			});
 		};
 
+		Vue.prototype.$dialogs.rolesEmptyError = function(context) {
+			context.$swal({
+				title: context.$i18n.t('alerts.rolesempty.title'),
+				text: context.$i18n.t('alerts.rolesempty.text'),
+				type: 'error',
+				showConfirmButton: true
+			});
+		};
+
 		Vue.prototype.$dialogs.deleteElement = function(context, workFunction) {
 			context.$swal({
 				title: context.$i18n.t('alerts.delete.title'),

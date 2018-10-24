@@ -61,22 +61,45 @@
 							<label class="col-lg-2 control-label">{{ $t('users.general.othersettings') }}</label>
 							<div class="col-lg-10">
 								<table style="width: 100%">
+									<thead style="text-align: center">
+										<tr>
+											<td>{{ $t('users.general.enabled') }}</td>
+											<td>{{ $t('users.general.email_valid') }}</td>
+										</tr>
+									</thead>
 									<tbody style="text-align: center">
-									<tr>
-										<td>{{ $t('users.general.enabled') }}</td>
-										<td>{{ $t('users.general.email_valid') }}</td>
+										<tr>
+											<td>
+												<input v-if="this.$store.getters.permission('user.change_role')" type="checkbox" v-model="form.enabled" class="userEnabeldCheckBox" value="true">
+												<span v-if="form.enabled && !this.$store.getters.permission('user.change_role')" class="label label-success">{{ $t('general.yes') }}</span>
+												<span v-if="!form.enabled && !this.$store.getters.permission('user.change_role')" class="label label-primary">{{ $t('general.no') }}</span>
+											</td>
+											<td>
+												<input v-if="this.$store.getters.permission('user.change_role')" type="checkbox" v-model="form.email_valid" class="userEnabeldCheckBox" value="true">
+												<span v-if="form.email_valid && !this.$store.getters.permission('user.change_role')" class="label label-success">{{ $t('general.yes') }}</span>
+												<span v-if="!form.email_valid && !this.$store.getters.permission('user.change_role')" class="label label-primary">{{ $t('general.no') }}</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label">{{ $t('users.general.metainfo') }}</label>
+							<div class="col-lg-10">
+								<table style="border-spacing: 9px;border-collapse: separate">
+									<tbody style="text-align: left">
+									<tr v-if="created_on || created_by">
+										<td><span v-if="created_on">{{ $t('general.created_on') }}</span></td>
+										<td><span v-if="created_on">{{ this.created_on}}</span></td>
+										<td><span v-if="created_by">{{ $t('general.byUser') }}</span></td>
+										<td><span v-if="created_by">{{ this.created_by}}</span></td>
 									</tr>
-									<tr>
-										<td>
-											<input v-if="this.$store.getters.permission('user.change_role')" type="checkbox" v-model="form.enabled" class="userEnabeldCheckBox" value="true" checked="checked">
-											<span v-if="form.enabled && !this.$store.getters.permission('user.change_role')" class="label label-success">{{ $t('general.yes') }}</span>
-											<span v-if="!form.enabled && !this.$store.getters.permission('user.change_role')" class="label label-primary">{{ $t('general.no') }}</span>
-										</td>
-										<td>
-											<input v-if="this.$store.getters.permission('user.change_role')" type="checkbox" v-model="form.email_valid" class="userEnabeldCheckBox" value="true" checked="checked">
-											<span v-if="form.email_valid && !this.$store.getters.permission('user.change_role')" class="label label-success">{{ $t('general.yes') }}</span>
-											<span v-if="!form.email_valid && !this.$store.getters.permission('user.change_role')" class="label label-primary">{{ $t('general.no') }}</span>
-										</td>
+									<tr v-if="changed_on || changed_by">
+										<td><span v-if="changed_on">{{ $t('general.changed_on') }}</span></td>
+										<td><span v-if="changed_on">{{ this.changed_on}}</span></td>
+										<td><span v-if="changed_by">{{ $t('general.byUser') }}</span></td>
+										<td><span v-if="changed_by">{{ this.changed_by}}</span></td>
 									</tr>
 									</tbody>
 								</table>
@@ -101,6 +124,7 @@
 
 <script>
 	import axios from 'axios';
+	import moment from 'moment';
 	export default {
 		created() {
 			axios.get('auth/users/roles')
@@ -120,7 +144,26 @@
 					this.form.roles = response.data.roles;
 					this.form.enabled = response.data.enabled;
 					this.form.email_valid = response.data.email_valid;
-					console.log(this.form.roles);
+					if (response.data.created_on) {
+						this.created_on = moment(response.data.created_on).format('DD.MM.YYYY HH:mm:ss');
+					} else {
+						response.data.created_on = '';
+					}
+					if (response.data.created_by) {
+						this.created_by = response.data.created_by;
+					} else {
+						this.created_by = '';
+					}
+					if (response.data.changed_on) {
+						this.changed_on = moment(response.data.changed_on).format('DD.MM.YYYY HH:mm:ss');
+					} else {
+						this.changed_on = '';
+					}
+					if (response.data.changed_by) {
+						this.changed_by = response.data.changed_by;
+					} else {
+						this.changed_by = '';
+					}
 				}).catch(e => {
 					console.log('Error getting user\'s individual details with axios');
 					this.$router.push('/users');
@@ -130,7 +173,6 @@
 		data() {
 			return {
 				editing: false,
-				messages: ['hello', 'vue', 'test'],
 				form: {
 					_id: '',
 					password: '',
@@ -150,7 +192,11 @@
 				formData: {
 					roles: []
 				},
-				passwordVisible: false
+				passwordVisible: false,
+				created_on: '',
+				created_by: '',
+				changed_on: '',
+				changed_by: ''
 			};
 		},
 		methods: {
@@ -160,6 +206,11 @@
 				// prevent anything but A-Z, a-z, 0-9 as password
 				if (this.form.password.match(/[^A-Za-z0-9]/g)) {
 					this.$dialogs.passwordError(this);
+					return false;
+				}
+
+				if (!this.form.roles.length > 0) {
+					this.$dialogs.rolesEmptyError(this);
 					return false;
 				}
 
