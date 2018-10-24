@@ -35,7 +35,8 @@
 					<li class="divider-vertical"></li>
 					<li><router-link to="/nodes">{{ $t('navigation.nodes') }}</router-link></li>
 					<li class="divider-vertical"></li>
-					<li><router-link to="/users">{{ $t('navigation.users') }}</router-link></li>
+					<li v-if="this.$store.getters.permission('user.read') === 'all'"><router-link to="/users">{{ $t('navigation.users') }}</router-link></li>
+					<li v-else><router-link to="/usersonlynames">{{ $t('navigation.usersonlynames') }}</router-link></li>
 				</ul>
 				<ul class="nav navbar-nav">
 					<li class="divider-vertical"></li>

@@ -18,6 +18,7 @@ import NodeOverview from '@/components/node/Overview';
 import NodeNew from '@/components/node/New';
 import NodeMonitoring from '@/components/node/Monitoring';
 import UserOverview from '@/components/user/Overview';
+import UserOverviewOnlyNames from '@/components/user/OverviewOnlyNames';
 import UserNew from '@/components/user/New';
 import Login from '@/components/authentication/Login';
 import Logout from '@/components/authentication/Logout';
@@ -232,6 +233,15 @@ export default new Router({
 			path: '/users',
 			name: 'User Overview',
 			component: UserOverview,
+			meta: {
+				titleTranslationKey: 'pagetitle.user.overview',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/usersonlynames',
+			name: 'User Overview Only Names',
+			component: UserOverviewOnlyNames,
 			meta: {
 				titleTranslationKey: 'pagetitle.user.overview',
 				requireAuthentication: true

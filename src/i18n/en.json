@@ -16,6 +16,7 @@
 		},
 		"nodes": "Nodes",
 		"users": "Users",
+		"usersonlynames": "Usernames",
 		"help": {
 			"title": "Help",
 			"wiki": "Documentation",
@@ -568,6 +569,11 @@
 				"help": "This is an overview of all registered user account on the DAPNET network. If you are not an admin, you don't see other user's details. You can edit your user by yourself, e.g. change your password or your email address."
 			}
 		},
+		"overviewonlynames": {
+			"information": {
+				"help": "These are all registered users in the DAPNET."
+			}
+		},
 		"new": {
 			"edituser": "Edit User",
 			"password": {
@@ -622,6 +628,7 @@
 		},
 		"user": {
 			"overview": "User Overview",
+			"overviewonlynames": "User Names",
 			"new": "New User",
 			"edit": "Edit User"
 		},
