@@ -90,16 +90,36 @@
 								<table style="border-spacing: 9px;border-collapse: separate">
 									<tbody style="text-align: left">
 									<tr v-if="created_on || created_by">
-										<td><span v-if="created_on">{{ $t('general.created_on') }}</span></td>
-										<td><span v-if="created_on">{{ this.created_on}}</span></td>
-										<td><span v-if="created_by">{{ $t('general.byUser') }}</span></td>
-										<td><span v-if="created_by">{{ this.created_by}}</span></td>
+										<td>
+											<span>{{ $t('general.created_on') }}</span>
+										</td>
+										<td>
+											<span v-if="created_on">{{ this.created_on}}</span>
+											<span v-else>-{{ $t('general.missing') }}-</span>
+										</td>
+										<td>
+											<span>{{ $t('general.byUser') }}</span>
+										</td>
+										<td>
+											<span v-if="created_by">{{ this.created_by}}</span>
+											<span v-else>-{{ $t('general.missing') }}-</span>
+										</td>
 									</tr>
 									<tr v-if="changed_on || changed_by">
-										<td><span v-if="changed_on">{{ $t('general.changed_on') }}</span></td>
-										<td><span v-if="changed_on">{{ this.changed_on}}</span></td>
-										<td><span v-if="changed_by">{{ $t('general.byUser') }}</span></td>
-										<td><span v-if="changed_by">{{ this.changed_by}}</span></td>
+										<td>
+											<span>{{ $t('general.changed_on') }}</span>
+										</td>
+										<td>
+											<span v-if="changed_on">{{ this.changed_on}}</span>
+											<span v-else>-{{ $t('general.missing') }}-</span>
+										</td>
+										<td>
+											<span>{{ $t('general.byUser') }}</span>
+										</td>
+										<td>
+											<span v-if="changed_by">{{ this.changed_by}}</span>
+											<span v-else>-{{ $t('general.missing') }}-</span>
+										</td>
 									</tr>
 									</tbody>
 								</table>
