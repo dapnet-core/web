@@ -1,5 +1,6 @@
 {
 	"navigation": {
+		"home" : "Home",
 		"calls": "Calls",
 		"subscribers": "Subscribers",
 		"rubrics": {
@@ -326,6 +327,8 @@
 			"picker": "Location Picker"
 		},
 		"password": "Password",
+		"password_unchanged": "Password unchanged",
+		"password_new": "New Password",
 		"yes": "Yes",
 		"no": "No",
 		"permalink": "Permalink",

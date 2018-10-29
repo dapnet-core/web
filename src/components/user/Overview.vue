@@ -11,7 +11,6 @@
 		<div class="row">
 			<div class="col-lg-9">
 				<h2>{{ $t('users.overview.allusers') }}
-					<i class="fa fa-refresh fa-fw" :class="{ 'fa-spin': loadingdata }" @click="loadData"></i>
 				</h2>
 
 <!--				<info-error :message="errorMessage"></info-error>
@@ -21,7 +20,11 @@
 				<v-data-table
 					:headers="headers"
 					:items="userrows"
+					:pagination.sync="pagination"
+					:total-items="total_rows"
 					:loading="loadingdata"
+					:rows-per-page-items="[10, 25, 50, 100]"
+					must-sort
 					class="elevation-1"
 				>
 					<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
@@ -64,23 +67,22 @@
 </template>
 
 <script>
-	import axios from 'axios';
-	// import moment from 'moment';
-	import 'vuetify/dist/vuetify.min.css';
-	import Vue from 'vue';
-	import Vuetify from 'vuetify';
-
-	Vue.use(Vuetify, {
-		iconfont: 'fa4'
-	});
 	export default {
 		created() {
 			this.loadData();
 		},
+		watch: {
+			pagination: {
+				handler() {
+					this.loadData();
+				},
+				deep: true
+			}
+		},
 		data() {
 			return {
-				total_rows: '',
-				userrows: false,
+				total_rows: 0,
+				userrows: [],
 				headers: [
 					{
 						text: this.$i18n.t('general.name'),
@@ -105,7 +107,7 @@
 					}
 				],
 				errorMessage: false,
-				loadingdata: false,
+				loadingdata: true,
 				table: {
 					columns: [
 						{
@@ -113,7 +115,13 @@
 							title: 'general.actions'
 						}
 					]
-				}
+				},
+				pagination: {
+					sortBy: 'doc._id',
+					descending: true,
+					rowsPerPage: 25,
+					page: 1
+				},
 			};
 		},
 		computed: {
@@ -124,7 +132,13 @@
 		methods: {
 			loadData() {
 				this.loadingdata = true;
-				axios.get('users').then(response => {
+				this.$axios.get('users', {
+					params: {
+						descending: !!this.pagination.descending,
+						limit: this.pagination.rowsPerPage,
+						skip: (this.pagination.page-1) * this.pagination.rowsPerPage
+					}
+				}).then(response => {
 					// success --> save new data
 
 					// save total rows

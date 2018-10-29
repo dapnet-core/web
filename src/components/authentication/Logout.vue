@@ -1,4 +1,8 @@
 <template>
+	<v-container fluid fill-height>
+		<h1>asd</h1>
+	</v-container>
+<!--
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-12">
@@ -28,12 +32,15 @@
 			</div>
 		</div>
 	</div>
+	-->
 </template>
 
 <script>
 	export default {
 		created() {
+			console.log('logged off');
 			this.$store.commit('logout');
+			console.log('logged off');
 			this.$router.push('/');
 		}
 	};

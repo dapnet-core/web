@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import VuexPersistedState from 'vuex-persistedstate';
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -60,14 +61,14 @@ export default new Vuex.Store({
 			state.auth = payload.auth;
 			state.permissions = payload.permissions;
 
-			Vue.http.headers.common['Authorization'] = 'Basic ' + payload.auth;
+			axios.defaults.headers.common['Authorization'] = 'Basic ' + payload.auth;
 		},
 		logout(state) {
 			state.user = null;
 			state.auth = null;
 			state.permissions = [];
 
-			Vue.http.headers.common['Authorization'] = '';
+			axios.defaults.headers.common['Authorization'] = '';
 		},
 		changeLanguage(state, payload) {
 			state.language = payload.language;

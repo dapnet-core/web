@@ -1,18 +1,43 @@
 <template>
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="page-header">
-					<h1>{{ $t('navigation.login') }}</h1>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-lg-8">
-				<form class="form-horizontal well">
-					<fieldset>
-						<legend>{{ $t('navigation.login') }}</legend>
+	<v-container fluid fill-height>
+		<v-layout align-center justify-center>
+			<v-flex xs12 sm8 md4>
+				<v-card class="elevation-12">
+					<v-toolbar>
+						<v-toolbar-title>{{ $t('navigation.login') }}</v-toolbar-title>
+					</v-toolbar>
+					<v-card-text>
+						<v-form>
+							<v-text-field
+								prepend-icon="person"
+								name="username"
+								v-model="username"
+								v-bind:label="$t('login.username')"
+								type="text">
+							</v-text-field>
+							<v-text-field
+								id="password"
+								prepend-icon="lock"
+								name="password"
+								v-model="password"
+								v-bind:label="$t('login.password')"
+								type="password">
+							</v-text-field>
+						</v-form>
+					</v-card-text>
+					<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn
+							color="primary"
+							@click="submitForm"
+						>
+							{{ $t('general.submit') }}</v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-flex>
+		</v-layout>
+	</v-container>
+<!--
 
 						<info-error :message="errorMessage"></info-error>
 
@@ -43,6 +68,7 @@
 			</div>
 		</div>
 	</div>
+	-->
 </template>
 
 <script>
@@ -62,17 +88,16 @@
 		},
 		methods: {
 			submitForm(event) {
-				event.preventDefault();
-
+				// event.preventDefault();
 				// request given users data to validate credentials
-				this.$http.post('auth/users/login', {
+				this.$axios.post('auth/users/login', {
 					username: this.username,
 					password: this.password
 				}).then(response => {
 					// success --> save credentials and go to home
 					this.$store.commit('login', {
-						user: response.body.user,
-						permissions: response.body.permissions,
+						user: response.data.user,
+						permissions: response.data.permissions,
 						auth: btoa(this.username + ':' + this.password)
 					});
 
