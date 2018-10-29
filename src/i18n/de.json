@@ -356,6 +356,7 @@
     "password": "Passwort",
     "password_unchanged": "Passwort nicht geändert",
     "password_new": "Neues Passwort",
+    "password_invalid_content": "Ungültige Zeichen",
     "yes": "Ja",
     "no": "Nein",
     "permalink": "Permanentlink",

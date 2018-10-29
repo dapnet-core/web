@@ -4,12 +4,10 @@
 			<v-flex xs12 sm8 md8>
 				<v-card class="elevation-12">
 					<v-toolbar>
-						<v-toolbar-title
-								v-if="this.$route.params.id"
-						>
-							{{ $t('users.new.edituser') }}
-						</v-toolbar-title>
-					</v-toolbar>
+						<v-toolbar-title>
+							{{ this.isEdditing ? this.$t('users.general.edituser') : this.$t('users.general.newuser') }}
+                        </v-toolbar-title>
+                    </v-toolbar>
 					<v-card-text>
 						<v-form>
 							<v-text-field
@@ -18,8 +16,8 @@
 									v-model="form._id"
 									v-bind:label="$t('general.name')"
 									type="text"
-                                    readonly
-                            >
+									v-bind:readonly="userformReadlony ? true : false"
+							>
 							</v-text-field>
                             <v-layout>
                                 <v-flex xs6>
@@ -29,7 +27,8 @@
                                             name="password"
                                             v-model="form.password"
                                             v-bind:label="passwordLabel"
-                                            :type="passwordVisible ? 'text' : 'password'"
+                                            v-bind:type="passwordVisible ? 'text' : 'password'"
+                                            v-bind:background-color="passwordValuesOk ? '' : 'red'"
                                             @input="updatePasswortLabel"
                                    >
                                    </v-text-field>
@@ -70,6 +69,29 @@
                                 >
                                 </v-text-field>
 						</v-form>
+                        <v-layout>
+                            <!-- if user is not allowed to change a role, just display it -->
+                            <v-flex xs6 v-if="!this.$store.getters.permission('user.change_role')">
+                                <v-chip v-for="(role, index) in this.form.roles" v-bind:key="`role-${index}`" color="green" text-color="white">
+                                    {{ role }}
+                                </v-chip>
+                            </v-flex>
+                            <!-- if user is allowed to change a role, display selection box -->
+                            <v-flex xs12 v-if="this.$store.getters.permission('user.change_role')">
+                                <v-combobox
+                                    chips
+                                    deletable-chips
+                                    multiple
+                                    solo
+                                    prepend-icon="loyalty"
+                                    v-model="form.roles"
+                                    :items="formData.roles"
+                                    v-bind:label="$t('users.general.roles')"
+                                    v-bind:background-color="emptyRolesCombobox() ? '' : 'red'"
+                                                                    >
+                                </v-combobox>
+                            </v-flex>
+                        </v-layout>
 					</v-card-text>
 					<v-card-actions>
 						<v-spacer></v-spacer>
@@ -107,6 +129,9 @@
 			// load data of given id
 			if (this.$route.params.id) {
 				console.log('params:' + this.$route.params.id);
+				this.userformReadlony = true;
+				this.passwordLabel = this.$t('general.password_unchanged');
+
 				this.$axios.get('users/' + this.$route.params.id).then(response => {
 					this.editing = true;
 					this.form._id = response.data._id;
@@ -139,6 +164,8 @@
 					console.log('Error getting user\'s individual details with axios');
 					// this.$router.push('/users');
 				});
+			} else {
+				this.userformReadlony = false;
 			}
 		},
 		data() {
@@ -161,15 +188,45 @@
 				created_by: '',
 				changed_on: '',
 				changed_by: '',
-				passwordLabel: this.$t('general.password_unchanged')
+				passwordLabel: this.$t('general.password'),
+				passwordValuesOk: true,
+				userformReadlony: true,
+				isEdditing: this.$route.params.id
 			};
 		},
 		methods: {
+			emptyRolesCombobox(event) {
+				console.log('emptyRoles');
+				return (this.form.roles.length > 0);
+			},
 			updatePasswortLabel(event) {
-				if (this.form.password === '') {
-					this.passwordLabel = this.$t('general.password_unchanged');
+				this.userformReadlony = this.isEdditing;
+				if (this.isEdditing) {
+					if (this.form.password === '') {
+						this.passwordLabel = this.$t('general.password_unchanged');
+						this.passwordValuesOk = true;
+					} else {
+						if (!this.form.password.match(/[^A-Za-z0-9]/g)) {
+							this.passwordValuesOk = true;
+							this.passwordLabel = this.$t('general.password_new');
+						} else {
+							this.passwordValuesOk = false;
+							this.passwordLabel = this.$t('general.password_new') + ' - ' + this.$t('general.password_invalid_content');
+						}
+					}
 				} else {
-					this.passwordLabel = this.$t('general.password_new');
+					if (this.form.password === '') {
+						this.passwordLabel = this.$t('general.password');
+						this.passwordValuesOk = true;
+					} else {
+						if (!this.form.password.match(/[^A-Za-z0-9]/g)) {
+							this.passwordValuesOk = true;
+							this.passwordLabel = this.$t('general.password');
+						} else {
+							this.passwordValuesOk = false;
+							this.passwordLabel = this.$t('general.password') + ' - ' + this.$t('general.password_invalid_content');
+						}
+					}
 				}
 			},
 			submitForm(event) {
@@ -186,20 +243,15 @@
 					return false;
 				}
 
-				// workaround to allow empty password to not change it
-				if (this.$route.params.id && this.form.password === '') {
-					this.form.password = '~~~DO_NOT_CHANGE_PASSWORD~~~';
+				// check for input in all fields but password if empty
+				var skipkeys = [];
+				if (!(this.form.password === '')) {
+					skipkeys.push('password');
+					if (!this.$helpers.checkForInput(this, this.form, skipkeys)) {
+						return false;
+					}
 				}
 
-				// check for input in all fields
-				if (!this.$helpers.checkForInput(this, this.form)) {
-					return false;
-				}
-
-				// second part of the workaround
-				if (this.$route.params.id && this.form.password === '~~~DO_NOT_CHANGE_PASSWORD~~~') {
-					this.form.password = '';
-				}
 				this.form2send = Object.assign({}, this.form);
 				if (this.form.password === '') {
 					delete this.form2send.password;
