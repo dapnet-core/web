@@ -1,22 +1,32 @@
 <template>
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="page-header">
-					<h1>{{ $t('navigation.users') }}</h1>
-				</div>
-			</div>
-		</div>
+	<v-container fluid>
+		<v-layout>
+			<v-flex sx3><h1>{{ $t('users.overview.allusers') }}</h1></v-flex>
+			<v-flex xs9 v-if="this.$store.getters.permission('user.create')">
+				<v-card class="elevation-12">
+					<v-card-title>{{ $t('general.actions') }}</v-card-title>
+					<v-btn>
+						<router-link to="/users/new">{{ $t('users.general.newuser') }}</router-link>
+					</v-btn>
+					<v-btn v-on:click="mailToAll">{{ $t('users.overview.sendemailallusers') }}</v-btn>
+				</v-card>
+			</v-flex>
+			<!--			<template v-if="table.rows">
+                            <legend>{{ $t('general.statistics') }}</legend>
+                            <ul class="list-group">
+                                <li class="list-group-item"><b>{{ $t('users.overview.totalusers') }}</b><span class="badge">{{ statTotal }}</span></li>
+                            </ul>
+                        </template>
+            -->
+		</v-layout>
 
-		<div class="row">
-			<div class="col-lg-9">
-				<h2>{{ $t('users.overview.allusers') }}
-				</h2>
+		<!--				<info-error :message="errorMessage"></info-error>
 
-<!--				<info-error :message="errorMessage"></info-error>
+                        <tablegrid v-if="table.rows" :columns="table.columns" :data="table.rows" :mail-action="mailToOwner" :edit-action="editElement" :delete-action="deleteElement"></tablegrid>
+        -->
 
-				<tablegrid v-if="table.rows" :columns="table.columns" :data="table.rows" :mail-action="mailToOwner" :edit-action="editElement" :delete-action="deleteElement"></tablegrid>
--->
+		<v-layout>
+			<v-flex xs12>
 				<v-data-table
 					:headers="headers"
 					:items="userrows"
@@ -40,30 +50,11 @@
 						</td>
 					</template>
 				</v-data-table>
-			</div>
-
-			<div class="col-lg-3">
-				<div class="actions well">
-					<template v-if="this.$store.getters.permission('user.create')">
-						<legend>{{ $t('general.actions') }}</legend>
-						<ul>
-							<li><router-link to="/users/new">{{ $t('users.general.newuser') }}</router-link></li>
-							<li><p class="linklike" @click="mailToAll">{{ $t('users.overview.sendemailallusers') }}</p></li>
-						</ul>
-						<br>
-					</template>
-					<template v-if="table.rows">
-						<legend>{{ $t('general.statistics') }}</legend>
-						<ul class="list-group">
-							<li class="list-group-item"><b>{{ $t('users.overview.totalusers') }}</b><span class="badge">{{ statTotal }}</span></li>
-						</ul>
-					</template>
-				</div>
-				<h2>{{ $t('general.information') }}</h2>
-				<p v-html="$t('users.overview.information.help')"></p>
-			</div>
-		</div>
-	</div>
+			</v-flex>
+		</v-layout>
+		<h2>{{ $t('general.information') }}</h2>
+		<p v-html="$t('users.overview.information.help')"></p>
+	</v-container>
 </template>
 
 <script>
@@ -119,9 +110,9 @@
 				pagination: {
 					sortBy: 'doc._id',
 					descending: true,
-					rowsPerPage: 25,
+					rowsPerPage: 10,
 					page: 1
-				},
+				}
 			};
 		},
 		computed: {
@@ -136,7 +127,7 @@
 					params: {
 						descending: !!this.pagination.descending,
 						limit: this.pagination.rowsPerPage,
-						skip: (this.pagination.page-1) * this.pagination.rowsPerPage
+						skip: (this.pagination.page - 1) * this.pagination.rowsPerPage
 					}
 				}).then(response => {
 					// success --> save new data
