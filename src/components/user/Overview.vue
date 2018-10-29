@@ -41,8 +41,30 @@
 					<template slot="items" slot-scope="props">
 						<td>{{ props.item._id }}</td>
 						<td class="text-xs-center">{{ props.item.email }}</td>
-						<td class="text-xs-center">
-							<span v-html="props.item.roles"></span>
+						<td class="text-xs-left">
+							<span v-for="(role, index) in props.item.roles" v-bind:key="`role-${index}`">
+								<v-badge right overlap>
+									<span slot="badge" v-if="role.badge">{{ role.badge }}</span>
+									<v-chip
+											label
+											v-bind:color="`${role.color}`"
+											text-color="white"
+											small
+									>
+										{{ role.text }}
+									</v-chip>
+								</v-badge>
+<!--								<v-chip
+										label
+										v-for="(role, index) in props.item.roles"
+										v-bind:key="`role-${index}`"
+										v-bind:color="`${role.color}`"
+										text-color="white"
+										small
+								>
+									{{ role.text }}
+								</v-chip>-->
+							</span>
 						</td>
 						<td class="text-xs-right">
 							<v-icon v-if="props.item.enabled" color="green">toggle_on</v-icon>
@@ -212,10 +234,40 @@
 							if (user.email === undefined) {
 								user.email = '---';
 							}
-							let rolesRenderd = '';
+							let rolesRenderd = [];
 							// Render Roles in a beautiful way
 							user.roles.forEach(role => {
-								rolesRenderd = rolesRenderd + '<span class="badge">' + role + '</span><br />';
+								if (role === 'user') {
+									rolesRenderd.push({
+										text: 'U',
+										color: 'green'
+									});
+								} else if (role === 'support') {
+									rolesRenderd.push({
+										text: 'S',
+										color: 'yellow'
+									});
+								} else if (role === 'admin') {
+									rolesRenderd.push({
+										text: 'A',
+										color: 'pink'
+									});
+								} else if ((role.split('.')[0]) === 'thirdparty') {
+									let service = role.split('.')[1];
+									if (service === 'brandmeister') {
+										rolesRenderd.push({
+											text: 'B',
+											color: 'purple',
+											badge: '3'
+										});
+									} else if (service === 'aprs') {
+										rolesRenderd.push({
+											text: 'A',
+											color: 'deep-orange',
+											badge: '3'
+										});
+									}
+								}
 							});
 							user.roles = rolesRenderd;
 						});
