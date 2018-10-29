@@ -7,7 +7,7 @@
 						<v-toolbar-title>{{ $t('navigation.login') }}</v-toolbar-title>
 					</v-toolbar>
 					<v-card-text>
-						<v-form>
+						<v-form @keyup.native.enter="submitForm">
 							<v-text-field
 								prepend-icon="person"
 								name="username"
@@ -30,6 +30,7 @@
 						<v-btn
 							color="primary"
 							@click="submitForm"
+							type="submit"
 						>
 							{{ $t('general.submit') }}</v-btn>
 					</v-card-actions>
