@@ -104,6 +104,14 @@ const GlobalMethodsPlugin = {
 			}
 		};
 
+		Vue.prototype.$dialogs.getUserDataError = function(context) {
+			context.$swal({
+				title: context.$i18n.t('alerts.getUserData.title'),
+				html: context.$i18n.t('alerts.getUserData.text'),
+				type: 'error'
+			});
+		};
+
 		Vue.prototype.$dialogs.overwriteError = function(context) {
 			context.$swal({
 				title: context.$i18n.t('alerts.overwrite.title'),

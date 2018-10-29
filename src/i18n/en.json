@@ -298,6 +298,10 @@
 			"title": "Prevented Overwriting",
 			"text": "A possible case of overwriting existing data has been prevented."
 		},
+		"getUserData": {
+			"title": "Unable to load User data from Server",
+			"text": "Please try again later."
+		},
 		"password": {
 			"title": "Forbidden character",
 			"text": "Your password must not contain anything but <code>A-Z</code>, <code>a-Z</code> and/or <code>0-9</code>."
