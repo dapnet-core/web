@@ -278,7 +278,6 @@
 					return false;
 				}
 
-
 				this.form2send = Object.assign({}, this.form);
 				if (this.form.password === '') {
 					delete this.form2send.password;

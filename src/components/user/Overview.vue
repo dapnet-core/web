@@ -45,8 +45,34 @@
 							<span v-html="props.item.roles"></span>
 						</td>
 						<td class="text-xs-right">
-							<span v-if="props.item.enabled" class="label label-success">{{ $t('general.yes') }}</span>
-							<span v-else class="label label-primary">{{ $t('general.no') }}</span>
+							<v-icon v-if="props.item.enabled" color="green">toggle_on</v-icon>
+							<v-icon v-else color ="red">toggle_off</v-icon>
+						</td>
+						<td class="text-xs-center" v-if="displayToolColumn">
+							<v-btn
+									v-if="getPermissionsWrapper('user.update') === 'all'"
+									flat
+									icon
+									color="blue"
+							>
+								<v-icon>edit</v-icon>
+							</v-btn>
+							<v-btn
+									v-if="getPermissionsWrapper('user.delete') === 'all'"
+									flat
+									icon
+									color="pink"
+							>
+								<v-icon>delete</v-icon>
+							</v-btn>
+							<v-btn
+									v-if="getPermissionsWrapper('user.update') === 'all'"
+									flat
+									icon
+									color="grey"
+							>
+								<v-icon>contact_mail</v-icon>
+							</v-btn>
 						</td>
 					</template>
 				</v-data-table>
@@ -74,29 +100,7 @@
 			return {
 				total_rows: 0,
 				userrows: [],
-				headers: [
-					{
-						text: this.$i18n.t('general.name'),
-						align: 'left',
-						sortable: true,
-						value: '_id'
-					},
-					{
-						text: this.$i18n.t('users.general.email'),
-						align: 'center',
-						value: 'email'
-					},
-					{
-						text: this.$i18n.t('users.general.roles'),
-						align: 'center',
-						value: 'roles'
-					},
-					{
-						text: this.$i18n.t('users.general.enabled'),
-						align: 'right',
-						value: 'enabled'
-					}
-				],
+				headers: this.getHeaders(),
 				errorMessage: false,
 				loadingdata: true,
 				table: {
@@ -121,6 +125,70 @@
 			}
 		},
 		methods: {
+			getHeaders() {
+				if (this.displayToolColumn()) {
+					return [
+						{
+							text: this.$i18n.t('general.name'),
+							align: 'left',
+							sortable: true,
+							value: '_id'
+						},
+						{
+							text: this.$i18n.t('users.general.email'),
+							align: 'center',
+							value: 'email'
+						},
+						{
+							text: this.$i18n.t('users.general.roles'),
+							align: 'center',
+							value: 'roles'
+						},
+						{
+							text: this.$i18n.t('users.general.enabled'),
+							align: 'right',
+							value: 'enabled'
+						},
+						{
+							text: this.$i18n.t('general.actions'),
+							align: 'center',
+							sortable: false
+						}
+					];
+				} else {
+					return [
+						{
+							text: this.$i18n.t('general.name'),
+							align: 'left',
+							sortable: true,
+							value: '_id'
+						},
+						{
+							text: this.$i18n.t('users.general.email'),
+							align: 'center',
+							value: 'email',
+							sortable: false
+						},
+						{
+							text: this.$i18n.t('users.general.roles'),
+							align: 'center',
+							value: 'roles'
+						},
+						{
+							text: this.$i18n.t('users.general.enabled'),
+							align: 'right',
+							value: 'enabled'
+						}
+					];
+				}
+			},
+			displayToolColumn() {
+				return ((this.$store.getters.permission('user.update') === 'all') ||
+				(this.$store.getters.permission('user.delete') === 'all'));
+			},
+			getPermissionsWrapper(mypermission) {
+				return (this.$store.getters.permission(mypermission));
+			},
 			loadData() {
 				this.loadingdata = true;
 				this.$axios.get('users', {
