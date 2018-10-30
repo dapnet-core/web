@@ -236,6 +236,7 @@
 							}
 							let rolesRenderd = [];
 							// Render Roles in a beautiful way
+							user.roles.sort(function(a, b){return b-a});
 							user.roles.forEach(role => {
 								if (role === 'user') {
 									rolesRenderd.push({
