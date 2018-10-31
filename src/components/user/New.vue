@@ -87,18 +87,18 @@
 										<!-- if user is allowed to change a role, display selection box -->
 										<v-flex xs7 v-if="this.$store.getters.permission('user.change_role')">
 											<v-autocomplete
-                                                    hide-selected
-                                                    chips
-                                                    small-chips
-                                                    deletable-chips
-                                                    multiple
+													hide-selected
+													chips
+													small-chips
+													deletable-chips
+													multiple
 													prepend-icon="loyalty"
 													v-model="form.roles"
 													:items="formData.roles"
 													v-bind:label="$t('users.general.roles')"
 													v-bind:background-color="emptyRolesCombobox() ? '' : 'red'"
-                                                    persistent-hint
-                                                    v-bind:hint="emptyRolesCombobox() ? '' : $t('users.general.atleastonerole')"
+													persistent-hint
+													v-bind:hint="emptyRolesCombobox() ? '' : $t('users.general.atleastonerole')"
 											>
 											</v-autocomplete>
 										</v-flex>
@@ -180,14 +180,16 @@
 									</v-expansion-panel>
 								</v-card-text>
 							</v-card>
+							<!-- Default settings -->
 							<v-card color="green">
 								<v-card-title>{{ $t('general.default_settings') }}</v-card-title>
 								<v-card-text>
 									<v-layout>
 									<!-- Display default subscriber names selection-->
 										<v-flex xs5>
-											<v-combobox
+											<v-autocomplete
 												chips
+												small-chips
 												deletable-chips
 												multiple
 												hide-selected
@@ -197,13 +199,14 @@
 												:items="formData.subscribers"
 												v-bind:label="$t('users.general.subscribers')"
 											>
-											</v-combobox>
+											</v-autocomplete>
 										</v-flex>
 										<v-flex xs2></v-flex>
 										<!-- Display default subscriber groups selection-->
 										<v-flex xs5>
-											<v-combobox
+											<v-autocomplete
 												chips
+												small-chips
 												deletable-chips
 												multiple
 												solo
@@ -212,14 +215,15 @@
 												:items="formData.subscriber_groups"
 												v-bind:label="$t('users.general.subscriber_groups')"
 										>
-										</v-combobox>
+										</v-autocomplete>
 									</v-flex>
 									</v-layout>
 									<v-layout>
 										<!-- Display default transmitter names selection-->
 										<v-flex xs5>
-											<v-combobox
+											<v-autocomplete
 													chips
+													small-chips
 													deletable-chips
 													multiple
 													solo
@@ -228,13 +232,14 @@
 													:items="formData.transmitters"
 													v-bind:label="$t('users.general.transmitters')"
 											>
-											</v-combobox>
+											</v-autocomplete>
 										</v-flex>
 										<v-flex xs2></v-flex>
 										<!-- Display default trasnmitter groups selection-->
 										<v-flex xs5>
-											<v-combobox
+											<v-autocomplete
 													chips
+													small-chips
 													deletable-chips
 													multiple
 													solo
@@ -243,7 +248,7 @@
 													:items="formData.transmitter_groups"
 													v-bind:label="$t('users.general.transmitter_groups')"
 											>
-											</v-combobox>
+											</v-autocomplete>
 										</v-flex>
 									</v-layout>
 								</v-card-text>
