@@ -315,7 +315,8 @@
 		"overlength": "{fieldname} must be less or equal than {count} characters.",
 		"underlength": "{fieldname} must be minimum {count} characters.",
 		"isrequired": "{fieldname} is required.",
-		"onlyalphanumeric": "Only numbers and letters allowed."
+		"onlyalphanumeric": "Only numbers and letters allowed.",
+		"isvalidEmail": "The given email must be valid."
 	},
 	"general": {
 		"continue": "Continue",
@@ -338,6 +339,7 @@
 		},
 		"password": "Password",
 		"username": "Username",
+		"email": "Email",
 		"password_unchanged": "Password unchanged",
 		"password_new": "New Password",
 		"yes": "Yes",

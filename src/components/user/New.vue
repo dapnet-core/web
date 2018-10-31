@@ -42,7 +42,7 @@
 													id="password"
 													prepend-icon="lock"
 													name="password"
-													required
+													required="!isEditmode"
 													:counter="30"
 													:rules="validationRules.password"
 													v-model="form.password"
@@ -83,6 +83,8 @@
 										id="email"
 										prepend-icon="email"
 										name="email"
+										required
+										:rules="validationRules.email"
 										v-model="form.email"
 										v-bind:label="$t('users.general.email')"
 										type="text"
@@ -410,6 +412,10 @@
 						v => ((!!v || this.isEditMode) && v.length <= 30) || this.$t('formvalidation.overlength', { fieldname: this.$t('general.password'), count: '30' }),
 						v => ((!!v || this.isEditMode) && (!v || /^[a-z0-9]+$/i.test(v))) || this.$t('formvalidation.onlyalphanumeric'),
 						v => ((!!v || this.isEditMode) && (!v || v.length >= 3)) || this.$t('formvalidation.underlength', { fieldname: this.$t('general.password'), count: '3' }),
+					],
+					'email': [
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.email') }),
+						v => /.+@.+\..+/.test(v) || this.$t('formvalidation.isvalidEmail')
 					]
 				},
 				form: {
