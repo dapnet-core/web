@@ -342,7 +342,9 @@
 		"changed_on": "Changed on",
 		"created_on": "Created on",
 		"byUser": "by",
-		"missing": "missing"
+		"missing": "missing",
+		"general_settings": "General Settings",
+		"default_settings": "Default Settings"
 	},
 	"rubric": {
 		"overview": {
@@ -434,7 +436,7 @@
 			"newcall": "New Call",
 			"message": {
 				"title": "Message",
-				"charactersremaining": "{remaining} / 80 characters remaining.<br>Enter your paging text. Your user name is added automatically."
+				"charactersremaining": "{remaining} / 80 characters remaining. Enter your paging text. Your user name is added automatically."
 			},
 			"subscribers": {
 				"help": "Select one or multiple subscribers you want to send the message to."
@@ -567,7 +569,18 @@
 			"enabled": "Enabled?",
 			"email_valid": "Email valid?",
 			"othersettings": "Other settings",
-			"metainfo": "Meta-Information"
+			"metainfo": "Meta-Information",
+			"transmitters": "Transmitters",
+			"transmitter_groups": "Transmitter Groups",
+			"subscribers": "Subscribers",
+			"subscriber_groups": "Subscriber Groups",
+			"addroles": {
+				"title": "Add new third-party role to available selections",
+				"placeholder": "Example: \"dmrplus\", \"lorawan\"",
+				"help": "Add a the name of a new third-party role. The part \"thridparty.\" will be added autoamtically, so don't type it here. If the role designator is already present, you won't be able to add it.",
+				"add": "Add"
+			},
+			"showthirdpartyroles": "Show third-party roles"
 		},
 		"overview": {
 			"allusers": "All Users",

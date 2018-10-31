@@ -54,16 +54,6 @@
 										{{ role.text }}
 									</v-chip>
 								</v-badge>
-<!--								<v-chip
-										label
-										v-for="(role, index) in props.item.roles"
-										v-bind:key="`role-${index}`"
-										v-bind:color="`${role.color}`"
-										text-color="white"
-										small
-								>
-									{{ role.text }}
-								</v-chip>-->
 							</span>
 						</td>
 						<td class="text-xs-right">
@@ -236,7 +226,7 @@
 							}
 							let rolesRenderd = [];
 							// Render Roles in a beautiful way
-							user.roles.sort(function(a, b){return b-a});
+							user.roles.sort(function(a, b) { return (b - a); });
 							user.roles.forEach(role => {
 								if (role === 'user') {
 									rolesRenderd.push({
@@ -285,7 +275,7 @@
 				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20User%3A%20' + element._id;
 			},
 			editElement(element) {
-				this.$router.push({name: 'Edit User', params: {id: element._id}});
+				this.$router.push({ name: 'Edit User', params: { id: element._id } });
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {

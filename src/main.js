@@ -55,5 +55,5 @@ new Vue({
 	i18n,
 	store,
 	router,
-	components: {Sidebar}
+	components: { Sidebar }
 }).$mount('#app');
