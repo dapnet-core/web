@@ -566,6 +566,7 @@
 			"newuser": "New User",
 			"edituser": "Edit User",
 			"roles": "Roles",
+			"atleastonerole": "At least one role is necesarry.",
 			"enabled": "Enabled?",
 			"email_valid": "Email valid?",
 			"othersettings": "Other settings",

@@ -86,18 +86,21 @@
 									<v-layout>
 										<!-- if user is allowed to change a role, display selection box -->
 										<v-flex xs7 v-if="this.$store.getters.permission('user.change_role')">
-											<v-combobox
-													chips
-													deletable-chips
-													multiple
-													solo
+											<v-autocomplete
+                                                    hide-selected
+                                                    chips
+                                                    small-chips
+                                                    deletable-chips
+                                                    multiple
 													prepend-icon="loyalty"
 													v-model="form.roles"
 													:items="formData.roles"
 													v-bind:label="$t('users.general.roles')"
 													v-bind:background-color="emptyRolesCombobox() ? '' : 'red'"
+                                                    persistent-hint
+                                                    v-bind:hint="emptyRolesCombobox() ? '' : $t('users.general.atleastonerole')"
 											>
-											</v-combobox>
+											</v-autocomplete>
 										</v-flex>
 										<!-- if user is not allowed to change a role, just display it -->
 										<v-flex xs7 v-if="!this.$store.getters.permission('user.change_role')">
