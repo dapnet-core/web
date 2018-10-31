@@ -8,7 +8,8 @@
 						<v-toolbar-title>
 							<div>
 								<div class="headline">
-									{{ this.isEdditing ? this.$t('users.general.edituser') : this.$t('users.general.newuser') }}
+									{{ this.isEditMode ? this.$t('users.general.edituser') :
+									this.$t('users.general.newuser') }}
 								</div>
 							</div>
 						</v-toolbar-title>
@@ -41,13 +42,12 @@
 													id="password"
 													prepend-icon="lock"
 													name="password"
-                                                    required
-                                                    :counter="30"
-                                                    :rules="validationRules.password"
+													required
+													:counter="30"
+													:rules="validationRules.password"
 													v-model="form.password"
 													v-bind:label="passwordLabel"
 													v-bind:type="passwordVisible ? 'text' : 'password'"
-													v-bind:background-color="passwordValuesOk ? '' : 'red'"
 													@input="updatePasswortLabel"
 											>
 											</v-text-field>
@@ -392,6 +392,8 @@
 			} else {
 				this.enabledReadonly = true;
 			}
+			console.log('this.$route.params.id ' + this.$route.params.id);
+			console.log('EditMode: ' + this.isEditMode);
 		},
 		data() {
 			return {
@@ -400,14 +402,14 @@
 					'username': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.username') }),
 						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', { fieldname: this.$t('general.username'), count: '20' }),
-                        v => (v && v.length >= 3) || this.$t('formvalidation.underlength', { fieldname: this.$t('general.username'), count: '3' }),
-                        v => /^[a-z0-9]+$/i.test(v) || this.$t('formvalidation.onlyalphanumeric')
+						v => (v && v.length >= 3) || this.$t('formvalidation.underlength', { fieldname: this.$t('general.username'), count: '3' }),
+						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
 					],
 					'password': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.password') }),
-						v => (v && v.length <= 30) || this.$t('formvalidation.overlength', { fieldname: this.$t('general.password'), count: '30' }),
-                        v => (v && v.length >= 3) || this.$t('formvalidation.underlength', { fieldname: this.$t('general.password'), count: '3' }),
-						v => /^[a-z0-9]+$/i.test(v) || this.$t('formvalidation.onlyalphanumeric')
+						v => (!!v || this.isEditMode) || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.password') }),
+						v => ((!!v || this.isEditMode) && v.length <= 30) || this.$t('formvalidation.overlength', { fieldname: this.$t('general.password'), count: '30' }),
+						v => ((!!v || this.isEditMode) && (!v || /^[a-z0-9]+$/i.test(v))) || this.$t('formvalidation.onlyalphanumeric'),
+						v => ((!!v || this.isEditMode) && (!v || v.length >= 3)) || this.$t('formvalidation.underlength', { fieldname: this.$t('general.password'), count: '3' }),
 					]
 				},
 				form: {
@@ -443,10 +445,9 @@
 				changed_on: '',
 				changed_by: '',
 				passwordLabel: this.$t('general.password'),
-				passwordValuesOk: true,
 				userformReadonly: true,
 				enabledReadonly: false,
-				isEdditing: this.$route.params.id,
+				isEditMode: (!!(this.$route.params.id)),
 				newthridpartyrole: '',
 				newRoleOk: true,
 				newRoleAddButtonDisabled: true,
@@ -490,33 +491,15 @@
 				}
 			},
 			updatePasswortLabel(event) {
-				this.userformReadonly = this.isEdditing;
-				if (this.isEdditing) {
+				this.userformReadonly = this.isEditMode;
+				if (this.isEditMode) {
 					if (this.form.password === '') {
 						this.passwordLabel = this.$t('general.password_unchanged');
-						this.passwordValuesOk = true;
 					} else {
-						if (!this.form.password.match(/[^A-Za-z0-9]/g)) {
-							this.passwordValuesOk = true;
-							this.passwordLabel = this.$t('general.password_new');
-						} else {
-							this.passwordValuesOk = false;
-							this.passwordLabel = this.$t('general.password_new') + ' - ' + this.$t('general.password_invalid_content');
-						}
+						this.passwordLabel = this.$t('general.password_new');
 					}
 				} else {
-					if (this.form.password === '') {
-						this.passwordLabel = this.$t('general.password');
-						this.passwordValuesOk = true;
-					} else {
-						if (!this.form.password.match(/[^A-Za-z0-9]/g)) {
-							this.passwordValuesOk = true;
-							this.passwordLabel = this.$t('general.password');
-						} else {
-							this.passwordValuesOk = false;
-							this.passwordLabel = this.$t('general.password') + ' - ' + this.$t('general.password_invalid_content');
-						}
-					}
+					this.passwordLabel = this.$t('general.password');
 				}
 			},
 			submitForm(event) {
