@@ -34,11 +34,11 @@
                                     </v-layout>
                                     <v-layout>
                                         <v-flex xs5>
-                                            <v-combobox
+                                            <v-autocomplete
                                                 persistent-hint
                                                 hint="hjdkhasjk"
-                                                hide-selected
                                                 chips
+                                                small-chips
                                                 deletable-chips
                                                 multiple
                                                 solo
@@ -47,13 +47,14 @@
                                                 :items="formData.subscribers"
                                                 v-bind:label="$t('users.general.subscribers')"
                                             >
-                                            </v-combobox>
+                                            </v-autocomplete>
                                         </v-flex>
                                         <v-flex xs2></v-flex>
                                         <!-- Display default subscriber groups selection-->
                                         <v-flex xs5>
-                                            <v-combobox
+                                            <v-autocomplete
                                                 chips
+                                                small-chips
                                                 deletable-chips
                                                 multiple
                                                 solo
@@ -62,14 +63,15 @@
                                                 :items="formData.subscriber_groups"
                                                 v-bind:label="$t('users.general.subscriber_groups')"
                                             >
-                                            </v-combobox>
+                                            </v-autocomplete>
                                         </v-flex>
                                     </v-layout>
                                     <v-layout>
                                         <!-- Display default transmitter names selection-->
                                         <v-flex xs5>
-                                            <v-combobox
+                                            <v-autocomplete
                                                 chips
+                                                small-chips
                                                 deletable-chips
                                                 multiple
                                                 solo
@@ -78,13 +80,14 @@
                                                 :items="formData.transmitters"
                                                 v-bind:label="$t('users.general.transmitters')"
                                             >
-                                            </v-combobox>
+                                            </v-autocomplete>
                                         </v-flex>
                                         <v-flex xs2></v-flex>
                                         <!-- Display default trasnmitter groups selection-->
                                         <v-flex xs5>
-                                            <v-combobox
+                                            <v-autocomplete
                                                 chips
+                                                small-chips
                                                 deletable-chips
                                                 multiple
                                                 solo
@@ -93,7 +96,7 @@
                                                 :items="formData.transmitter_groups"
                                                 v-bind:label="$t('users.general.transmitter_groups')"
                                             >
-                                            </v-combobox>
+                                            </v-autocomplete>
                                         </v-flex>
                                     </v-layout>
 
