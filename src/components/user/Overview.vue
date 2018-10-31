@@ -60,12 +60,13 @@
 							<v-icon v-if="props.item.enabled" color="green">toggle_on</v-icon>
 							<v-icon v-else color ="red">toggle_off</v-icon>
 						</td>
-						<td class="text-xs-center" v-if="displayToolColumn">
+						<td class="text-xs-center" v-if="displayActionsColumn">
 							<v-btn
 									v-if="getPermissionsWrapper('user.update') === 'all'"
 									flat
 									icon
 									color="blue"
+                                    v-on:click="editElement(props.item)"
 							>
 								<v-icon>edit</v-icon>
 							</v-btn>
@@ -74,6 +75,7 @@
 									flat
 									icon
 									color="pink"
+                                    v-on:click="deleteElement(props.item)"
 							>
 								<v-icon>delete</v-icon>
 							</v-btn>
@@ -82,6 +84,7 @@
 									flat
 									icon
 									color="grey"
+                                    v-on:click="mailToOwner(props.item)"
 							>
 								<v-icon>contact_mail</v-icon>
 							</v-btn>
@@ -138,7 +141,7 @@
 		},
 		methods: {
 			getHeaders() {
-				if (this.displayToolColumn()) {
+				if (this.displayActionsColumn()) {
 					return [
 						{
 							text: this.$i18n.t('general.name'),
@@ -194,7 +197,7 @@
 					];
 				}
 			},
-			displayToolColumn() {
+			displayActionsColumn() {
 				return ((this.$store.getters.permission('user.update') === 'all') ||
 				(this.$store.getters.permission('user.delete') === 'all'));
 			},
@@ -279,10 +282,10 @@
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {
-					this.$http.delete('users/' + element._id, {
-						before(request) {
-							request.headers.delete('Content-Type');
-						}
+					this.axios.delete('users/' + element._id, {
+						// before(request) {
+						//	request.headers.delete('Content-Type');
+						// }
 					}).then(response => {
 						// success --> reload data
 						this.loadData();

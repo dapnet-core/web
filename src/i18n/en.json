@@ -311,6 +311,12 @@
 			"text": "Please check the given location and make sure to use your locale's decimal separator (e.g. <code>,</code> in German or <code>.</code> in US-English)."
 		}
 	},
+	"formvalidation": {
+		"overlength": "{fieldname} must be less or equal than {count} characters.",
+		"underlength": "{fieldname} must be minimum {count} characters.",
+		"isrequired": "{fieldname} is required.",
+		"onlyalphanumeric": "Only numbers and letters allowed."
+	},
 	"general": {
 		"continue": "Continue",
 		"submit": "Submit",
@@ -331,6 +337,7 @@
 			"picker": "Location Picker"
 		},
 		"password": "Password",
+		"username": "Username",
 		"password_unchanged": "Password unchanged",
 		"password_new": "New Password",
 		"password_invalid_content": "Invalid content",
@@ -561,6 +568,7 @@
 	},
 	"users": {
 		"general": {
+			"username": "Username",
 			"email": "Email",
 			"admin": "Admin?",
 			"newuser": "New User",

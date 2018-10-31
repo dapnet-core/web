@@ -334,7 +334,13 @@
         "Bitte die Position überprüfen und sicherstellen, dass das korrekte Dezimaltrennzeichen verwendet wird (z.B. <code>,</code> für Deutsch oder <code>.</code> für US-Englisch)."
     }
   },
-  "general": {
+	"formvalidation": {
+		"overlength": "{fieldname} darf maximal {count} Zeichen enthalten.",
+		"underlength": "{fieldname} muss mindestens {count} Zeichen enthalten.",
+		"isrequired": "{fieldname} ist obligatisch anzugeben.",
+		"onlyalphanumeric": "Es sind nur Zahlen und Buchstaben ohne Sonderzeichen oder Umlaute erlaubt."
+	},
+	"general": {
     "continue": "Fortfahren",
     "submit": "Absenden",
     "abort": "Abbrechen",
@@ -354,6 +360,7 @@
       "picker": "Position auswählen"
     },
     "password": "Passwort",
+    "username": "Benutzername",
     "password_unchanged": "Passwort nicht geändert",
     "password_new": "Neues Passwort",
     "password_invalid_content": "Ungültige Zeichen",

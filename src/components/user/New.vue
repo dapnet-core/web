@@ -13,7 +13,7 @@
 							</div>
 						</v-toolbar-title>
 					</v-toolbar>
-					<v-form>
+					<v-form v-model="valid">
 						<v-card-text>
 							<!--General settings-->
 							<v-card color="blue-grey lighten-4">
@@ -23,12 +23,15 @@
 								<v-card-text>
 									<!--ID-->
 									<v-text-field
-											prepend-icon="person"
-											name="username"
-											v-model="form._id"
-											v-bind:label="$t('general.name')"
-											type="text"
-											v-bind:readonly="userformReadonly ? true : false"
+										name="username"
+										prepend-icon="person"
+										required
+										:counter="20"
+										:rules="validationRules.username"
+										v-model="form._id"
+										v-bind:label="$t('general.username')"
+										type="text"
+										v-bind:readonly="userformReadonly ? true : false"
 									>
 									</v-text-field>
 									<!--Password-->
@@ -38,6 +41,9 @@
 													id="password"
 													prepend-icon="lock"
 													name="password"
+                                                    required
+                                                    :counter="30"
+                                                    :rules="validationRules.password"
 													v-model="form.password"
 													v-bind:label="passwordLabel"
 													v-bind:type="passwordVisible ? 'text' : 'password'"
@@ -389,6 +395,21 @@
 		},
 		data() {
 			return {
+				valid: true,
+				validationRules: {
+					'username': [
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.username') }),
+						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', { fieldname: this.$t('general.username'), count: '20' }),
+                        v => (v && v.length >= 3) || this.$t('formvalidation.underlength', { fieldname: this.$t('general.username'), count: '3' }),
+                        v => /^[a-z0-9]+$/i.test(v) || this.$t('formvalidation.onlyalphanumeric')
+					],
+					'password': [
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.password') }),
+						v => (v && v.length <= 30) || this.$t('formvalidation.overlength', { fieldname: this.$t('general.password'), count: '30' }),
+                        v => (v && v.length >= 3) || this.$t('formvalidation.underlength', { fieldname: this.$t('general.password'), count: '3' }),
+						v => /^[a-z0-9]+$/i.test(v) || this.$t('formvalidation.onlyalphanumeric')
+					]
+				},
 				form: {
 					_id: '',
 					password: '',
