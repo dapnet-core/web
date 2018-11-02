@@ -18,7 +18,6 @@ import swal from 'sweetalert2';
 
 Vue.use(globalMethods);
 
-Vue.use(Vuetify);
 Vue.use(axios);
 Vue.use(VueClipboard);
 
@@ -35,6 +34,12 @@ Vue.use(swalPlugin);
 
 // set initial locale
 i18n.locale = store.getters.language;
+
+Vue.use(Vuetify, {
+	lang: {
+		t: (key, ...params) => i18n.t(key, params)
+	}
+});
 
 // Change Document title according to router target
 router.afterEach((to, from) => {

@@ -1,5 +1,5 @@
 {
-  "navigation": {
+    "navigation": {
     "home": "Heimat",
     "calls": "Rufe",
     "subscribers": "Teilnehmer",
@@ -271,10 +271,6 @@
   },
   "table": {
     "search": "Suche",
-    "pagination": {
-      "page": "Seite",
-      "of": "von"
-    },
     "actionbuttons": {
       "edit": "Bearbeiten",
       "delete": "Löschen",
@@ -334,13 +330,20 @@
         "Bitte die Position überprüfen und sicherstellen, dass das korrekte Dezimaltrennzeichen verwendet wird (z.B. <code>,</code> für Deutsch oder <code>.</code> für US-Englisch)."
     }
   },
-	"formvalidation": {
-		"overlength": "{fieldname} darf maximal {count} Zeichen enthalten.",
-		"underlength": "{fieldname} muss mindestens {count} Zeichen enthalten.",
-		"isrequired": "{fieldname} ist obligatisch anzugeben.",
-		"onlyalphanumeric": "Es sind nur Zahlen und Buchstaben ohne Sonderzeichen oder Umlaute erlaubt."
-	},
-	"general": {
+  "formvalidation": {
+    "overlength": "{fieldname} darf maximal {count} Zeichen enthalten.",
+    "underlength": "{fieldname} muss mindestens {count} Zeichen enthalten.",
+    "isrequired": "{fieldname} ist obligatisch anzugeben.",
+    "onlyalphanumeric": "Es sind nur Zahlen und Buchstaben ohne Sonderzeichen oder Umlaute erlaubt.",
+    "isvalidEmail": "Die Email-Adresse muss ein gültiges Format haben.",
+    "minonerole": "Mindestens eine Rolle"
+  },
+  "general": {
+    "transmitters": "Sender",
+    "transmitter_groups": "Sender-Gruppen",
+    "subscribers": "Teilnehmer",
+    "subscriber_groups": "Teilnehmer-Gruppen",
+    "enabled": "Aktiv?",
     "continue": "Fortfahren",
     "submit": "Absenden",
     "abort": "Abbrechen",
@@ -363,12 +366,21 @@
     "username": "Benutzername",
     "password_unchanged": "Passwort nicht geändert",
     "password_new": "Neues Passwort",
+    "email": "Email-Adresse",
+    "roles": "Rollen",
     "yes": "Ja",
     "no": "Nein",
     "permalink": "Permanentlink",
     "duplication":
       "Wenn dieser Name geändert wird, erzeugt das ein Duplikat und ändert <i>nicht</i> den Namen dieses Elements.",
-    "news": "Nachrichten"
+    "news": "Nachrichten",
+    "changed_on": "Geändert am ",
+    "created_on": "Erstellt am",
+    "byUser": "durch",
+    "missing": "fehlend",
+    "general_settings": "Generelle Einstellungen",
+    "default_settings": "Vorauswahl-Einstellungen"
+
   },
   "rubric": {
     "overview": {
@@ -602,11 +614,18 @@
     }
   },
   "users": {
-    "general": {
-      "email": "Email",
-      "admin": "Admin?",
-      "newuser": "Neuer Nutzer"
+    "newuser": "Neuer Benutzer",
+    "edituser": "Ändere Benutzer",
+    "email_valid": "Email-Adresse gültig?",
+    "othersettings": "Weitere Einstellungen",
+    "metainfo": "Meta-Information",
+    "addroles": {
+      "title": "Füge neue Drittanbieter-Rolle zu Auswahl hinzu",
+      "placeholder": "Beispiele: \"dmrplus\", \"lorawan\"",
+      "help": "Für einen Namen einer neuer Drittanbieter-Rolle hinzu.Der Teil \"thridparty.\" wird automatisch zum Bezeichner hinzugefügt, daher bitte hier nicht angeben. Wenn die es die Rolle schon gibt, kann sie nicht erneut hinzugefügt werden.",
+      "add": "Hinzufügen"
     },
+    "showthirdpartyroles": "Zeige Drittanbeiter-Rollen",
     "overview": {
       "allusers": "Alle Nutzer",
       "sendemailallusers": "Sende eine Email an alle Nutzer",
@@ -680,5 +699,19 @@
     "impress": "Impressum",
     "privacy": "Datenschutz",
     "notfound": "Nicht gefunden"
+  },
+  "$vuetify": {
+    "dataIterator": {
+      "rowsPerPageText": "Elemente pro Seite:",
+      "rowsPerPageAll": "Alle",
+      "pageText": "{0}-{1} von {2}",
+      "noResultsText": "Keine Elemente gefunden",
+      "nextPage": "Nächste Seite",
+      "prevPage": "Vorherige Seite"
+    },
+    "dataTable": {
+      "rowsPerPageText": "Zeilen pro Seite:"
+    },
+    "noDataText": "Keine Daten vorhanden"
   }
 }

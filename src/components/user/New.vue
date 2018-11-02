@@ -8,8 +8,8 @@
 						<v-toolbar-title>
 							<div>
 								<div class="headline">
-									{{ this.isEditMode ? this.$t('users.general.edituser') :
-									this.$t('users.general.newuser') }}
+									{{ this.isEditMode ? this.$t('users.edituser') :
+									this.$t('users.newuser') }}
 								</div>
 							</div>
 						</v-toolbar-title>
@@ -87,7 +87,7 @@
 										required
 										v-bind:rules="validationRules.email"
 										v-model="form.email"
-										v-bind:label="$t('users.general.email')"
+										v-bind:label="$t('general.email')"
 										type="text"
 										:loading="isLoadingData.general"
 									>
@@ -106,7 +106,7 @@
 													prepend-icon="loyalty"
 													v-model="form.roles"
 													:items="formData.roles"
-													v-bind:label="$t('users.general.roles')"
+													v-bind:label="$t('general.roles')"
 													:loading="isLoadingData.roles"
 													required
 													v-bind:rules="validationRules.roles"
@@ -124,8 +124,8 @@
 										<!--Enabled-->
 										<v-flex xs3>
 											<v-layout row wrap class="dark--text">
-												<v-flex xs6><p class="text-xs-center">{{ $t('users.general.enabled') }}</p></v-flex>
-												<v-flex xs6><p class="text-xs-center">{{ $t('users.general.showthirdpartyroles') }}</p></v-flex>
+												<v-flex xs6><p class="text-xs-center">{{ $t('general.enabled') }}</p></v-flex>
+												<v-flex xs6><p class="text-xs-center">{{ $t('users.showthirdpartyroles') }}</p></v-flex>
 											</v-layout>
 											<v-layout row wrap>
 												<v-flex>
@@ -153,7 +153,7 @@
 									<!-- Add third-party roles-->
 									<v-expansion-panel v-if="showthirdpartyroles">
 										<v-expansion-panel-content>
-											<div slot="header">{{ $t('users.general.addroles.title') }}</div>
+											<div slot="header">{{ $t('users.addroles.title') }}</div>
 											<v-card>
 												<v-layout>
 													<v-flex xs3>
@@ -162,8 +162,8 @@
 													<v-flex sx7>
 														<v-text-field
 															v-model="newthridpartyrole"
-															v-bind:placeholder="$t('users.general.addroles.placeholder')"
-															v-bind:hint="$t('users.general.addroles.help')"
+															v-bind:placeholder="$t('users.addroles.placeholder')"
+															v-bind:hint="$t('users.addroles.help')"
 															persistent-hint
 															v-bind:background-color="newRoleOk ? '' : 'red'"
 															@input="updateNewRoleField"
@@ -176,7 +176,7 @@
 															v-bind:disabled="newRoleAddButtonDisabled"
 															v-on:click="addNewThirdPartyRole"
 														>
-															{{ $t('users.general.addroles.add') }}
+															{{ $t('users.addroles.add') }}
 														</v-btn>
 													</v-flex>
 												</v-layout>
@@ -209,7 +209,7 @@
 												prepend-icon="person"
 												v-model="form.defaults.subscribers"
 												:items="formData.subscribers"
-												v-bind:label="$t('users.general.subscribers')"
+												v-bind:label="$t('general.subscribers')"
 												:loading="isLoadingData.subscribers"
 											>
 												<v-progress-linear color="blue" indeterminate></v-progress-linear>
@@ -227,7 +227,7 @@
 												prepend-icon="people"
 												v-model="form.defaults.subscriber_groups"
 												:items="formData.subscriber_groups"
-												v-bind:label="$t('users.general.subscriber_groups')"
+												v-bind:label="$t('general.subscriber_groups')"
 												:loading="isLoadingData.subscriber_groups"
 										>
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
@@ -246,7 +246,7 @@
 													prepend-icon="wifi"
 													v-model="form.defaults.transmitters"
 													:items="formData.transmitters"
-													v-bind:label="$t('users.general.transmitters')"
+													v-bind:label="$t('general.transmitters')"
 													:loading="isLoadingData.transmitters"
 											>
 												<v-progress-linear color="blue" indeterminate></v-progress-linear>
@@ -264,7 +264,7 @@
 													prepend-icon="wifi_tethering"
 													v-model="form.defaults.transmitter_groups"
 													:items="formData.transmitter_groups"
-													v-bind:label="$t('users.general.transmitter_groups')"
+													v-bind:label="$t('general.transmitter_groups')"
 													:loading="this.isLoadingData.transmitter_groups"
 											>
 												<v-progress-linear color="blue" indeterminate></v-progress-linear>
@@ -273,6 +273,7 @@
 									</v-layout>
 								</v-card-text>
 							</v-card>
+							<!-- Timestamps -->
 							<v-card color="red lighten-2">
 								<v-card-text>
 									<v-layout row wrap class="dark--text">
@@ -290,6 +291,7 @@
 								</v-card-text>
 							</v-card>
 						</v-card-text>
+						<!-- Buttons -->
 						<v-card-actions>
 							<v-btn
 								color="primary"
@@ -328,27 +330,6 @@
 					roles: true
 				},
 				isFormValid: true,
-				validationRules: {
-					'username': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.username') }),
-						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', { fieldname: this.$t('general.username'), count: '20' }),
-						v => (v && v.length >= 3) || this.$t('formvalidation.underlength', { fieldname: this.$t('general.username'), count: '3' }),
-						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
-					],
-					'password': [
-						v => (!!v || this.isEditMode) || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.password') }),
-						v => ((!!v || this.isEditMode) && v.length <= 30) || this.$t('formvalidation.overlength', { fieldname: this.$t('general.password'), count: '30' }),
-						v => ((!!v || this.isEditMode) && (!v || /^[a-z0-9]+$/i.test(v))) || this.$t('formvalidation.onlyalphanumeric'),
-						v => ((!!v || this.isEditMode) && (!v || v.length >= 3)) || this.$t('formvalidation.underlength', { fieldname: this.$t('general.password'), count: '3' }),
-					],
-					'email': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.email') }),
-						v => /.+@.+\..+/.test(v) || this.$t('formvalidation.isvalidEmail')
-					],
-					'roles': [
-						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.role') })
-					]
-				},
 				form: {
 					_id: '',
 					password: '',
@@ -402,6 +383,41 @@
 				} else {
 					return this.$t('general.password');
 				}
+			},
+			validationRules() {
+				return {
+					'username': [
+						v => !!v || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.username')}),
+						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
+							fieldname: this.$t('general.username'),
+							count: '20'
+						}),
+						v => (v && v.length >= 3) || this.$t('formvalidation.underlength', {
+							fieldname: this.$t('general.username'),
+							count: '3'
+						}),
+						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
+					],
+					'password': [
+						v => (!!v || this.isEditMode) || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.password')}),
+						v => ((!!v || this.isEditMode) && v.length <= 30) || this.$t('formvalidation.overlength', {
+							fieldname: this.$t('general.password'),
+							count: '30'
+						}),
+						v => ((!!v || this.isEditMode) && (!v || /^[a-z0-9]+$/i.test(v))) || this.$t('formvalidation.onlyalphanumeric'),
+						v => ((!!v || this.isEditMode) && (!v || v.length >= 3)) || this.$t('formvalidation.underlength', {
+							fieldname: this.$t('general.password'),
+							count: '3'
+						})
+					],
+					'email': [
+						v => !!v || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.email')}),
+						v => /.+@.+\..+/.test(v) || this.$t('formvalidation.isvalidEmail')
+					],
+					'roles': [
+						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', {fieldname: this.$t('formvalidation.minonerole')})
+					]
+				};
 			}
 		},
 		methods: {
