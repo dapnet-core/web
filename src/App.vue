@@ -104,7 +104,7 @@
 		</v-toolbar>
 		<main>
 			<v-content>
-				<router-view></router-view>
+				<router-view :key="$route.fullPath"></router-view>
 			</v-content>
 		</main>
 		<v-footer color="indigo" app>
@@ -177,6 +177,9 @@
 		methods: {
 			changeLanguage(lang) {
 				this.$root.$i18n.locale = lang;
+				// Whatever may be right here?
+				this.$root.$forceUpdate();
+				this.$forceUpdate();
 				this.$vuetify.lang.current = lang;
 				this.$store.commit('changeLanguage', {
 					language: lang
