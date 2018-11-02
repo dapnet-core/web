@@ -28,7 +28,7 @@
 										prepend-icon="person"
 										required
 										:counter="20"
-										:rules="validationRules.username"
+										v-bind:rules="validationRules.username"
 										v-model="form._id"
 										v-bind:label="$t('general.username')"
 										type="text"
@@ -42,13 +42,12 @@
 													id="password"
 													prepend-icon="lock"
 													name="password"
-													required="!isEditmode"
+													:required="!isEditMode"
 													:counter="30"
-													:rules="validationRules.password"
+													v-bind:rules="validationRules.password"
 													v-model="form.password"
 													v-bind:label="passwordLabel"
 													v-bind:type="passwordVisible ? 'text' : 'password'"
-													@input="updatePasswortLabel"
 											>
 											</v-text-field>
 										</v-flex>
@@ -84,7 +83,7 @@
 										prepend-icon="email"
 										name="email"
 										required
-										:rules="validationRules.email"
+										v-bind::rules="validationRules.email"
 										v-model="form.email"
 										v-bind:label="$t('users.general.email')"
 										type="text"
@@ -302,100 +301,7 @@
 	import moment from 'moment';
 	export default {
 		created() {
-			// Load avaiable user roles
-			this.$axios.get('auth/users/roles')
-				.then(response => {
-					this.formData.roles = response.data;
-					this.formData.roles_backup = Array.from(this.formData.roles);
-				}).catch(e => {
-					console.log('Error getting user\'s roles in user/new.vue');
-				});
-
-			// TO: Load availableThirdPartyRoles from API:
-			// Workaround: Set static
-			this.availableThirdPartyRoles = ['thirdparty.brandmeister'];
-
-			// Load avaiable subscriber names
-			this.$axios.get('subscribers/_names')
-				.then(response => {
-					this.formData.subscribers = response.data;
-				}).catch(e => {
-					console.log('Error getting subscriber names in user/new.vue');
-			});
-
-			// Load avaiable subscriber groups
-			this.$axios.get('subscribers/_groups')
-				.then(response => {
-					this.formData.subscriber_groups = response.data;
-				}).catch(e => {
-					console.log('Error getting subscriber groups in user/new.vue');
-			});
-
-			// Load avaiable stransmitter names
-			this.$axios.get('transmitters/_names')
-				.then(response => {
-					this.formData.transmitters = response.data;
-				}).catch(e => {
-					console.log('Error getting subscriber names in user/new.vue');
-			});
-
-			// Load avaiable transmitter groups
-			this.$axios.get('transmitters/_groups')
-				.then(response => {
-					this.formData.transmitter_groups = response.data;
-				}).catch(e => {
-					console.log('Error getting subscriber groups in user/new.vue');
-			});
-
-			// load data of given id
-			if (this.$route.params.id) {
-				console.log('params:' + this.$route.params.id);
-				this.userformReadonly = true;
-
-				this.passwordLabel = this.$t('general.password_unchanged');
-
-				this.$axios.get('users/' + this.$route.params.id).then(response => {
-					this.form._id = response.data._id;
-					this.form._rev = response.data._rev;
-					this.form.email = response.data.email;
-					this.form.roles = response.data.roles;
-					this.form.enabled = response.data.enabled;
-					this.form.email_lastchecked = response.data.email_lastchecked;
-					if (response.data.created_on) {
-						this.created_on = moment(response.data.created_on).format('DD.MM.YYYY HH:mm:ss');
-					} else {
-						response.data.created_on = '';
-					}
-					if (response.data.created_by) {
-						this.created_by = response.data.created_by;
-					} else {
-						this.created_by = '';
-					}
-					if (response.data.changed_on) {
-						this.changed_on = moment(response.data.changed_on).format('DD.MM.YYYY HH:mm:ss');
-					} else {
-						this.changed_on = '';
-					}
-					if (response.data.changed_by) {
-						this.changed_by = response.data.changed_by;
-					} else {
-						this.changed_by = '';
-					}
-				}).catch(e => {
-					console.log('Error getting user\'s individual details with axios');
-					this.$dialogs.passwordError(this, e);
-					// this.$router.push('/users');
-				});
-			} else {
-				this.userformReadonly = false;
-			}
-			if (this.$store.getters.permission('user.change_role')) {
-				this.enabledReadonly = false;
-			} else {
-				this.enabledReadonly = true;
-			}
-			console.log('this.$route.params.id ' + this.$route.params.id);
-			console.log('EditMode: ' + this.isEditMode);
+            this.loadData();
 		},
 		data() {
 			return {
@@ -450,7 +356,6 @@
 				created_by: '',
 				changed_on: '',
 				changed_by: '',
-				passwordLabel: this.$t('general.password'),
 				userformReadonly: true,
 				enabledReadonly: false,
 				isEditMode: (!!(this.$route.params.id)),
@@ -461,7 +366,117 @@
 				availableThirdPartyRoles: []
 			};
 		},
+		computed: {
+			passwordLabel() {
+				if (this.isEditMode) {
+					if (this.form.password === '') {
+						return this.$t('general.password_unchanged');
+					} else {
+						return this.$t('general.password_new');
+					}
+				} else {
+					return this.$t('general.password');
+				}
+			}
+		},
 		methods: {
+		    loadData() {
+                console.log('Created');
+                // Load avaiable user roles
+                this.$axios.get('auth/users/roles')
+                    .then(response => {
+                        this.formData.roles = response.data;
+                        this.formData.roles_backup = Array.from(this.formData.roles);
+                    }).catch(e => {
+                    console.log('Error getting user\'s roles in user/new.vue');
+                });
+
+                // TO: Load availableThirdPartyRoles from API:
+                // Workaround: Set static
+                this.availableThirdPartyRoles = ['thirdparty.brandmeister'];
+
+                // Load avaiable subscriber names
+                this.$axios.get('subscribers/_names')
+                    .then(response => {
+                        this.formData.subscribers = response.data;
+                    }).catch(e => {
+                    console.log('Error getting subscriber names in user/new.vue');
+                });
+
+                // Load avaiable subscriber groups
+                this.$axios.get('subscribers/_groups')
+                    .then(response => {
+                        this.formData.subscriber_groups = response.data;
+                    }).catch(e => {
+                    console.log('Error getting subscriber groups in user/new.vue');
+                });
+
+                // Load avaiable stransmitter names
+                this.$axios.get('transmitters/_names')
+                    .then(response => {
+                        this.formData.transmitters = response.data;
+                    }).catch(e => {
+                    console.log('Error getting subscriber names in user/new.vue');
+                });
+
+                // Load avaiable transmitter groups
+                this.$axios.get('transmitters/_groups')
+                    .then(response => {
+                        this.formData.transmitter_groups = response.data;
+                    }).catch(e => {
+                    console.log('Error getting subscriber groups in user/new.vue');
+                });
+
+                // load data of given id
+                if (this.$route.params.id) {
+                    console.log('params:' + this.$route.params.id);
+                    this.userformReadonly = true;
+
+                    //this.passwordLabel = this.$t('general.password_unchanged');
+
+                    this.$axios.get('users/' + this.$route.params.id).then(response => {
+                        this.form._id = response.data._id;
+                        this.form._rev = response.data._rev;
+                        this.form.email = response.data.email;
+                        this.form.roles = response.data.roles;
+                        this.form.enabled = response.data.enabled;
+                        this.form.email_lastchecked = response.data.email_lastchecked;
+                        if (response.data.created_on) {
+                            this.created_on = moment(response.data.created_on).format('DD.MM.YYYY HH:mm:ss');
+                        } else {
+                            response.data.created_on = '';
+                        }
+                        if (response.data.created_by) {
+                            this.created_by = response.data.created_by;
+                        } else {
+                            this.created_by = '';
+                        }
+                        if (response.data.changed_on) {
+                            this.changed_on = moment(response.data.changed_on).format('DD.MM.YYYY HH:mm:ss');
+                        } else {
+                            this.changed_on = '';
+                        }
+                        if (response.data.changed_by) {
+                            this.changed_by = response.data.changed_by;
+                        } else {
+                            this.changed_by = '';
+                        }
+                    }).catch(e => {
+                        console.log('Error getting user\'s individual details with axios');
+                        this.$dialogs.passwordError(this, e);
+                        // this.$router.push('/users');
+                    });
+                } else {
+                    this.userformReadonly = false;
+                }
+                if (this.$store.getters.permission('user.change_role')) {
+                    this.enabledReadonly = false;
+                } else {
+                    this.enabledReadonly = true;
+                }
+                console.log('this.$route.params.id ' + this.$route.params.id);
+                console.log('EditMode: ' + this.isEditMode);
+            },
 			changeAvailableRoles(event) {
 				if (this.showthirdpartyroles) {
 					this.formData.roles.push.apply(this.formData.roles, this.availableThirdPartyRoles);
@@ -494,18 +509,6 @@
 					this.formData.roles.push('thirdparty.' + this.newthridpartyrole);
 					this.newthridpartyrole = '';
 					this.newRoleAddButtonDisabled = true;
-				}
-			},
-			updatePasswortLabel(event) {
-				this.userformReadonly = this.isEditMode;
-				if (this.isEditMode) {
-					if (this.form.password === '') {
-						this.passwordLabel = this.$t('general.password_unchanged');
-					} else {
-						this.passwordLabel = this.$t('general.password_new');
-					}
-				} else {
-					this.passwordLabel = this.$t('general.password');
 				}
 			},
 			submitForm(event) {
