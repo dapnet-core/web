@@ -14,7 +14,7 @@
 							</div>
 						</v-toolbar-title>
 					</v-toolbar>
-					<v-form v-model="valid">
+					<v-form v-model="isFormValid" ref="form">
 						<v-card-text>
 							<!--General settings-->
 							<v-card color="blue-grey lighten-4">
@@ -85,7 +85,7 @@
 										prepend-icon="email"
 										name="email"
 										required
-										v-bind::rules="validationRules.email"
+										v-bind:rules="validationRules.email"
 										v-model="form.email"
 										v-bind:label="$t('users.general.email')"
 										type="text"
@@ -107,10 +107,9 @@
 													v-model="form.roles"
 													:items="formData.roles"
 													v-bind:label="$t('users.general.roles')"
-													v-bind:background-color="emptyRolesCombobox() ? '' : 'red'"
-													persistent-hint
-													v-bind:hint="emptyRolesCombobox() ? '' : $t('users.general.atleastonerole')"
 													:loading="isLoadingData.roles"
+													required
+													v-bind:rules="validationRules.roles"
 											>
 												<v-progress-linear color="blue" indeterminate></v-progress-linear>
 											</v-autocomplete>
@@ -295,6 +294,7 @@
 							<v-btn
 								color="primary"
 								@click="submitForm"
+								:disabled="!isFormValid"
 							>
 								{{ $t('general.submit') }}
 							</v-btn>
@@ -327,7 +327,7 @@
 					transmitter_groups: true,
 					roles: true
 				},
-				valid: true,
+				isFormValid: true,
 				validationRules: {
 					'username': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.username') }),
@@ -344,6 +344,9 @@
 					'email': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.email') }),
 						v => /.+@.+\..+/.test(v) || this.$t('formvalidation.isvalidEmail')
+					],
+					'roles': [
+						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.role') })
 					]
 				},
 				form: {
@@ -515,9 +518,6 @@
 					this.formData.roles = Array.from(this.formData.roles_backup);
 				}
 			},
-			emptyRolesCombobox(event) {
-				return (this.form.roles.length > 0);
-			},
 			updateNewRoleField(event) {
 				if (this.newthridpartyrole === '') {
 					this.newRoleOk = true;
@@ -546,34 +546,21 @@
 				event.preventDefault();
 				console.log(this.form);
 
-				// prevent anything but A-Z, a-z, 0-9 as password
-				if (this.form.password.match(/[^A-Za-z0-9]/g)) {
-					this.$dialogs.passwordError(this);
-					return false;
-				}
+				if (this.$refs.form.validate()) {
+					this.form2send = Object.assign({}, this.form);
+					if (this.form.password === '') {
+						delete this.form2send.password;
+					} else {
+						var bcrypt = require('bcryptjs');
+						var hash = bcrypt.hashSync(this.form.password, 10);
+						this.form2send.password = hash;
+					}
 
-				if (!this.form.roles.length > 0) {
-					this.$dialogs.rolesEmptyError(this);
-					return false;
-				}
+					console.log(this.form2send);
+					this.$helpers.sendData(this, 'users', this.form2send, '/users');
 
-				this.form2send = Object.assign({}, this.form);
-				if (this.form.password === '') {
-					delete this.form2send.password;
-				} else {
-					var bcrypt = require('bcryptjs');
-					var hash = bcrypt.hashSync(this.form.password, 10);
-					this.form2send.password = hash;
+					// TODO: Update auth if a user change their own password
 				}
-				// check for input in all fields but password if empty
-				if (!this.$helpers.checkForInput(this, this.form2send)) {
-					return false;
-				}
-
-				console.log(this.form2send);
-				this.$helpers.sendData(this, 'users', this.form2send, '/users');
-
-				// TODO: Update auth if a user change their own password
 			}
 		}
 	};

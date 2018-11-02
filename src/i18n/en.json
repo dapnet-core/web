@@ -342,6 +342,7 @@
 		"email": "Email",
 		"password_unchanged": "Password unchanged",
 		"password_new": "New Password",
+        "role": "At least one role",
 		"yes": "Yes",
 		"no": "No",
 		"permalink": "Permalink",
