@@ -518,11 +518,8 @@
 				} else {
 					this.userformReadonly = false;
 				}
-				if (this.$store.getters.permission('user.change_role')) {
-					this.enabledReadonly = false;
-				} else {
-					this.enabledReadonly = true;
-				}
+				this.enabledReadonly = !(this.$store.getters.permission('user.change_role'));
+
 				console.log('this.$route.params.id ' + this.$route.params.id);
 				console.log('EditMode: ' + this.isEditMode);
 				this.isLoadingData.general = false;
@@ -568,8 +565,7 @@
 						delete this.form2send.password;
 					} else {
 						var bcrypt = require('bcryptjs');
-						var hash = bcrypt.hashSync(this.form.password, 10);
-						this.form2send.password = hash;
+						this.form2send.password = bcrypt.hashSync(this.form.password, 10);
 					}
 
 					console.log(this.form2send);
