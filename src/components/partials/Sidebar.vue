@@ -25,7 +25,7 @@
                 </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile exact to="/users">
+            <v-list-tile v-if="this.$store.getters.permission('user.read') === 'all'" exact to="/users">
                 <v-list-tile-action>
                     <v-icon>account_box</v-icon>
                 </v-list-tile-action>
@@ -34,7 +34,19 @@
                 </v-list-tile-content>
             </v-list-tile>
 
-        </v-list>
+			<v-list-tile
+				v-if="!(this.$store.getters.permission('user.read') === 'all')"
+				exact to="/usersonlynames"
+			>
+				<v-list-tile-action>
+					<v-icon>account_box</v-icon>
+				</v-list-tile-action>
+				<v-list-tile-content>
+					<v-list-tile-title>{{ $t('navigation.users') }}</v-list-tile-title>
+				</v-list-tile-content>
+			</v-list-tile>
+
+		</v-list>
 
 <!--        <div class="version">Version {{version}}</div>-->
     </div>

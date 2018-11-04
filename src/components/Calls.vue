@@ -256,14 +256,12 @@
 			event.preventDefault();
 			console.log(this.form);
 
-
 			this.form2send = Object.assign({}, this.form);
 			if (this.form.password === '') {
 				delete this.form2send.password;
 			} else {
 				var bcrypt = require('bcryptjs');
-				var hash = bcrypt.hashSync(this.form.password, 10);
-				this.form2send.password = hash;
+				this.form2send.password = bcrypt.hashSync(this.form.password, 10);
 			}
 			// check for input in all fields but password if empty
 			if (!this.$helpers.checkForInput(this, this.form2send)) {

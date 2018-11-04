@@ -203,14 +203,14 @@
 					},
 					{
 						text: this.$i18n.t('general.roles'),
-						align: 'center',
+						align: 'left',
 						value: 'roles'
 					},
 					{
 						text: this.$i18n.t('general.enabled'),
 						align: 'right',
 						value: 'enabled'
-					},
+					}
 				];
 				if (this.displayActionsColumn()) {
 					let actions = {
