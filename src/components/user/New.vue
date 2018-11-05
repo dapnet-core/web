@@ -344,7 +344,8 @@
 						transmitter_groups: [],
 						expiration_duration: '',
 						priority: ''
-					}
+					},
+					_attachments: {}
 				},
 				form2send: '',
 				formData: {
@@ -510,8 +511,47 @@
 						} else {
 							this.changed_by = '';
 						}
+						if (response.data.defaults) {
+							if (response.data.defaults.transmitters) {
+								this.form.defaults.transmitters = response.data.defaults.transmitters;
+							} else {
+								this.form.defaults.transmitters = [];
+							}
+							if (response.data.defaults.transmitter_groups) {
+								this.form.defaults.transmitter_groups = response.data.defaults.transmitter_groups;
+							} else {
+								this.form.defaults.transmitter_groups = [];
+							}
+							if (response.data.defaults.subscribers) {
+								this.form.defaults.subscribers = response.data.defaults.subscribers;
+							} else {
+								this.form.defaults.subscribers = [];
+							}
+							if (response.data.defaults.subscriber_groups) {
+								this.form.defaults.subscriber_groups = response.data.defaults.subscriber_groups;
+							} else {
+								this.form.defaults.subscriber_groups = [];
+							}
+							if (response.data.defaults.expiration_duration) {
+								this.form.defaults.expiration_duration = response.data.defaults.expiration_duration;
+							} else {
+								this.form.defaults.expiration_duration = '';
+							}
+							if (response.data.defaults.priority) {
+								this.form.defaults.priority = response.data.defaults.priority;
+							} else {
+								this.form.defaults.priority = '';
+							}
+						}
+						if (response.data._attachments) {
+							this.form._attachments = response.data._attachments;
+						} else {
+							this.form._attachments = {};
+						}
+						// TODO: continue integration of avatar
+						console.log(this.form._attachments['avatar.jpg'].content_type);
 					}).catch(e => {
-						console.log('Error getting user\'s individual details with axios');
+						console.log('Error getting user\'s individual details with axios or any exception in the get handler.');
 						this.$dialogs.passwordError(this, e);
 						// this.$router.push('/users');
 					});
