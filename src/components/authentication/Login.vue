@@ -101,7 +101,6 @@
 						permissions: response.data.permissions,
 						auth: btoa(this.username + ':' + this.password)
 					});
-
 					this.$router.push('/');
 				}, response => {
 					// error --> show error message

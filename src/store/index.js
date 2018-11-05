@@ -17,7 +17,7 @@ export default new Vuex.Store({
 		permissions: [],
 		language: 'en',
 		customText: defaultText,
-		map: defaultMap
+		map: defaultMap,
 	},
 	getters: {
 		url: state => {
@@ -28,6 +28,13 @@ export default new Vuex.Store({
 		},
 		username: state => {
 			return state.user ? state.user._id : 'Guest';
+		},
+		avatar: state => {
+			if (state.user._attachments) {
+				return state.user._attachments['avatar.jpg'] ? state.user._attachments['avatar.jpg'] : null;
+			} else {
+				return null;
+			}
 		},
 		auth: state => {
 			return state.auth;
@@ -81,7 +88,7 @@ export default new Vuex.Store({
 				'user',
 				'auth',
 				'permissions',
-				'language'
+				'language',
 			]
 		})
 	]

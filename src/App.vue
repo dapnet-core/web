@@ -76,6 +76,12 @@
 						color="primary"
 						dark
 					>
+						<v-avatar
+							v-if="this.$store.getters.avatar"
+							size="40"
+						>
+							<img v-bind:src="'/users/' + this.$store.getters.username + '/avatar.jpg'">
+						</v-avatar>
 						<span>{{ this.$store.getters.username }}</span>
 					</v-btn>
 
