@@ -1,30 +1,40 @@
 <template>
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="page-header">
-					<h1>{{ $t('navigation.usersonlynames') }}</h1>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-9">
-				<div v-for="columns in rowCount" v-bind:key="columns">
-					<div class="row">
-						<div class="col-sm-3" v-for="column in numberOfColumns" v-bind:key="column">
-							<div v-if="data.length >= layoutCount(columns, column)">
-								{{ data[columns*column] }}
+	<v-card>
+		<v-container
+			fluid
+			grid-list-lg
+		>
+			<v-layout row wrap>
+				<v-flex xs12>
+					<v-card color="grey" class="white--text">
+						<v-card-title primary-title>
+							<div>
+								<div class="headline">{{ $t('navigation.usersonlynames') }}</div>
+								<div>{{ $t('users.overviewonlynames.information.help') }}</div>
 							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-3">
-				<h2>{{ $t('general.information') }}</h2>
-				<p v-html="$t('users.overviewonlynames.information.help')"></p>
-			</div>
-		</div>
-	</div>
+						</v-card-title>
+						<v-card-text>
+							<v-card>
+								<v-layout>
+									<v-flex xs12>
+										<div v-for="rows in rowCount" v-bind:key="rows">
+											<div class="row">
+												<div class="col-sm-3" v-for="column in numberOfColumns" v-bind:key="column">
+													<div v-if="data.length >= layoutCount(rows, column)">
+														{{ data[rows*column] }}
+													</div>
+												</div>
+											</div>
+										</div>
+									</v-flex>
+								</v-layout>
+							</v-card>
+						</v-card-text>
+					</v-card>
+				</v-flex>
+			</v-layout>
+		</v-container>
+	</v-card>
 </template>
 
 <script>
