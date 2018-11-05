@@ -17,7 +17,7 @@ export default new Vuex.Store({
 		permissions: [],
 		language: 'en',
 		customText: defaultText,
-		map: defaultMap,
+		map: defaultMap
 	},
 	getters: {
 		url: state => {
@@ -88,7 +88,7 @@ export default new Vuex.Store({
 				'user',
 				'auth',
 				'permissions',
-				'language',
+				'language'
 			]
 		})
 	]
