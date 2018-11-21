@@ -1,103 +1,216 @@
 <template>
+	<!--
+	<v-avatar
+		v-if="this.$store.getters.avatar"
+		size="80"
+	>
+		<img v-auth-image="'/users/' + this.$store.getters.username + '/avatar.jpg'">
+
+	</v-avatar>
+	<v-btn
+		absolute
+		icon
+		right
+		top
+	>
+		<v-icon>edit</v-icon>
+	</v-btn>
+	-->
+
 	<v-container fluid fill-height>
 		<v-layout align-center justify-center>
 			<v-flex xs12 sm9 md9>
 				<v-card class="elevation-12">
 					<!--General toolbar-->
-					<v-toolbar>
-						<v-toolbar-title>
-							<div>
-								<div class="headline">
-									{{ this.isEditMode ? this.$t('users.edituser') :
-									this.$t('users.newuser') }}
-								</div>
-							</div>
-						</v-toolbar-title>
-					</v-toolbar>
+					<v-card-title>
+						<span class="headline">{{ this.isEditMode ? this.$t('users.edituser') :
+											this.$t('users.newuser') }}</span>
+					</v-card-title>
 					<v-form v-model="isFormValid" ref="form">
 						<v-card-text>
+							<v-container grid-list-md>
+								<v-layout wrap>
+									<!--ID-->
+									<v-flex xs12 sm6 md4>
+										<v-text-field
+											name="username"
+											prepend-icon="person"
+											required
+											:counter="20"
+											v-bind:rules="validationRules.username"
+											v-model="form._id"
+											v-bind:label="$t('general.username')"
+											type="text"
+											v-bind:readonly="userformReadonly ? true : false"
+											:loading="isLoadingData.general"
+										>
+											<v-progress-linear color="blue" indeterminate></v-progress-linear>
+										</v-text-field>
+									</v-flex>
+
+									<!--Email-->
+									<v-flex xs12 sm6 md4>
+										<v-text-field
+											id="email"
+											prepend-icon="email"
+											name="email"
+											required
+											v-bind:rules="validationRules.email"
+											v-model="form.email"
+											v-bind:label="$t('general.email')"
+											type="text"
+											:loading="isLoadingData.general"
+										>
+											<v-progress-linear color="blue" indeterminate></v-progress-linear>
+										</v-text-field>
+									</v-flex>
+									<v-spacer></v-spacer>
+									<!-- Avatar -->
+									<span class="avatar-position">
+										<v-avatar
+											v-if="this.$store.getters.avatar"
+											size="80"
+										>
+											<img v-bind:src="AvatarImageComputed" />
+											<!--<img v-auth-image="'/users/' + this.$store.getters.username + '/avatar.jpg'">-->
+
+										</v-avatar>
+
+										<v-btn class="edit-avatar-icon"
+											   flat
+											   icon
+											   color="red"
+											   @click="editavatardialog = true"
+										>
+											<v-icon>edit</v-icon>
+										</v-btn>
+									</span>
+									<!--Edit avatar Dialog-->
+									<v-dialog v-model="editavatardialog" max-width="430px">
+										<v-card>
+											<v-card-title>
+												<span class="headline">Edit avatar picture</span>
+											</v-card-title>
+											<v-card-text>
+														<div align="center">
+														<vue-avatar
+															:width="400"
+															:height="400"
+															:rotation="rotation"
+															:borderRadius=0
+															:scale="scale"
+															:border="0"
+															ref="vueavatar"
+															@vue-avatar-editor:image-ready="onImageReady"
+															:image="AvatarImageComputed"
+														>
+														</vue-avatar>
+														</div>
+												<v-layout align-center justify-center>
+													<v-flex xs10>
+														<v-slider
+															v-model="scale"
+															label="Zoom:"
+															min="1"
+															max="4"
+															step="0.02"
+															thumb-label
+															width="400"
+														>
+														</v-slider>
+
+													<br />
+														<v-slider
+															v-model="rotation"
+															label="Rotation:"
+															min="0"
+															max="360"
+															step="1"
+															thumb-label
+															width="400"
+														>
+
+														</v-slider>
+													</v-flex>
+												</v-layout>
+											</v-card-text>
+											<v-card-actions>
+												<v-btn v-on:click="avatarSaveClicked">Save changes</v-btn>
+												<v-btn color="primary" flat @click="editavatardialog=false">Close</v-btn>
+											</v-card-actions>
+										</v-card>
+									</v-dialog>
+									<!--Password-->
+									<v-flex xs12>
+										<v-layout align-center>
+											<v-flex xs9>
+												<v-text-field
+												id="password"
+												prepend-icon="lock"
+												name="password"
+												:required="!isEditMode"
+												:counter="30"
+												v-bind:rules="validationRules.password"
+												v-model="form.password"
+												v-bind:label="passwordLabel"
+												v-bind:type="passwordVisible ? 'text' : 'password'"
+												>
+												</v-text-field>
+											</v-flex>
+											<v-flex xs2>
+												<v-tooltip bottom>
+													<v-btn class="action-buttons"
+														   flat
+														   icon
+														   small
+														   v-on:click="passwordVisible = !passwordVisible"
+														   slot="activator"
+													>
+														<v-icon v-if="passwordVisible">visibility_off</v-icon>
+														<v-icon v-if="!passwordVisible">visibility</v-icon>
+													</v-btn>
+													<span>Toggle password visibility</span>
+												</v-tooltip>
+												<v-tooltip bottom>
+													<v-btn class="action-buttons"
+														   flat
+														   icon
+														   small
+														   :v-clipboard:copy="form.password"
+														   slot="activator"
+													>
+														<v-icon>assignment</v-icon>
+													</v-btn>
+													<span>Copy password to clipboard</span>
+												</v-tooltip>
+												<v-tooltip bottom>
+													<v-btn class="action-buttons"
+														   flat
+														   icon
+														   small
+														   v-on:click="form.password = $helpers.generatePassword(); passwordVisible = true;"
+														   slot="activator"
+													>
+														<v-icon>refresh</v-icon>
+													</v-btn>
+													<span>Generate random password</span>
+												</v-tooltip>
+											</v-flex>
+										</v-layout>
+									</v-flex>
+
 							<!--General settings-->
-							<v-card color="blue-grey lighten-4">
+<!--							<v-card color="blue-grey lighten-4">
 								<v-card-title>
 									<div>{{ $t('general.general_settings') }}</div>
-										</v-card-title>
-								<v-card-text>
-									<!--ID-->
-									<v-text-field
-										name="username"
-										prepend-icon="person"
-										required
-										:counter="20"
-										v-bind:rules="validationRules.username"
-										v-model="form._id"
-										v-bind:label="$t('general.username')"
-										type="text"
-										v-bind:readonly="userformReadonly ? true : false"
-										:loading="isLoadingData.general"
-									>
-										<v-progress-linear color="blue" indeterminate></v-progress-linear>
-									</v-text-field>
-									<!--Password-->
-									<v-layout>
-										<v-flex xs6>
-											<v-text-field
-													id="password"
-													prepend-icon="lock"
-													name="password"
-													:required="!isEditMode"
-													:counter="30"
-													v-bind:rules="validationRules.password"
-													v-model="form.password"
-													v-bind:label="passwordLabel"
-													v-bind:type="passwordVisible ? 'text' : 'password'"
-											>
-											</v-text-field>
-										</v-flex>
-										<v-flex xs2>
-											<v-btn
-													v-on:click="passwordVisible = !passwordVisible"
-													title="Toggle password visibility"
-											>
-												<v-icon v-if="passwordVisible">visibility_off</v-icon>
-												<v-icon v-if="!passwordVisible">visibility</v-icon>
-											</v-btn>
-										</v-flex>
-										<v-flex xs2>
-											<v-btn
-													:v-clipboard:copy="form.password"
-													title="Copy password to clipboard"
-											>
-												<v-icon>assignment</v-icon>
-											</v-btn>
-										</v-flex>
-										<v-flex xs2>
-											<v-btn
-													v-on:click="form.password = $helpers.generatePassword(); passwordVisible = true; updatePasswortLabel();"
-													title="Generate random password"
-											>
-												<v-icon>refresh</v-icon>
-											</v-btn>
-										</v-flex>
-									</v-layout>
-									<!--Email-->
-									<v-text-field
-										id="email"
-										prepend-icon="email"
-										name="email"
-										required
-										v-bind:rules="validationRules.email"
-										v-model="form.email"
-										v-bind:label="$t('general.email')"
-										type="text"
-										:loading="isLoadingData.general"
-									>
-										<v-progress-linear color="blue" indeterminate></v-progress-linear>
-									</v-text-field>
+								</v-card-title>
+-->
 									<!--Roles, enabled and show third-party roles-->
-									<v-layout>
+									<v-flex xs12>
+										<v-layout align-center>
 										<!-- if user is allowed to change a role, display selection box -->
-										<v-flex xs7 v-if="this.$store.getters.permission('user.change_role')">
-											<v-autocomplete
+											<v-flex xs6 v-if="this.$store.getters.permission('user.change_role')">
+												<v-autocomplete
 													hide-selected
 													chips
 													small-chips
@@ -110,46 +223,37 @@
 													:loading="isLoadingData.roles"
 													required
 													v-bind:rules="validationRules.roles"
-											>
-												<v-progress-linear color="blue" indeterminate></v-progress-linear>
-											</v-autocomplete>
-										</v-flex>
+												>
+													<v-progress-linear color="blue" indeterminate></v-progress-linear>
+												</v-autocomplete>
+											</v-flex>
 										<!-- if user is not allowed to change a role, just display it -->
-										<v-flex xs7 v-if="!this.$store.getters.permission('user.change_role')">
-											<v-icon>loyalty</v-icon>
-											<v-chip v-for="(role, index) in this.form.roles" v-bind:key="`role-${index}`" color="green" text-color="white">
-												{{ role }}
-											</v-chip>
-										</v-flex>
-										<!--Enabled-->
-										<v-flex xs3>
-											<v-layout row wrap class="dark--text">
-												<v-flex xs6><p class="text-xs-center">{{ $t('general.enabled') }}</p></v-flex>
-												<v-flex xs6><p class="text-xs-center">{{ $t('users.showthirdpartyroles') }}</p></v-flex>
-											</v-layout>
-											<v-layout row wrap>
-												<v-flex>
-													<div class="text-xs-center">
-														<v-switch
-																v-model="form.enabled"
-																v-bind:readonly="enabledReadonly ? true : false"
-														>
-														</v-switch>
-													</div>
-												</v-flex>
-												<v-flex v-if="this.$store.getters.permission('user.change_role')">
-													<div class="text-xs-center">
-														<v-checkbox
-															v-model="showthirdpartyroles"
-															hide-details
-															v-on:click.native="changeAvailableRoles"
-														>
-														</v-checkbox>
-													</div>
-												</v-flex>
-											</v-layout>
-										</v-flex>
-									</v-layout>
+											<v-flex xs6 v-if="!this.$store.getters.permission('user.change_role')">
+												<v-icon>loyalty</v-icon>
+												<v-chip v-for="(role, index) in this.form.roles" v-bind:key="`role-${index}`" color="green" text-color="white">
+													{{ role }}
+												</v-chip>
+											</v-flex>
+											<!--Enabled-->
+											<v-flex xs3>
+												<v-switch
+													v-model="form.enabled"
+													v-bind:readonly="enabledReadonly ? true : false"
+													:label="$t('general.enabled')"
+												>
+												</v-switch>
+											</v-flex>
+											<v-flex xs3>
+												<v-checkbox
+													v-model="showthirdpartyroles"
+													hide-details
+													v-on:click.native="changeAvailableRoles"
+													:label="$t('users.showthirdpartyroles')"
+												>
+												</v-checkbox>
+											</v-flex>
+										</v-layout>
+									</v-flex>
 									<!-- Add third-party roles-->
 									<v-expansion-panel v-if="showthirdpartyroles">
 										<v-expansion-panel-content>
@@ -190,8 +294,8 @@
 											</v-card>
 										</v-expansion-panel-content>
 									</v-expansion-panel>
-								</v-card-text>
-							</v-card>
+								</v-layout>
+							</v-container>
 							<!-- Default settings -->
 							<v-card color="green">
 								<v-card-title>{{ $t('general.default_settings') }}</v-card-title>
@@ -315,23 +419,31 @@
 </template>
 <script>
 	import moment from 'moment';
+	import {VueAvatar} from 'vue-avatar-editor-improved';
+
 	export default {
+		components: {
+			VueAvatar: VueAvatar
+		},
 		created() {
 			this.loadData();
 		},
 		data() {
 			return {
+				rotation: 0,
+				scale: 1,
+				editavatardialog: false,
 				isLoadingData: {
 					general: true,
 					subscribers: true,
 					subscriber_groups: true,
 					transmitters: true,
 					transmitter_groups: true,
-					roles: true
-				},
+					roles: true				},
 				isFormValid: true,
 				form: {
 					_id: '',
+					_rev: '',
 					password: '',
 					email: '',
 					roles: ['user'],
@@ -374,6 +486,9 @@
 			};
 		},
 		computed: {
+			AvatarImageComputed() {
+				return this.$store.getters.avatarImage;
+			},
 			passwordLabel() {
 				if (this.isEditMode) {
 					if (this.form.password === '') {
@@ -422,6 +537,51 @@
 			}
 		},
 		methods: {
+			createBlob(dataURL) {
+				var BASE64_MARKER = ';base64,';
+				if (dataURL.indexOf(BASE64_MARKER) == -1) {
+					var parts = dataURL.split(',');
+					var contentType = parts[0].split(':')[1];
+					var raw = decodeURIComponent(parts[1]);
+					return new Blob([raw], { type: contentType });
+				}
+				var parts = dataURL.split(BASE64_MARKER);
+				var contentType = parts[0].split(':')[1];
+				var raw = window.atob(parts[1]);
+				var rawLength = raw.length;
+
+				var uInt8Array = new Uint8Array(rawLength);
+
+				for (var i = 0; i < rawLength; ++i) {
+					uInt8Array[i] = raw.charCodeAt(i);
+				}
+
+				return new Blob([uInt8Array], { type: contentType });
+			},
+			avatarSaveClicked() {
+				var img = this.$refs.vueavatar.getImageScaled();
+				console.log('Stored new avatar to browser store');
+				this.$store.commit('changeAvatar', {
+					avatarImage: img.toDataURL("image/jpeg")
+				});
+				console.log('Storing to Couchdb');
+				let avatarPutPath = '/users/' + this.$store.getters.username + '/avatar.jpg?rev=' + this.form._rev;
+				console.log(avatarPutPath);
+				var rawImage = this.createBlob(img.toDataURL("image/jpeg"));
+
+				this.$axios.put(
+					avatarPutPath,
+					rawImage,
+					{headers: {"Content-Type": "image/jpeg"}}
+				)
+					.then(r => console.log(r.status))
+					.catch(e => console.log(e));
+				this.editavatardialog=false
+			},
+			onImageReady() {
+				this.scale = 1;
+				this.rotation = 0;
+			},
 			loadData() {
 				console.log('Created');
 				// Load avaiable user roles
@@ -618,5 +778,19 @@
 	};
 </script>
 <style scoped>
+	.action-buttons {
+		padding: 1px;
+		margin: 0px;
+		display: inline-block;
+	}
 
+	.edit-avatar-icon {
+		position: relative;
+		right: 34px;
+		top: 30px;
+	}
+	.avatar-position {
+		position: relative;
+		top: -80px;
+	}
 </style>

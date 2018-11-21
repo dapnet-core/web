@@ -80,7 +80,8 @@
 							v-if="this.$store.getters.avatar"
 							size="40"
 						>
-							<img v-auth-image="'/users/' + this.$store.getters.username + '/avatar.jpg'">
+							<img v-bind:src="AvatarImageComputed" />
+							<!--<img v-auth-image="'/users/' + this.$store.getters.username + '/avatar.jpg'">-->
 						</v-avatar>
 						<span>{{ this.$store.getters.username }}</span>
 					</v-btn>
@@ -128,6 +129,9 @@
 		components: {Sidebar},
 		created() {
 			this.selectedLanguage = this.$root.$i18n.locale;
+			if (this.$store.getters.avatar) {
+				this.loadAvatar();
+			}
 		},
 		data() {
 			return {
@@ -174,13 +178,43 @@
 						icon: 'se'
 					}
 				],
-				selectedLanguage: 'en'
+				selectedLanguage: 'en',
+				avatarImage: ''
 			};
 		},
 		props: {
 			source: String
 		},
+		computed:{
+			AvatarImageComputed() {
+				return this.$store.getters.avatarImage;
+
+			}
+		},
 		methods: {
+			loadAvatar() {
+				console.log('Loading avatar');
+				console.log('Path: ' + '/users/' + this.$store.getters.username + '/avatar.jpg');
+				this.$axios.get('/users/' + this.$store.getters.username + '/avatar.jpg', {
+					responseType: 'arraybuffer'
+				})
+					.then(response => {
+						let arrayBuffer =  response.data;
+						let u8 = new Uint8Array(arrayBuffer)
+						let b64encoded = btoa([].reduce.call(new Uint8Array(arrayBuffer),function(p,c){return p+String.fromCharCode(c)},''))
+						let mimetype="image/jpeg"
+						this.avatarImage = "data:"+mimetype+";base64,"+b64encoded;
+						//this.$refs.avatarImage.src = this.avatarImage;
+						this.$store.commit('changeAvatar', {
+							avatarImage: this.avatarImage
+						});
+
+						console.log('toDataURL');
+					}).catch(e => {
+					console.log('Error getting avatar in app.vue');
+					console.log(e);
+				});
+			},
 			changeLanguage(lang) {
 				this.$root.$i18n.locale = lang;
 				// Whatever may be right here?
