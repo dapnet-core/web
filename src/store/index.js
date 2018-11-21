@@ -30,7 +30,7 @@ export default new Vuex.Store({
 			return state.user ? state.user._id : 'Guest';
 		},
 		avatar: state => {
-			if (state.user._attachments) {
+			if ((state.user) && (state.user._attachments)) {
 				return state.user._attachments['avatar.jpg'] ? state.user._attachments['avatar.jpg'] : null;
 			} else {
 				return null;

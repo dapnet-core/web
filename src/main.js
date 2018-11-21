@@ -19,7 +19,9 @@ import VueAuthImage from 'vue-auth-image';
 
 Vue.use(globalMethods);
 
-Vue.use(axios);
+//Vue.use(axios);
+Vue.use(VueAxios, axios);
+
 Vue.use(VueClipboard);
 
 // register vue-auth-image directive
