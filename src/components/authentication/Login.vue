@@ -101,6 +101,30 @@
 						permissions: response.data.permissions,
 						auth: btoa(this.username + ':' + this.password)
 					});
+					// But first also load the avatar image
+					if (this.$store.getters.avatar) {
+						console.log('Loading avatar');
+						console.log('Path: ' + '/users/' + this.$store.getters.username + '/avatar.jpg');
+						this.$axios.get('/users/' + this.$store.getters.username + '/avatar.jpg', {
+							responseType: 'arraybuffer'
+						})
+							.then(response => {
+								let arrayBuffer =  response.data;
+								let u8 = new Uint8Array(arrayBuffer)
+								let b64encoded = btoa([].reduce.call(new Uint8Array(arrayBuffer),function(p,c){return p+String.fromCharCode(c)},''))
+								let mimetype="image/jpeg"
+								this.avatarImage = "data:"+mimetype+";base64,"+b64encoded;
+								//this.$refs.avatarImage.src = this.avatarImage;
+								this.$store.commit('changeAvatar', {
+									avatarImage: this.avatarImage
+								});
+
+								console.log('toDataURL');
+							}).catch(e => {
+							console.log('Error getting avatar in app.vue');
+							console.log(e);
+						});
+					}
 					this.$router.push('/');
 				}, response => {
 					// error --> show error message
