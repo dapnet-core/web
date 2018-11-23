@@ -66,25 +66,24 @@
 									</v-flex>
 									<v-spacer></v-spacer>
 									<!-- Avatar -->
-									<span class="avatar-position">
-										<v-avatar
-											v-if="this.$store.getters.avatar"
-											size="80"
-										>
-											<img v-bind:src="AvatarImageComputed" />
-											<!--<img v-auth-image="'/users/' + this.$store.getters.username + '/avatar.jpg'">-->
-
-										</v-avatar>
-
-										<v-btn class="edit-avatar-icon"
-											   flat
-											   icon
-											   color="red"
-											   @click="editavatardialog = true"
+									<div class="avatar-position">
+									<v-avatar
+										v-if="this.$store.getters.avatar"
+										size="80"
+									>
+										<img v-bind:src="AvatarImageComputed" />
+										<div class="avatar-editicon-position">
+										<v-btn
+											flat
+											icon
+											color="red"
+											@click="editavatardialog = true"
 										>
 											<v-icon>edit</v-icon>
 										</v-btn>
-									</span>
+										</div>
+									</v-avatar>
+									</div>
 									<!--Edit avatar Dialog-->
 									<v-dialog v-model="editavatardialog" max-width="430px">
 										<v-card>
@@ -160,11 +159,11 @@
 											<v-flex xs2>
 												<v-tooltip bottom>
 													<v-btn class="action-buttons"
-														   flat
-														   icon
-														   small
-														   v-on:click="passwordVisible = !passwordVisible"
-														   slot="activator"
+														flat
+														icon
+														small
+														v-on:click="passwordVisible = !passwordVisible"
+														slot="activator"
 													>
 														<v-icon v-if="passwordVisible">visibility_off</v-icon>
 														<v-icon v-if="!passwordVisible">visibility</v-icon>
@@ -173,11 +172,11 @@
 												</v-tooltip>
 												<v-tooltip bottom>
 													<v-btn class="action-buttons"
-														   flat
-														   icon
-														   small
-														   :v-clipboard:copy="form.password"
-														   slot="activator"
+														flat
+														icon
+														small
+														:v-clipboard:copy="form.password"
+														slot="activator"
 													>
 														<v-icon>assignment</v-icon>
 													</v-btn>
@@ -185,11 +184,11 @@
 												</v-tooltip>
 												<v-tooltip bottom>
 													<v-btn class="action-buttons"
-														   flat
-														   icon
-														   small
-														   v-on:click="form.password = $helpers.generatePassword(); passwordVisible = true;"
-														   slot="activator"
+														flat
+														icon
+														small
+														v-on:click="form.password = $helpers.generatePassword(); passwordVisible = true;"
+														slot="activator"
 													>
 														<v-icon>refresh</v-icon>
 													</v-btn>
@@ -784,13 +783,12 @@
 		display: inline-block;
 	}
 
-	.edit-avatar-icon {
-		position: relative;
-		right: 34px;
+	.avatar-editicon-position {
+		position: absolute;
+		left: 30px;
 		top: 30px;
 	}
 	.avatar-position {
 		position: relative;
-		top: -80px;
 	}
 </style>
