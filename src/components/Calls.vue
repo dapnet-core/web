@@ -15,6 +15,7 @@
 						</v-card-title>
 						<v-form>
                             <v-card-text>
+								<!-- Message -->
                                 <v-card color ="grey lighten-2">
                                     <v-layout>
                                         <v-flex>
@@ -32,9 +33,12 @@
                                             </v-textarea>
                                         </v-flex>
                                     </v-layout>
+									<!-- Subscriber selection -->
                                     <v-layout>
+										<!-- Display default subscriber selection-->
                                         <v-flex xs5>
                                             <v-autocomplete
+												:loading="isLoadingData.subscribers"
                                                 persistent-hint
                                                 hint="hjdkhasjk"
                                                 chips
@@ -49,10 +53,13 @@
                                             >
                                             </v-autocomplete>
                                         </v-flex>
-                                        <v-flex xs2></v-flex>
+										<v-spacer></v-spacer>
                                         <!-- Display default subscriber groups selection-->
                                         <v-flex xs5>
                                             <v-autocomplete
+												:loading="isLoadingData.subscriber_groups"
+												persistent-hint
+												hint="hjdkhasjk"
                                                 chips
                                                 small-chips
                                                 deletable-chips
@@ -70,6 +77,9 @@
                                         <!-- Display default transmitter names selection-->
                                         <v-flex xs5>
                                             <v-autocomplete
+												:loading="isLoadingData.transmitters"
+												persistent-hint
+												hint="hjdkhasjk"
                                                 chips
                                                 small-chips
                                                 deletable-chips
@@ -86,6 +96,9 @@
                                         <!-- Display default trasnmitter groups selection-->
                                         <v-flex xs5>
                                             <v-autocomplete
+												:loading="isLoadingData.transmitter_groups"
+												persistent-hint
+												hint="hjdkhasjk"
                                                 chips
                                                 small-chips
                                                 deletable-chips
@@ -188,50 +201,18 @@
 <script>
 	export default {
 		created() {
-			// Load avaiable subscriber names
-			this.$axios.get('subscribers/_names')
-				.then(response => {
-					this.formData.subscribers = response.data;
-				}).catch(e => {
-					console.log('Error getting subscriber names in calls/Calls.vue');
-				});
-
-			// Load avaiable subscriber groups
-			this.$axios.get('subscribers/_groups')
-				.then(response => {
-					this.formData.subscriber_groups = response.data;
-				}).catch(e => {
-					console.log('Error getting subscriber groups in calls/Calls.vue');
-			});
-
-			// Load avaiable stransmitter names
-			this.$axios.get('transmitters/_names')
-				.then(response => {
-					this.formData.transmitters = response.data;
-				}).catch(e => {
-					console.log('Error getting subscriber names in calls/Calls.vue');
-			});
-
-			// Load avaiable transmitter groups
-			this.$axios.get('transmitters/_groups')
-				.then(response => {
-					this.formData.transmitter_groups = response.data;
-				}).catch(e => {
-					console.log('Error getting subscriber groups in calls/Calls.vue');
-			});
+			this.loadSelectionChoices();
+			this.loadUserDefaultSettings();
 		},
 		data() {
 			return {
 				form: {
 					data: this.$store.getters.user._id.toUpperCase() + ': ',
-					recipients: {
-						subscribers: [],
-						subscriber_groups: []
-					},
-					distribution: {
-						transmitters: [],
-						transmitter_groups: []
-					},
+					subscribers: [],
+					subscriber_groups: [],
+					transmitters: [],
+					transmitter_groups: [],
+					expiration_duration: '',
 					priority: 3
 				},
 				formData: {
@@ -239,7 +220,15 @@
 					subscriber_groups: [],
 					transmitters: [],
 					transmitter_groups: []
-				}
+				},
+				isLoadingData: {
+					subscribers: true,
+					subscriber_groups: true,
+					transmitters: true,
+					transmitter_groups: true,
+					userDefaults: true
+				},
+				isFormValid: true
 			};
 		},
 		computed: {
@@ -250,6 +239,89 @@
 		methods: {
 			emptyMessage(event) {
 				return (this.form.data.length > 0);
+			},
+			loadUserDefaultSettings() {
+				// Load users details to obtain default settings
+				this.isLoadingData.userDefaults = true;
+				this.$axios.get('/users/' + this.$store.getters.username)
+					.then(response => {
+						if (response.data.defaults) {
+							if (response.data.defaults.transmitters) {
+								this.form.transmitters = response.data.defaults.transmitters;
+							} else {
+								this.form.transmitters = [];
+							}
+							if (response.data.defaults.transmitter_groups) {
+								this.form.transmitter_groups = response.data.defaults.transmitter_groups;
+							} else {
+								this.form.transmitter_groups = [];
+							}
+							if (response.data.defaults.subscribers) {
+								this.form.subscribers = response.data.defaults.subscribers;
+							} else {
+								this.form.subscribers = [];
+							}
+							if (response.data.defaults.subscriber_groups) {
+								this.form.subscriber_groups = response.data.defaults.subscriber_groups;
+							} else {
+								this.form.subscriber_groups = [];
+							}
+							if (response.data.defaults.expiration_duration) {
+								this.form.expiration_duration = response.data.defaults.expiration_duration;
+							} else {
+								this.form.expiration_duration = '';
+							}
+							if (response.data.defaults.priority) {
+								this.form.priority = response.data.defaults.priority;
+							} else {
+								this.form.priority = '';
+							}
+						}
+						this.isLoadingData.userDefaults = false;
+					}).catch(e => {
+						console.log('Error getting subscriber names in calls/Calls.vue');
+				});
+			},
+			loadSelectionChoices() {
+				// Load available subscriber names
+				this.isLoadingData.subscribers = true;
+				this.$axios.get('subscribers/_names')
+					.then(response => {
+						this.formData.subscribers = response.data;
+						this.isLoadingData.subscribers = false;
+					}).catch(e => {
+						console.log('Error getting subscriber names in calls/Calls.vue');
+				});
+
+				// Load available subscriber groups
+				this.isLoadingData.subscriber_groups = true;
+				this.$axios.get('subscribers/_groups')
+					.then(response => {
+						this.formData.subscriber_groups = response.data;
+						this.isLoadingData.subscriber_groups = false;
+					}).catch(e => {
+						console.log('Error getting subscriber groups in calls/Calls.vue');
+				});
+
+				// Load available transmitter names
+				this.isLoadingData.transmitters = true;
+				this.$axios.get('transmitters/_names')
+					.then(response => {
+						this.formData.transmitters = response.data;
+						this.isLoadingData.transmitters = false;
+					}).catch(e => {
+						console.log('Error getting subscriber names in calls/Calls.vue');
+				});
+
+				// Load available transmitter groups
+				this.isLoadingData.transmitter_groups = true;
+				this.$axios.get('transmitters/_groups')
+					.then(response => {
+						this.formData.transmitter_groups = response.data;
+						this.isLoadingData.transmitter_groups = false;
+					}).catch(e => {
+						console.log('Error getting subscriber groups in calls/Calls.vue');
+				});
 			}
 		},
 		submitForm(event) {
