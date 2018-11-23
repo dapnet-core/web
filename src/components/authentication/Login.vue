@@ -109,20 +109,18 @@
 							responseType: 'arraybuffer'
 						})
 							.then(response => {
-								let arrayBuffer =  response.data;
+								let arrayBuffer = response.data;
 								let u8 = new Uint8Array(arrayBuffer)
-								let b64encoded = btoa([].reduce.call(new Uint8Array(arrayBuffer),function(p,c){return p+String.fromCharCode(c)},''))
-								let mimetype="image/jpeg"
-								this.avatarImage = "data:"+mimetype+";base64,"+b64encoded;
-								//this.$refs.avatarImage.src = this.avatarImage;
+								let b64encoded = btoa([].reduce.call(new Uint8Array(arrayBuffer), function(p, c) { return p + String.fromCharCode(c); }, ''));
+								let mimetype = 'image/jpeg'
+								this.avatarImage = 'data:' + mimetype + ';base64,' + b64encoded;
 								this.$store.commit('changeAvatar', {
 									avatarImage: this.avatarImage
 								});
-
 								console.log('toDataURL');
 							}).catch(e => {
-							console.log('Error getting avatar in app.vue');
-							console.log(e);
+								console.log('Error getting avatar in app.vue');
+								console.log(e);
 						});
 					}
 					this.$router.push('/');
