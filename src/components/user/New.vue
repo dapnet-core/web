@@ -356,7 +356,7 @@
 											</v-autocomplete>
 										</v-flex>
 										<v-flex xs2></v-flex>
-										<!-- Display default trasnmitter groups selection-->
+										<!-- Display default transmitter groups selection-->
 										<v-flex xs5>
 											<v-autocomplete
 													chips
@@ -562,21 +562,25 @@
 				var img = this.$refs.vueavatar.getImageScaled();
 				console.log('Stored new avatar to browser store');
 				this.$store.commit('changeAvatar', {
-					avatarImage: img.toDataURL("image/jpeg")
+					avatarImage: img.toDataURL('image/jpeg')
 				});
 				console.log('Storing to Couchdb');
 				let avatarPutPath = '/users/' + this.$store.getters.username + '/avatar.jpg?rev=' + this.form._rev;
 				console.log(avatarPutPath);
-				var rawImage = this.createBlob(img.toDataURL("image/jpeg"));
+				var rawImage = this.createBlob(img.toDataURL('image/jpeg'));
 
 				this.$axios.put(
 					avatarPutPath,
 					rawImage,
-					{headers: {"Content-Type": "image/jpeg"}}
+					{
+						headers: {
+							'Content-Type': 'image/jpeg'
+						}
+					}
 				)
 					.then(r => console.log(r.status))
 					.catch(e => console.log(e));
-				this.editavatardialog=false
+				this.editavatardialog = false;
 			},
 			onImageReady() {
 				this.scale = 1;
@@ -599,7 +603,7 @@
 				// Workaround: Set static
 				this.availableThirdPartyRoles = ['thirdparty.brandmeister'];
 
-				// Load avaiable subscriber names
+				// Load available subscriber names
 				this.isLoadingData.subscribers = true;
 				this.$axios.get('subscribers/_names')
 					.then(response => {
@@ -609,7 +613,7 @@
 						console.log('Error getting subscriber names in user/new.vue');
 				});
 
-				// Load avaiable subscriber groups
+				// Load available subscriber groups
 				this.isLoadingData.subscriber_groups = true;
 				this.$axios.get('subscribers/_groups')
 					.then(response => {
@@ -619,7 +623,7 @@
 						console.log('Error getting subscriber groups in user/new.vue');
 				});
 
-				// Load avaiable transmitter names
+				// Load available transmitter names
 				this.isLoadingData.transmitters = true;
 				this.$axios.get('transmitters/_names')
 					.then(response => {
@@ -629,7 +633,7 @@
 						console.log('Error getting subscriber names in user/new.vue');
 				});
 
-				// Load avaiable transmitter groups
+				// Load available transmitter groups
 				this.isLoadingData.transmitter_groups = true;
 				this.$axios.get('transmitters/_groups')
 					.then(response => {
@@ -644,76 +648,77 @@
 				if (this.$route.params.id) {
 					console.log('params:' + this.$route.params.id);
 					this.userformReadonly = true;
-					this.$axios.get('users/' + this.$route.params.id).then(response => {
-						this.form._id = response.data._id;
-						this.form._rev = response.data._rev;
-						this.form.email = response.data.email;
-						this.form.roles = response.data.roles;
-						this.form.enabled = response.data.enabled;
-						this.form.email_lastchecked = response.data.email_lastchecked;
-						if (response.data.created_on) {
-							this.created_on = moment(response.data.created_on).format('DD.MM.YYYY HH:mm:ss');
-						} else {
-							response.data.created_on = '';
-						}
-						if (response.data.created_by) {
-							this.created_by = response.data.created_by;
-						} else {
-							this.created_by = '';
-						}
-						if (response.data.changed_on) {
-							this.changed_on = moment(response.data.changed_on).format('DD.MM.YYYY HH:mm:ss');
-						} else {
-							this.changed_on = '';
-						}
-						if (response.data.changed_by) {
-							this.changed_by = response.data.changed_by;
-						} else {
-							this.changed_by = '';
-						}
-						if (response.data.defaults) {
-							if (response.data.defaults.transmitters) {
-								this.form.defaults.transmitters = response.data.defaults.transmitters;
+					this.$axios.get('users/' + this.$route.params.id)
+						.then(response => {
+							this.form._id = response.data._id;
+							this.form._rev = response.data._rev;
+							this.form.email = response.data.email;
+							this.form.roles = response.data.roles;
+							this.form.enabled = response.data.enabled;
+							this.form.email_lastchecked = response.data.email_lastchecked;
+							if (response.data.created_on) {
+								this.created_on = moment(response.data.created_on).format('DD.MM.YYYY HH:mm:ss');
 							} else {
-								this.form.defaults.transmitters = [];
+								response.data.created_on = '';
 							}
-							if (response.data.defaults.transmitter_groups) {
-								this.form.defaults.transmitter_groups = response.data.defaults.transmitter_groups;
+							if (response.data.created_by) {
+								this.created_by = response.data.created_by;
 							} else {
-								this.form.defaults.transmitter_groups = [];
+								this.created_by = '';
 							}
-							if (response.data.defaults.subscribers) {
-								this.form.defaults.subscribers = response.data.defaults.subscribers;
+							if (response.data.changed_on) {
+								this.changed_on = moment(response.data.changed_on).format('DD.MM.YYYY HH:mm:ss');
 							} else {
-								this.form.defaults.subscribers = [];
+								this.changed_on = '';
 							}
-							if (response.data.defaults.subscriber_groups) {
-								this.form.defaults.subscriber_groups = response.data.defaults.subscriber_groups;
+							if (response.data.changed_by) {
+								this.changed_by = response.data.changed_by;
 							} else {
-								this.form.defaults.subscriber_groups = [];
+								this.changed_by = '';
 							}
-							if (response.data.defaults.expiration_duration) {
-								this.form.defaults.expiration_duration = response.data.defaults.expiration_duration;
+							if (response.data.defaults) {
+								if (response.data.defaults.transmitters) {
+									this.form.defaults.transmitters = response.data.defaults.transmitters;
+								} else {
+									this.form.defaults.transmitters = [];
+								}
+								if (response.data.defaults.transmitter_groups) {
+									this.form.defaults.transmitter_groups = response.data.defaults.transmitter_groups;
+								} else {
+									this.form.defaults.transmitter_groups = [];
+								}
+								if (response.data.defaults.subscribers) {
+									this.form.defaults.subscribers = response.data.defaults.subscribers;
+								} else {
+									this.form.defaults.subscribers = [];
+								}
+								if (response.data.defaults.subscriber_groups) {
+									this.form.defaults.subscriber_groups = response.data.defaults.subscriber_groups;
+								} else {
+									this.form.defaults.subscriber_groups = [];
+								}
+								if (response.data.defaults.expiration_duration) {
+									this.form.defaults.expiration_duration = response.data.defaults.expiration_duration;
+								} else {
+									this.form.defaults.expiration_duration = '';
+								}
+								if (response.data.defaults.priority) {
+									this.form.defaults.priority = response.data.defaults.priority;
+								} else {
+									this.form.defaults.priority = '';
+								}
+							}
+							if (response.data._attachments) {
+								this.form._attachments = response.data._attachments;
 							} else {
-								this.form.defaults.expiration_duration = '';
+								this.form._attachments = {};
 							}
-							if (response.data.defaults.priority) {
-								this.form.defaults.priority = response.data.defaults.priority;
-							} else {
-								this.form.defaults.priority = '';
-							}
-						}
-						if (response.data._attachments) {
-							this.form._attachments = response.data._attachments;
-						} else {
-							this.form._attachments = {};
-						}
-						// TODO: continue integration of avatar
-						console.log(this.form._attachments['avatar.jpg'].content_type);
-					}).catch(e => {
-						console.log('Error getting user\'s individual details with axios or any exception in the get handler.');
-						this.$dialogs.passwordError(this, e);
-						// this.$router.push('/users');
+							// TODO: continue integration of avatar
+							console.log(this.form._attachments['avatar.jpg'].content_type);
+						}).catch(e => {
+							console.log('Error getting user\'s individual details with axios or any exception in the get handler.');
+							this.$dialogs.passwordError(this, e);
+							// this.$router.push('/users');
 					});
 				} else {
 					this.userformReadonly = false;
