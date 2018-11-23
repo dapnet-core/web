@@ -438,7 +438,8 @@
 					subscriber_groups: true,
 					transmitters: true,
 					transmitter_groups: true,
-					roles: true				},
+					roles: true
+				},
 				isFormValid: true,
 				form: {
 					_id: '',
