@@ -1,6 +1,6 @@
 <template>
 	<v-container fluid fill-height>
-		<h1>asd</h1>
+		<h1>Logout, you should not see this</h1>
 	</v-container>
 <!--
 	<div class="container">
@@ -40,7 +40,13 @@
 		created() {
 			console.log('logged off');
 			this.$store.commit('logout');
-			console.log('logged off');
+			console.log('Deleted Browser storage manually');
+			this.$axios.post('clear')
+				.then(response => {
+					console.log('Deleting Browser storage via http header worked.');
+				}).catch(e => {
+					console.log('Error deleting browser storage via http header');
+			});
 			this.$router.push('/');
 		}
 	};
