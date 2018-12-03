@@ -13,7 +13,7 @@
 								<div>Send a new call now</div>
 							</div>
 						</v-card-title>
-						<v-form>
+						<v-form v-model="isFormValid" ref="form">
                             <v-card-text>
 								<!-- Message -->
                                 <v-card color ="grey lighten-2">
@@ -22,13 +22,13 @@
                                             <v-textarea
                                                 prepend-icon="message"
                                                 name="message"
-                                                v-model="form.data"
+                                                v-model="form.message"
                                                 v-bind:label="$t('calls.new.message.title')"
-                                                v-bind:hint="$t('calls.new.message.charactersremaining', { remaining: messageCharsRemaining })"
                                                 outline
                                                 rows="2"
                                                 persistent-hint
-                                                v-bind:background-color="emptyMessage() ? '' : 'red'"
+												:counter="80"
+												v-bind:rules="validationRules.message"
                                             >
                                             </v-textarea>
                                         </v-flex>
@@ -39,17 +39,15 @@
                                         <v-flex xs5>
                                             <v-autocomplete
 												:loading="isLoadingData.subscribers"
-                                                persistent-hint
-                                                hint="hjdkhasjk"
                                                 chips
                                                 small-chips
                                                 deletable-chips
                                                 multiple
-                                                solo
+                                                hide-selected
                                                 prepend-icon="person"
                                                 v-model="form.subscribers"
                                                 :items="formData.subscribers"
-                                                v-bind:label="$t('users.general.subscribers')"
+												v-bind:label="$t('general.subscribers')"
                                             >
                                             </v-autocomplete>
                                         </v-flex>
@@ -58,17 +56,15 @@
                                         <v-flex xs5>
                                             <v-autocomplete
 												:loading="isLoadingData.subscriber_groups"
-												persistent-hint
-												hint="hjdkhasjk"
                                                 chips
                                                 small-chips
                                                 deletable-chips
                                                 multiple
-                                                solo
+												hide-selected
                                                 prepend-icon="people"
                                                 v-model="form.subscriber_groups"
                                                 :items="formData.subscriber_groups"
-                                                v-bind:label="$t('users.general.subscriber_groups')"
+                                                v-bind:label="$t('general.subscriber_groups')"
                                             >
                                             </v-autocomplete>
                                         </v-flex>
@@ -78,36 +74,32 @@
                                         <v-flex xs5>
                                             <v-autocomplete
 												:loading="isLoadingData.transmitters"
-												persistent-hint
-												hint="hjdkhasjk"
                                                 chips
                                                 small-chips
                                                 deletable-chips
                                                 multiple
-                                                solo
+												hide-selected
                                                 prepend-icon="wifi"
                                                 v-model="form.transmitters"
                                                 :items="formData.transmitters"
-                                                v-bind:label="$t('users.general.transmitters')"
+                                                v-bind:label="$t('general.transmitters')"
                                             >
                                             </v-autocomplete>
                                         </v-flex>
                                         <v-flex xs2></v-flex>
-                                        <!-- Display default trasnmitter groups selection-->
+                                        <!-- Display default transmitter groups selection-->
                                         <v-flex xs5>
                                             <v-autocomplete
 												:loading="isLoadingData.transmitter_groups"
-												persistent-hint
-												hint="hjdkhasjk"
                                                 chips
                                                 small-chips
                                                 deletable-chips
                                                 multiple
-                                                solo
+                                                hide-selected
                                                 prepend-icon="wifi_tethering"
                                                 v-model="form.transmitter_groups"
                                                 :items="formData.transmitter_groups"
-                                                v-bind:label="$t('users.general.transmitter_groups')"
+                                                v-bind:label="$t('general.transmitter_groups')"
                                             >
                                             </v-autocomplete>
                                         </v-flex>
@@ -115,81 +107,23 @@
 
                                 </v-card>
                             </v-card-text>
-                            <v-card-actions>
-                                <v-btn
-                                    color="primary"
-                                    @click="submitForm"
-                                >
-                                    {{ $t('general.submit') }}
-                                </v-btn>
-                            </v-card-actions>
+							<!-- Buttons -->
+							<v-card-actions>
+								<v-btn
+									color="primary"
+									@click="submitForm"
+									:disabled="!isFormValid"
+								>
+									{{ $t('general.submit') }}
+								</v-btn>
+								<v-btn
+									color="red"
+									exact to="/"
+								>
+									{{ $t('general.abort') }}
+								</v-btn>
+							</v-card-actions>
 						</v-form>
-					</v-card>
-				</v-flex>
-
-				<v-flex xs12>
-					<v-card color="cyan darken-2" class="white--text">
-						<v-layout>
-							<v-flex xs5>
-								<v-img
-									src="https://cdn.vuetifyjs.com/images/cards/foster.jpg"
-									height="125px"
-									contain
-								></v-img>
-							</v-flex>
-							<v-flex xs7>
-								<v-card-title primary-title>
-									<div>
-										<div class="headline">Supermodel</div>
-										<div>Foster the People</div>
-										<div>(2014)</div>
-									</div>
-								</v-card-title>
-							</v-flex>
-						</v-layout>
-						<v-divider light></v-divider>
-						<v-card-actions class="pa-3">
-							Rate this album
-							<v-spacer></v-spacer>
-							<v-icon>star_border</v-icon>
-							<v-icon>star_border</v-icon>
-							<v-icon>star_border</v-icon>
-							<v-icon>star_border</v-icon>
-							<v-icon>star_border</v-icon>
-						</v-card-actions>
-					</v-card>
-				</v-flex>
-
-				<v-flex xs12>
-					<v-card color="purple" class="white--text">
-						<v-layout row>
-							<v-flex xs7>
-								<v-card-title primary-title>
-									<div>
-										<div class="headline">Halycon Days</div>
-										<div>Ellie Goulding</div>
-										<div>(2013)</div>
-									</div>
-								</v-card-title>
-							</v-flex>
-							<v-flex xs5>
-								<v-img
-									src="https://cdn.vuetifyjs.com/images/cards/halcyon.png"
-									height="125px"
-									contain
-								></v-img>
-							</v-flex>
-						</v-layout>
-						<v-divider light></v-divider>
-						<v-card-actions class="pa-3">
-							Rate this album
-							<v-spacer></v-spacer>
-							<v-icon>star_border</v-icon>
-							<v-icon>star_border</v-icon>
-							<v-icon>star_border</v-icon>
-							<v-icon>star_border</v-icon>
-							<v-icon>star_border</v-icon>
-						</v-card-actions>
 					</v-card>
 				</v-flex>
 			</v-layout>
@@ -207,7 +141,7 @@
 		data() {
 			return {
 				form: {
-					data: this.$store.getters.user._id.toUpperCase() + ': ',
+					message: this.$store.getters.user._id.toUpperCase() + ': ',
 					subscribers: [],
 					subscriber_groups: [],
 					transmitters: [],
@@ -232,14 +166,19 @@
 			};
 		},
 		computed: {
-			messageCharsRemaining() {
-				return 80 - this.form.data.length;
+			validationRules() {
+				return {
+					'message': [
+						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.message') }),
+						v => (v && v.length <= 80) || this.$t('formvalidation.overlength', {
+							fieldname: this.$t('general.message'),
+							count: '80'
+						})
+					]
+				};
 			}
 		},
 		methods: {
-			emptyMessage(event) {
-				return (this.form.data.length > 0);
-			},
 			loadUserDefaultSettings() {
 				// Load users details to obtain default settings
 				this.isLoadingData.userDefaults = true;
@@ -322,28 +261,25 @@
 					}).catch(e => {
 						console.log('Error getting subscriber groups in calls/Calls.vue');
 				});
+			},
+			submitForm(event) {
+				event.preventDefault();
+				console.log(this.form);
+				this.form2send = Object.assign({}, this.form);
+				if (this.form.password === '') {
+					delete this.form2send.password;
+				} else {
+					var bcrypt = require('bcryptjs');
+					this.form2send.password = bcrypt.hashSync(this.form.password, 10);
+				}
+				// check for input in all fields but password if empty
+				if (!this.$helpers.checkForInput(this, this.form2send)) {
+					return false;
+				}
+				console.log(this.form2send);
+				this.$helpers.sendData(this, 'users', this.form2send, '/users');
+				// TODO: Update auth if a user change their own password
 			}
-		},
-		submitForm(event) {
-			event.preventDefault();
-			console.log(this.form);
-
-			this.form2send = Object.assign({}, this.form);
-			if (this.form.password === '') {
-				delete this.form2send.password;
-			} else {
-				var bcrypt = require('bcryptjs');
-				this.form2send.password = bcrypt.hashSync(this.form.password, 10);
-			}
-			// check for input in all fields but password if empty
-			if (!this.$helpers.checkForInput(this, this.form2send)) {
-				return false;
-			}
-
-			console.log(this.form2send);
-			this.$helpers.sendData(this, 'users', this.form2send, '/users');
-
-			// TODO: Update auth if a user change their own password
 		}
 	};
 </script>

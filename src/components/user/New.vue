@@ -331,10 +331,10 @@
 												:items="formData.subscriber_groups"
 												v-bind:label="$t('general.subscriber_groups')"
 												:loading="isLoadingData.subscriber_groups"
-										>
-											<v-progress-linear color="blue" indeterminate></v-progress-linear>
-										</v-autocomplete>
-									</v-flex>
+											>
+												<v-progress-linear color="blue" indeterminate></v-progress-linear>
+											</v-autocomplete>
+										</v-flex>
 									</v-layout>
 									<v-layout>
 										<!-- Display default transmitter names selection-->
@@ -355,7 +355,7 @@
 											</v-autocomplete>
 										</v-flex>
 										<v-flex xs2></v-flex>
-										<!-- Display default transmitter groups selection-->
+										<!-- Display default transmitter groups selection -->
 										<v-flex xs5>
 											<v-autocomplete
 													chips
@@ -371,6 +371,33 @@
 											>
 												<v-progress-linear color="blue" indeterminate></v-progress-linear>
 											</v-autocomplete>
+										</v-flex>
+									</v-layout>
+									<v-layout>
+										<!-- Display default message priority -->
+										<v-flex xs5>
+											<v-select
+												prepend-icon="low_priority"
+												v-model="form.defaults.priority"
+												:items="priorities"
+												v-bind:label="$t('general.priority')"
+												persistent-hint
+												v-bind:hint="$t('general.priority_hint')"
+											>
+											</v-select>
+										</v-flex>
+										<v-flex xs2></v-flex>
+										<!-- Display default expiration time -->
+										<v-flex xs5>
+											<v-select
+												prepend-icon=""
+												v-model="form.defaults.priority"
+												:items="priorities"
+												v-bind:label="$t('general.priority')"
+												persistent-hint
+												v-bind:hint="$t('general.priority_hint')"
+											>
+											</v-select>
 										</v-flex>
 									</v-layout>
 								</v-card-text>
@@ -481,7 +508,8 @@
 				newRoleOk: true,
 				newRoleAddButtonDisabled: true,
 				showthirdpartyroles: false,
-				availableThirdPartyRoles: []
+				availableThirdPartyRoles: [],
+				priorities: [1, 2, 3, 4, 5]
 			};
 		},
 		computed: {
