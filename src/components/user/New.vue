@@ -308,7 +308,6 @@
 												deletable-chips
 												multiple
 												hide-selected
-												solo
 												prepend-icon="person"
 												v-model="form.defaults.subscribers"
 												:items="formData.subscribers"
@@ -326,7 +325,7 @@
 												small-chips
 												deletable-chips
 												multiple
-												solo
+												hide-selected
 												prepend-icon="people"
 												v-model="form.defaults.subscriber_groups"
 												:items="formData.subscriber_groups"
@@ -345,7 +344,7 @@
 													small-chips
 													deletable-chips
 													multiple
-													solo
+													hide-selected
 													prepend-icon="wifi"
 													v-model="form.defaults.transmitters"
 													:items="formData.transmitters"
@@ -363,7 +362,7 @@
 													small-chips
 													deletable-chips
 													multiple
-													solo
+													hide-selected
 													prepend-icon="wifi_tethering"
 													v-model="form.defaults.transmitter_groups"
 													:items="formData.transmitter_groups"
