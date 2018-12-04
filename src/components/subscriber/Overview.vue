@@ -261,14 +261,14 @@
 									pagersRenderd.push({
 										color: 'green',
 										ric: pager.ric,
-										avatar: './assets/img/google-play.png',
+										avatar: './img/pager/alphapoc.png',
 										type: pager.type
 									});
 								} else if (pager.type === 'skyper') {
 									pagersRenderd.push({
 										color: 'red',
 										ric: pager.ric,
-										avatar: 'https://randomuser.me/api/portraits/men/35.jpg',
+										avatar: './img/pager/skyper.png',
 										type: pager.type
 									});
 								}
