@@ -389,7 +389,7 @@
 										<v-flex xs2></v-flex>
 										<!-- Display default expiration time -->
 
-										<v-flex xs2>
+										<v-flex xs1>
 											<v-select
 												prepend-icon="timer"
 												v-model="expiration_selection.days"

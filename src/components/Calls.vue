@@ -16,7 +16,7 @@
 						<v-form v-model="isFormValid" ref="form">
                             <v-card-text>
 								<!-- Message -->
-                                <v-card color ="grey lighten-2">
+                                <v-card color ="white">
                                     <v-layout>
                                         <v-flex>
                                             <v-textarea
@@ -104,7 +104,47 @@
                                             </v-autocomplete>
                                         </v-flex>
                                     </v-layout>
-
+									<v-layout>
+										<!-- Display default priority-->
+										<v-flex xs5>
+											<v-select
+												prepend-icon="low_priority"
+												v-model="form.priority"
+												v-bind:items="priority_labels"
+												v-bind:label="$t('general.priority')"
+											>
+											</v-select>
+										</v-flex>
+										<v-flex xs2></v-flex>
+										<!-- Display default duration -->
+										<v-flex xs1>
+											<v-select
+												prepend-icon="timer"
+												v-model="expiration_selection.days"
+												v-bind:items="expiration_posibilities.days"
+												v-bind:label="$t('general.days')"
+											>
+											</v-select>
+										</v-flex>
+										<v-spacer></v-spacer>
+										<v-flex xs1>
+											<v-select
+												v-model="expiration_selection.hours"
+												v-bind:items="expiration_posibilities.hours"
+												v-bind:label="$t('general.hours')"
+											>
+											</v-select>
+										</v-flex>
+										<v-spacer></v-spacer>
+										<v-flex xs1>
+											<v-select
+												v-model="expiration_selection.minutes"
+												v-bind:items="expiration_posibilities.minutes"
+												v-bind:label="$t('general.minutes')"
+											>
+											</v-select>
+										</v-flex>
+									</v-layout>
                                 </v-card>
                             </v-card-text>
 							<!-- Buttons -->
@@ -147,7 +187,7 @@
 					transmitters: [],
 					transmitter_groups: [],
 					expiration_duration: '',
-					priority: 3
+					priority: ''
 				},
 				formData: {
 					subscribers: [],
@@ -162,7 +202,17 @@
 					transmitter_groups: true,
 					userDefaults: true
 				},
-				isFormValid: true
+				isFormValid: true,
+				expiration_posibilities: {
+					minutes: [0, 10, 20, 30, 40, 50],
+					hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+					days: [0, 1, 2, 3, 4, 5, 6]
+				},
+				expiration_selection: {
+					minutes: 0,
+					hours: 0,
+					days: 0
+				}
 			};
 		},
 		computed: {
@@ -176,6 +226,15 @@
 						})
 					]
 				};
+			},
+			priority_labels() {
+				return [
+					this.$t('general.priorities.lowest'),
+					this.$t('general.priorities.low'),
+					this.$t('general.priorities.medium'),
+					this.$t('general.priorities.high'),
+					this.$t('general.priorities.highest')
+				];
 			}
 		},
 		methods: {
@@ -207,11 +266,17 @@
 							}
 							if (response.data.defaults.expiration_duration) {
 								this.form.expiration_duration = response.data.defaults.expiration_duration;
+								if (this.form.expiration_duration > ((6 * 3600 * 24) + (23 * 3600) + (45 * 60))) {
+									this.form.expiration_duration = (6 * 3600 * 24) + (23 * 3600) + (50 * 60);
+								}
+								this.expiration_selection.days = Math.floor(this.form.expiration_duration / (3600 * 24));
+								this.expiration_selection.hours = Math.floor(this.form.expiration_duration % (3600 * 24) / 3600);
+								this.expiration_selection.minutes = Math.floor(this.form.expiration_duration % 3600 / 60 / 10) * 10;
 							} else {
 								this.form.expiration_duration = '';
 							}
 							if (response.data.defaults.priority) {
-								this.form.priority = response.data.defaults.priority;
+								this.form.priority = this.$helpers.priorityNumber2String(this, response.data.defaults.priority);
 							} else {
 								this.form.priority = '';
 							}
@@ -266,18 +331,13 @@
 				event.preventDefault();
 				console.log(this.form);
 				this.form2send = Object.assign({}, this.form);
-				if (this.form.password === '') {
-					delete this.form2send.password;
-				} else {
-					var bcrypt = require('bcryptjs');
-					this.form2send.password = bcrypt.hashSync(this.form.password, 10);
-				}
-				// check for input in all fields but password if empty
-				if (!this.$helpers.checkForInput(this, this.form2send)) {
-					return false;
-				}
+
+				this.form2send.priority = this.$helpers.priorityString2Number(this, this.form.priority);
+				this.form2send.expiration_duration = this.expiration_selection.days * (24 * 3600) +
+					this.expiration_selection.hours * 3600 +
+					this.expiration_selection.minutes * 60;
 				console.log(this.form2send);
-				this.$helpers.sendData(this, 'users', this.form2send, '/users');
+				// this.$helpers.sendData(this, 'users', this.form2send, '/users');
 				// TODO: Update auth if a user change their own password
 			}
 		}
