@@ -255,29 +255,34 @@
 								subscriber.description = '---';
 							}
 							// Render Pagers in a beautiful way
-							let pagersRenderd = [];
+							let pagersRendered = [];
 							subscriber.pagers.forEach(pager => {
 								if (pager.type === 'alphapoc') {
-									pagersRenderd.push({
+									pagersRendered.push({
 										color: 'green',
 										ric: pager.ric,
 										avatar: './img/pager/alphapoc.png',
 										type: pager.type
 									});
 								} else if (pager.type === 'skyper') {
-									pagersRenderd.push({
+									pagersRendered.push({
 										color: 'red',
 										ric: pager.ric,
 										avatar: './img/pager/skyper.png',
 										type: pager.type
 									});
+								} else if (pager.type === 'swissphone') {
+									pagersRendered.push({
+										color: 'grey',
+										ric: pager.ric,
+										avatar: './img/pager/swissphone.png',
+										type: pager.type
+									});
 								}
 							});
-							console.log(pagersRenderd);
-							subscriber.pagers = pagersRenderd;
+							subscriber.pagers = pagersRendered;
 						});
 						this.subscriberrows = response.data.rows;
-						console.log(this.subscriberrows);
 					}
 					this.isLoadingData = false;
 				}, response => {
