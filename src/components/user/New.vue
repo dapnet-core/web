@@ -461,7 +461,7 @@
 </template>
 <script>
 	import moment from 'moment';
-	import {VueAvatar} from 'vue-avatar-editor-improved';
+	import { VueAvatar } from 'vue-avatar-editor-improved';
 
 	export default {
 		components: {
@@ -556,7 +556,7 @@
 			validationRules() {
 				return {
 					'username': [
-						v => !!v || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.username')}),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.username') }),
 						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
 							fieldname: this.$t('general.username'),
 							count: '20'
@@ -568,7 +568,7 @@
 						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
 					],
 					'password': [
-						v => (!!v || this.isEditMode) || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.password')}),
+						v => (!!v || this.isEditMode) || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.password') }),
 						v => ((!!v || this.isEditMode) && v.length <= 30) || this.$t('formvalidation.overlength', {
 							fieldname: this.$t('general.password'),
 							count: '30'
@@ -580,11 +580,11 @@
 						})
 					],
 					'email': [
-						v => !!v || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.email')}),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.email') }),
 						v => /.+@.+\..+/.test(v) || this.$t('formvalidation.isvalidEmail')
 					],
 					'roles': [
-						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', {fieldname: this.$t('formvalidation.minonerole')})
+						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('formvalidation.minonerole') })
 					]
 				};
 			},

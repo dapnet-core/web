@@ -283,7 +283,7 @@
 							if (subscriber.description === undefined) {
 								subscriber.description = '---';
 							}
-							// Render Pagers in a beautiful way
+							// Render Pagers in a beautiful way  Rework, too much Copy here
 							let pagersRendered = [];
 							subscriber.pagers.forEach(pager => {
 								if (pager.type === 'alphapoc') {
@@ -291,28 +291,32 @@
 										color: 'green',
 										ric: pager.ric,
 										avatar: './img/pager/alphapoc.png',
-										type: pager.type
+										type: pager.type,
+										enabled: pager.enabled
 									});
 								} else if (pager.type === 'skyper') {
 									pagersRendered.push({
 										color: 'red',
 										ric: pager.ric,
 										avatar: './img/pager/skyper.png',
-										type: pager.type
+										type: pager.type,
+										enabled: pager.enabled
 									});
 								} else if (pager.type === 'swissphone') {
 									pagersRendered.push({
 										color: 'grey',
 										ric: pager.ric,
 										avatar: './img/pager/swissphone.png',
-										type: pager.type
+										type: pager.type,
+										enabled: pager.enabled
 									});
 								} else if (pager.type === 'quix') {
 									pagersRendered.push({
 										color: 'purple',
 										ric: pager.ric,
 										avatar: './img/pager/quix.png',
-										type: pager.type
+										type: pager.type,
+										enabled: pager.enabled
 									});
 								}
 							});

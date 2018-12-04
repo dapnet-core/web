@@ -6,8 +6,11 @@ import Login from '@/components/authentication/Login';
 import Logout from '@/components/authentication/Logout';
 import UserOverview from '@/components/user/Overview';
 import UserOverviewOnlyNames from '@/components/user/OverviewOnlyNames';
-import SubscriberOverview from '@/components/subscriber/Overview';
 import UserNew from '@/components/user/New';
+import SubscriberOverview from '@/components/subscriber/Overview';
+import SubscriberOverviewOnlyNames from '@/components/subscriber/OverviewOnlyNames';
+import SubscriberNew from '@/components/subscriber/New';
+
 Vue.use(Router);
 
 export default new Router({
@@ -90,6 +93,33 @@ export default new Router({
 			component: SubscriberOverview,
 			meta: {
 				titleTranslationKey: 'pagetitle.subscriber.overview',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/subscribersonlynames',
+			name: 'Subscriber Overview Only Names',
+			component: SubscriberOverviewOnlyNames,
+			meta: {
+				titleTranslationKey: 'pagetitle.subscriber.overview',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/subscribers/new',
+			name: 'New Subscriber',
+			component: SubscriberNew,
+			meta: {
+				titleTranslationKey: 'pagetitle.subscriber.new',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/subscribers/edit/:id',
+			name: 'Edit Subscriber',
+			component: SubscriberNew,
+			meta: {
+				titleTranslationKey: 'pagetitle.subscriber.edit',
 				requireAuthentication: true
 			}
 		}

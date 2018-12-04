@@ -3,6 +3,7 @@
         "home" : "Home",
         "calls": "Calls",
         "subscribers": "Subscribers",
+        "subscribersonlynames": "Subscribers",
         "rubrics": {
             "title": "Rubrics",
             "all": "All Rubrics",
@@ -410,16 +411,17 @@
         }
     },
     "subscribers": {
-        "overview": {
+      "overviewonlynames": {
+           "information": {
+              "help": "These are all registered subscribers in the DAPNET."
+            }
+       },
+      "overview": {
             "newsubscriber": "New Subscriber",
             "allsubscribers": "All Subscribers",
             "totalsubscribers": "Total Subscribers",
             "information": {
                 "help": "A subscriber is the logical connection between a name (the callsign) and one or multiple RIC numbers, for example a Skyper address."
-            },
-            "table": {
-                "pager": "Pager",
-                "subscriber": "Subscriber"
             }
         },
         "new": {
