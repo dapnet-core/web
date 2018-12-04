@@ -46,6 +46,18 @@
 				</v-list-tile-content>
 			</v-list-tile>
 
+			<v-list-tile
+				v-if="(this.$store.getters.permission('subscriber.read') === 'all')"
+				exact to="/subscribers"
+			>
+				<v-list-tile-action>
+					<v-icon>cast</v-icon>
+				</v-list-tile-action>
+				<v-list-tile-content>
+					<v-list-tile-title>{{ $t('navigation.subscribers') }}</v-list-tile-title>
+				</v-list-tile-content>
+			</v-list-tile>
+
 		</v-list>
 
 <!--        <div class="version">Version {{version}}</div>-->

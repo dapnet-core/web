@@ -373,7 +373,9 @@
         "missing": "missing",
         "general_settings": "General Settings",
         "default_settings": "Default Settings",
-        "message": "Message"
+        "message": "Message",
+        "thirdpartyservices": "Third-Party Services",
+        "pagers": "Pagers"
     },
     "rubric": {
         "overview": {
@@ -632,7 +634,7 @@
             "overview": "Call Overview",
             "new": "New Call"
         },
-        "subscribers": {
+        "subscriber": {
             "overview": "Subscriber Overview",
             "new": "New Subscriber",
             "edit": "Edit Subscriber"

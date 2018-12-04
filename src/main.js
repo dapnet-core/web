@@ -15,17 +15,12 @@ import store from './store';
 import VueClipboard from 'vue-clipboard2';
 import globalMethods from './global';
 import swal from 'sweetalert2';
-import VueAuthImage from 'vue-auth-image';
 
 Vue.use(globalMethods);
 
-//Vue.use(axios);
 Vue.use(VueAxios, axios);
 
 Vue.use(VueClipboard);
-
-// register vue-auth-image directive
-Vue.use(VueAuthImage);
 
 // Vue Resource
 Vue.config.productionTip = false;

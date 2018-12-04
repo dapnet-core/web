@@ -10,12 +10,7 @@ module.exports = {
 		// Paths
 		assetsSubDirectory: 'assets',
 		assetsPublicPath: '/',
-		proxyTable: {
-			'/': {
-				target: 'http://dapnetdc2.db0sda.ampr.org',
-				changeOrigin: true,
-			}
-		},
+		proxyTable: {},
 
 		// Various Dev Server settings
 		host: '0.0.0.0', // can be overwritten by process.env.HOST

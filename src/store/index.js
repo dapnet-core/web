@@ -18,7 +18,7 @@ export default new Vuex.Store({
 		language: 'en',
 		customText: defaultText,
 		map: defaultMap,
-        avatarImage: ''
+		avatarImage: ''
 	},
 	getters: {
 		url: state => {
@@ -37,9 +37,9 @@ export default new Vuex.Store({
 				return null;
 			}
 		},
-        avatarImage: state => {
-            return state.avatarImage;
-        },
+		avatarImage: state => {
+			return state.avatarImage;
+		},
 		auth: state => {
 			return state.auth;
 		},
@@ -84,9 +84,9 @@ export default new Vuex.Store({
 		changeLanguage(state, payload) {
 			state.language = payload.language;
 		},
-        changeAvatar(state, payload) {
-		    state.avatarImage = payload.avatarImage;
-        }
+		changeAvatar(state, payload) {
+			state.avatarImage = payload.avatarImage;
+		}
 	},
 	plugins: [
 		VuexPersistedState({
@@ -96,7 +96,7 @@ export default new Vuex.Store({
 				'auth',
 				'permissions',
 				'language',
-                'avatarImage'
+				'avatarImage'
 			]
 		})
 	]

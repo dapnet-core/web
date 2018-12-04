@@ -392,8 +392,10 @@
     "byUser": "durch",
     "missing": "fehlend",
     "general_settings": "Generelle Einstellungen",
-    "default_settings": "Vorauswahl-Einstellungen"
-
+    "default_settings": "Vorauswahl-Einstellungen",
+    "message": "Nachricht",
+    "thirdpartyservices": "Drittanbieterdienste",
+    "pagers": "Funkmeldeempfänger"
   },
   "rubric": {
     "overview": {

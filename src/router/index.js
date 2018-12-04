@@ -6,6 +6,7 @@ import Login from '@/components/authentication/Login';
 import Logout from '@/components/authentication/Logout';
 import UserOverview from '@/components/user/Overview';
 import UserOverviewOnlyNames from '@/components/user/OverviewOnlyNames';
+import SubscriberOverview from '@/components/subscriber/Overview';
 import UserNew from '@/components/user/New';
 Vue.use(Router);
 
@@ -19,7 +20,6 @@ export default new Router({
 				titleTranslationKey: 'pagetitle.home',
 				requireAuthentication: false
 			}
-
 		},
 		{
 			path: '/calls',
@@ -81,6 +81,15 @@ export default new Router({
 			component: UserNew,
 			meta: {
 				titleTranslationKey: 'pagetitle.user.edit',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/subscribers',
+			name: 'Subscriber Overview',
+			component: SubscriberOverview,
+			meta: {
+				titleTranslationKey: 'pagetitle.subscriber.overview',
 				requireAuthentication: true
 			}
 		}
