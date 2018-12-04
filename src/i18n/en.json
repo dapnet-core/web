@@ -333,6 +333,10 @@
           "high": "high",
           "highest": "highest"
         },
+        "expiration": "Expiration time",
+        "days": "Days",
+        "hours": "Hours",
+        "minutes": "Minutes",
         "enabled": "Enabled?",
         "roles": "Roles",
         "continue": "Continue",

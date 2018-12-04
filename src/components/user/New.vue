@@ -388,6 +388,34 @@
 										</v-flex>
 										<v-flex xs2></v-flex>
 										<!-- Display default expiration time -->
+
+										<v-flex xs2>
+											<v-select
+												prepend-icon="timer"
+												v-model="expiration_selection.days"
+												v-bind:items="expiration_posibilities.days"
+												v-bind:label="$t('general.days')"
+											>
+											</v-select>
+										</v-flex>
+										<v-spacer></v-spacer>
+										<v-flex xs1>
+											<v-select
+												v-model="expiration_selection.hours"
+												v-bind:items="expiration_posibilities.hours"
+												v-bind:label="$t('general.hours')"
+											>
+											</v-select>
+										</v-flex>
+										<v-spacer></v-spacer>
+										<v-flex xs1>
+											<v-select
+												v-model="expiration_selection.minutes"
+												v-bind:items="expiration_posibilities.minutes"
+												v-bind:label="$t('general.minutes')"
+												>
+											</v-select>
+										</v-flex>
 									</v-layout>
 								</v-card-text>
 							</v-card>
@@ -497,7 +525,19 @@
 				newRoleOk: true,
 				newRoleAddButtonDisabled: true,
 				showthirdpartyroles: false,
-				availableThirdPartyRoles: []
+				availableThirdPartyRoles: [],
+				expiration_posibilities: {
+					seconds: [0, 15, 30, 45],
+					minutes: [0, 10, 20, 30, 40, 50],
+					hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+					days: [0, 1, 2, 3, 4, 5, 6]
+				},
+				expiration_selection: {
+					seconds: 0,
+					minutes: 0,
+					hours: 0,
+					days: 0
+				}
 			};
 		},
 		computed: {
