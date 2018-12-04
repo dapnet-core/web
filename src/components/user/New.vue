@@ -379,7 +379,7 @@
 											<v-select
 												prepend-icon="low_priority"
 												v-model="form.defaults.priority"
-												:items="priorities"
+												v-bind:items="priority_labels"
 												v-bind:label="$t('general.priority')"
 												persistent-hint
 												v-bind:hint="$t('general.priority_hint')"
@@ -388,17 +388,6 @@
 										</v-flex>
 										<v-flex xs2></v-flex>
 										<!-- Display default expiration time -->
-										<v-flex xs5>
-											<v-select
-												prepend-icon=""
-												v-model="form.defaults.priority"
-												:items="priorities"
-												v-bind:label="$t('general.priority')"
-												persistent-hint
-												v-bind:hint="$t('general.priority_hint')"
-											>
-											</v-select>
-										</v-flex>
 									</v-layout>
 								</v-card-text>
 							</v-card>
@@ -508,8 +497,7 @@
 				newRoleOk: true,
 				newRoleAddButtonDisabled: true,
 				showthirdpartyroles: false,
-				availableThirdPartyRoles: [],
-				priorities: [1, 2, 3, 4, 5]
+				availableThirdPartyRoles: []
 			};
 		},
 		computed: {
@@ -561,12 +549,21 @@
 						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', {fieldname: this.$t('formvalidation.minonerole')})
 					]
 				};
+			},
+			priority_labels() {
+				return [
+					this.$t('general.priorities.lowest'),
+					this.$t('general.priorities.low'),
+					this.$t('general.priorities.medium'),
+					this.$t('general.priorities.high'),
+					this.$t('general.priorities.highest')
+				];
 			}
 		},
 		methods: {
 			createBlob(dataURL) {
 				var BASE64_MARKER = ';base64,';
-				if (dataURL.indexOf(BASE64_MARKER) == -1) {
+				if (dataURL.indexOf(BASE64_MARKER) === -1) {
 					var parts = dataURL.split(',');
 					var contentType = parts[0].split(':')[1];
 					var raw = decodeURIComponent(parts[1]);
@@ -730,7 +727,7 @@
 									this.form.defaults.expiration_duration = '';
 								}
 								if (response.data.defaults.priority) {
-									this.form.defaults.priority = response.data.defaults.priority;
+									this.form.defaults.priority = this.$helpers.priorityNumber2String(this, response.data.defaults.priority);
 								} else {
 									this.form.defaults.priority = '';
 								}
@@ -793,6 +790,8 @@
 
 				if (this.$refs.form.validate()) {
 					this.form2send = Object.assign({}, this.form);
+
+					// Don't send password, if not changed
 					if (this.form.password === '') {
 						delete this.form2send.password;
 					} else {
@@ -800,6 +799,9 @@
 						this.form2send.password = bcrypt.hashSync(this.form.password, 10);
 					}
 
+					this.form2send.defaults.priority = this.$helpers.priorityString2Number(this, this.form.defaults.priority);
+
+					console.log('Data2Send:');
 					console.log(this.form2send);
 					this.$helpers.sendData(this, 'users', this.form2send, '/users');
 

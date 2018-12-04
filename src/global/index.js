@@ -199,6 +199,41 @@ const GlobalMethodsPlugin = {
 			});
 		};
 
+		// Convert message priority string to number
+		Vue.prototype.$helpers.priorityString2Number = function(context, priorityString) {
+		    console.log('prioString' + priorityString);
+            if (priorityString === context.$i18n.t('general.priorities.lowest')) {
+                return 1;
+            } else if (priorityString === context.$i18n.t('general.priorities.low')) {
+                return 2;
+            } else if (priorityString === context.$i18n.t('general.priorities.medium')) {
+                return 3;
+            } else if (priorityString === context.$i18n.t('general.priorities.high')) {
+                return 4;
+            } else if (priorityString === context.$i18n.t('general.priorities.highest')) {
+                return 5;
+            } else {
+                return 4;
+            }
+        };
+
+        // Convert message priority number to string
+        Vue.prototype.$helpers.priorityNumber2String = function(context, priorityNumber) {
+            if (priorityNumber === 1) {
+                return context.$i18n.t('general.priorities.lowest');
+            } else if (priorityNumber === 2) {
+                return context.$i18n.t('general.priorities.low');
+            } else if (priorityNumber === 3) {
+                return context.$i18n.t('general.priorities.medium');
+            } else if (priorityNumber === 4) {
+                return context.$i18n.t('general.priorities.high');
+            } else if (priorityNumber === 5) {
+                return context.$i18n.t('general.priorities.highest');
+            } else {
+                return context.$i18n.t('general.priorities.high');
+            }
+        };
+
 		Vue.prototype.$helpers.generatePassword = function() {
 			const chars = 'abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ0123456789';
 			let password = '';

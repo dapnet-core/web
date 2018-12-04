@@ -343,6 +343,15 @@
     "transmitter_groups": "Sender-Gruppen",
     "subscribers": "Teilnehmer",
     "subscriber_groups": "Teilnehmer-Gruppen",
+    "priority": "Priorität",
+    "priority_hint": "Speichere Prioität für persönliche Nachrichten",
+    "priorities": {
+      "lowest": "niedrigste",
+      "low": "niedrig",
+      "medium": "mittel",
+      "high": "hoch",
+      "highest": "höchste"
+    },
     "enabled": "Aktiv?",
     "continue": "Fortfahren",
     "submit": "Absenden",

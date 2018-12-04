@@ -325,7 +325,14 @@
         "subscribers": "Subscribers",
         "subscriber_groups": "Subscriber Groups",
         "priority": "Priority",
-        "priority_hint": "5 is highest, 1 is lowest priority",
+        "priority_hint": "Store priority for personal messages",
+        "priorities": {
+          "lowest": "lowest",
+          "low": "low",
+          "medium": "medium",
+          "high": "high",
+          "highest": "highest"
+        },
         "enabled": "Enabled?",
         "roles": "Roles",
         "continue": "Continue",
