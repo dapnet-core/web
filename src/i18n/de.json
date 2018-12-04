@@ -353,6 +353,9 @@
       "highest": "höchste"
     },
     "expiration": "Gütligkeitsdauer",
+    "days": "Tage",
+    "hours": "Stunden",
+    "minutes": "Minuten",
     "enabled": "Aktiv?",
     "continue": "Fortfahren",
     "submit": "Absenden",

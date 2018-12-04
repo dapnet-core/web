@@ -527,13 +527,11 @@
 				showthirdpartyroles: false,
 				availableThirdPartyRoles: [],
 				expiration_posibilities: {
-					seconds: [0, 15, 30, 45],
 					minutes: [0, 10, 20, 30, 40, 50],
 					hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
 					days: [0, 1, 2, 3, 4, 5, 6]
 				},
 				expiration_selection: {
-					seconds: 0,
 					minutes: 0,
 					hours: 0,
 					days: 0
@@ -763,6 +761,12 @@
 								}
 								if (response.data.defaults.expiration_duration) {
 									this.form.defaults.expiration_duration = response.data.defaults.expiration_duration;
+									if (this.form.defaults.expiration_duration > ((6 * 3600 * 24) + (23 * 3600) + (45 * 60))) {
+										this.form.defaults.expiration_duration = (6 * 3600 * 24) + (23 * 3600) + (50 * 60);
+									}
+									this.expiration_selection.days = Math.floor(this.form.defaults.expiration_duration / (3600 * 24));
+									this.expiration_selection.hours = Math.floor(this.form.defaults.expiration_duration % (3600 * 24) / 3600);
+									this.expiration_selection.minutes = Math.floor(this.form.defaults.expiration_duration % 3600 / 60 / 10) * 10;
 								} else {
 									this.form.defaults.expiration_duration = '';
 								}
@@ -840,6 +844,9 @@
 					}
 
 					this.form2send.defaults.priority = this.$helpers.priorityString2Number(this, this.form.defaults.priority);
+					this.form2send.defaults.expiration_duration = this.expiration_selection.days * (24 * 3600) +
+						this.expiration_selection.hours * 3600 +
+						this.expiration_selection.minutes * 60;
 
 					console.log('Data2Send:');
 					console.log(this.form2send);
