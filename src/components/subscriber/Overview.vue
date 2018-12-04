@@ -69,10 +69,41 @@
 									</v-chip>
 								</span>
 							</td>
-							<!-- Enabled column -->
-							<td class="text-xs-right">
-								<v-icon v-if="props.item.enabled" color="green">toggle_on</v-icon>
-								<v-icon v-else color ="red">toggle_off</v-icon>
+							<!-- Third-Party-Services column -->
+							<td class="text-xs-left">
+								<span v-for="(service, index) in props.item.third_party_services" v-bind:key="`service-${index}`">
+									<v-chip
+										v-bind:color="`${service.color}`"
+										text-color="white"
+										small
+									>
+										{{ service.text }}
+									</v-chip>
+								</span>
+							</td>
+							<!-- owner column -->
+							<td class="text-xs-center">
+								<span v-for="(owner, index) in props.item.owners" v-bind:key="`owner-${index}`">
+									<v-chip
+										color="grey"
+										text-color="white"
+										small
+									>
+										{{ owner }}
+									</v-chip>
+								</span>
+							</td>
+							<!-- Subscriber Groups column -->
+							<td class="text-xs-left">
+								<span v-for="(group, index) in props.item.groups" v-bind:key="`group-${index}`">
+									<v-chip
+										color="grey"
+										text-color="white"
+										small
+									>
+										{{ group }}
+									</v-chip>
+								</span>
 							</td>
 							<!-- Action Buttons -->
 							<td class="text-xs-center" v-if="displayActionsColumn">
@@ -192,24 +223,22 @@
 						text: this.$i18n.t('general.pagers'),
 						align: 'center',
 						value: 'pagers'
-					}
-					/*
+					},
 					{
 						text: this.$i18n.t('general.thirdpartyservices'),
-						align: 'left',
+						align: 'center',
 						value: 'third_party_services'
 					},
 					{
 						text: this.$i18n.t('general.owner'),
-						align: 'right',
+						align: 'center',
 						value: 'owners'
 					},
 					{
 						text: this.$i18n.t('general.subscriber_groups'),
-						align: 'right',
+						align: 'center',
 						value: 'groups'
 					}
-					*/
 				];
 				if (this.displayActionsColumn()) {
 					let actions = {
@@ -278,9 +307,33 @@
 										avatar: './img/pager/swissphone.png',
 										type: pager.type
 									});
+								} else if (pager.type === 'quix') {
+									pagersRendered.push({
+										color: 'purple',
+										ric: pager.ric,
+										avatar: './img/pager/quix.png',
+										type: pager.type
+									});
 								}
 							});
 							subscriber.pagers = pagersRendered;
+
+							// Render Third party assignments in a beautiful way
+							let thirdspartyRendered = [];
+							subscriber.third_party_services.forEach(service => {
+								if (service === 'APRS') {
+									thirdspartyRendered.push({
+										color: 'deep-orange',
+										text: 'APRS'
+									});
+								} else if (service === 'BM') {
+									thirdspartyRendered.push({
+										color: 'purple',
+										text: 'Brandmeister'
+									});
+								}
+							});
+							subscriber.third_party_services = thirdspartyRendered;
 						});
 						this.subscriberrows = response.data.rows;
 					}
