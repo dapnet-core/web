@@ -424,9 +424,9 @@
                 "help": "A subscriber is the logical connection between a name (the callsign) and one or multiple RIC numbers, for example a Skyper address."
             }
         },
+      "newsubscriber": "New Subscriber",
+      "editsubscriber": "Edit Subscriber",
         "new": {
-            "newsubscriber": "New Subscriber",
-            "editsubscriber": "Edit Subscriber",
             "subscriber": {
                 "title": "Subscriber",
                 "help": "Please enter a valid amateur radio callsign of a human or a classifying name of an organization."

@@ -26,7 +26,7 @@
 									fab
 									dark
 									small
-									to="/subscrivers/new"
+									to="/subscribers/new"
 									slot="activator"
 								>
 										<v-icon>add</v-icon>
