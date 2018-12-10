@@ -326,6 +326,7 @@
         "transmitters": "Transmitters",
         "transmitter_groups": "Transmitter Groups",
         "subscribers": "Subscribers",
+        "subscriber": "Subscriber",
         "subscriber_groups": "Subscriber Groups",
         "priority": "Priority",
         "priority_hint": "Store priority for personal messages",
@@ -348,6 +349,7 @@
         "search": "Search",
         "information": "Information",
         "owner": "Owner",
+        "owners": "Owners",
         "actions": "Actions",
         "statistics": "Statistics",
         "description": "Description",
@@ -414,41 +416,47 @@
     },
     "subscribers": {
       "overviewonlynames": {
-           "information": {
-              "help": "These are all registered subscribers in the DAPNET."
-            }
+        "information": {
+          "help": "These are all registered subscribers in the DAPNET."
+        }
        },
       "overview": {
-            "newsubscriber": "New Subscriber",
-            "allsubscribers": "All Subscribers",
-            "totalsubscribers": "Total Subscribers",
-            "information": {
-                "help": "A subscriber is the logical connection between a name (the callsign) and one or multiple RIC numbers, for example a Skyper address."
-            }
+        "newsubscriber": "New Subscriber",
+        "allsubscribers": "All Subscribers",
+        "totalsubscribers": "Total Subscribers",
+        "information": {
+          "help": "A subscriber is the logical connection between a name (the callsign) and one or multiple RIC numbers, for example a Skyper address."
+          }
         },
       "newsubscriber": "New Subscriber",
       "editsubscriber": "Edit Subscriber",
-        "new": {
-            "subscriber": {
-                "title": "Subscriber",
-                "help": "Please enter a valid amateur radio callsign of a human or a classifying name of an organization."
-            },
-            "description": {
-                "help": "Provide your name or any other useful description of this entry."
-            },
-            "pager": {
-                "title": "Pager",
-                "helprics": "Add one or more lines of pager RIC numbers.",
-                "helpnames": "Add a corresponding number for lines as a description for the RIC numbers given in the first box."
-            },
-            "owner": {
-                "title": "Owner",
-                "help": "An owner of a subscriber association can edit its parameters."
-            },
-            "information": {
-                "help": "Subscribers are an allocation between a name (usually your amateur radio callsign) and one or multiple pager IDs (RICs)."
-            }
+      "new": {
+        "subscriber": {
+          "title": "Subscriber",
+          "help": "Please enter a valid amateur radio callsign of a human or a classifying name of an organization."
+        },
+        "description": {
+          "title": "Description",
+          "help": "Provide your name or any other useful description of this entry."
+        },
+        "pager": {
+          "title": "Pager",
+          "helprics": "Add one or more lines of pager RIC numbers.",
+          "helpnames": "Add a corresponding number for lines as a description for the RIC numbers given in the first box."
+        },
+        "owner": {
+          "help": "An owner of a subscriber association can edit its parameters."
+        },
+        "thirdpartyservices": {
+          "help": "Select the third party services messages directed to this subscriber shall be forwarded to."
+        },
+        "subscriber_groups": {
+          "help": "Select one or more existing subscriber groups or create a new one by typing."
+        },
+        "information": {
+          "help": "Subscribers are an allocation between a name (usually your amateur radio callsign) and one or multiple pager IDs (RICs)."
         }
+      }
     },
     "calls": {
         "overview": {
