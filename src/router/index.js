@@ -10,6 +10,7 @@ import UserNew from '@/components/user/New';
 import SubscriberOverview from '@/components/subscriber/Overview';
 import SubscriberOverviewOnlyNames from '@/components/subscriber/OverviewOnlyNames';
 import SubscriberNew from '@/components/subscriber/New';
+import SubscriberMy from '@/components/subscriber/My';
 
 Vue.use(Router);
 
@@ -111,6 +112,15 @@ export default new Router({
 			component: SubscriberNew,
 			meta: {
 				titleTranslationKey: 'pagetitle.subscriber.new',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/mysubscribers',
+			name: 'My Subscribers',
+			component: SubscriberMy,
+			meta: {
+				titleTranslationKey: 'pagetitle.subscriber.my',
 				requireAuthentication: true
 			}
 		},

@@ -4,6 +4,8 @@
         "calls": "Calls",
         "subscribers": "Subscribers",
         "subscribersonlynames": "Subscribers",
+        "allsubscribers": "All Subscribers",
+        "mysubscribers": "My Subscribers",
         "rubrics": {
             "title": "Rubrics",
             "all": "All Rubrics",
