@@ -718,6 +718,7 @@
 							this.form.roles = response.data.roles;
 							this.form.enabled = response.data.enabled;
 							this.form.email_lastchecked = response.data.email_lastchecked;
+							// Format timestamp into readable version
 							if (response.data.created_on) {
 								this.created_on = moment(response.data.created_on).format('DD.MM.YYYY HH:mm:ss');
 							} else {
