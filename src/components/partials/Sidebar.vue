@@ -61,19 +61,34 @@
 					exact to="/subscribers"
 				>
 					<v-list-tile-action>
-						<v-icon>cast</v-icon>
+						<v-badge
+							right
+							overlap
+							v-model="isReadyLoadingData.total.subscribers"
+						>
+							<span slot="badge">{{ count_total.subscribers }}</span>
+							<v-icon>cast</v-icon>
+						</v-badge>
 					</v-list-tile-action>
 					<v-list-tile-content>
 						<v-list-tile-title>{{ $t('navigation.allsubscribers') }}</v-list-tile-title>
 					</v-list-tile-content>
 				</v-list-tile>
+
 				<!-- if !(permission read === all), link to overview -->
 				<v-list-tile
 					v-if="!(this.$store.getters.permission('subscriber.read') === 'all')"
 					exact to="/subscribersoverview"
 				>
 					<v-list-tile-action>
-						<v-icon>cast</v-icon>
+						<v-badge
+							right
+							overlap
+							v-model="isReadyLoadingData.total.subscribers"
+						>
+							<span slot="badge">{{ count_total.subscribers }}</span>
+							<v-icon>cast</v-icon>
+						</v-badge>
 					</v-list-tile-action>
 					<v-list-tile-content>
 						<v-list-tile-title>{{ $t('navigation.allsubscribers') }}</v-list-tile-title>
@@ -84,7 +99,14 @@
 					exact to="/mysubscribers"
 				>
 					<v-list-tile-action>
-						<v-icon>cast</v-icon>
+						<v-badge
+							right
+							overlap
+							v-model="isReadyLoadingData.my.subscribers"
+						>
+							<span slot="badge">{{ count_my.subscribers }}</span>
+								<v-icon>cast</v-icon>
+						</v-badge>
 					</v-list-tile-action>
 					<v-list-tile-content>
 						<v-list-tile-title>My Subscribers</v-list-tile-title>
@@ -115,47 +137,93 @@
 		created() {
 			this.loadMySubscribers();
 			this.loadMyTransmitters();
+			this.loadTotalSubscribers();
+			this.loadTotalTransmitters();
 		},
 		data() {
 			return {
-				isLoadingData: {
-					mysubscribers : true,
-					myrubrics: true,
-					mytransmitters: true,
-					mynodes: true
+				isReadyLoadingData: {
+					my: {
+						subscribers: false,
+						rubrics: false,
+						transmitters: false,
+						nodes: false
+					},
+					total: {
+						subscribers: false,
+						rubrics: false,
+						transmitters: false,
+						nodes: false
+					}
 				},
-				countMyObjects: {
-					mysubscribers : 0,
-					myrubrics: 0,
-					mytransmitters: 0,
-					mynodes: 0
+				count_my: {
+					subscribers: 0,
+					rubrics: 0,
+					transmitters: 0,
+					nodes: 0
+				},
+				count_total: {
+					subscribers: 0,
+					rubrics: 0,
+					transmitters: 0,
+					nodes: 0
 				}
 			};
 		},
+		computed: {
+		},
 		methods: {
 			loadMySubscribers() {
-				this.isLoadingData.mysubscribers = true;
+				this.isReadyLoadingData.my.subscribers = false;
 				axios.get('subscribers/_my_count').then(response => {
 					// success --> save new data
 					if (response.data.count) {
-						this.countMyObjects.mysubscribers = response.data.count;
+						this.count_my.subscribers = response.data.count;
 					}
-					console.log('mySubscribers: ' + this.countMyObjects.mytransmitters);
-					this.isLoadingData.mysubscribers = false;
+					console.log('mySubscribers: ' + this.count_my.transmitters);
+					this.isReadyLoadingData.my.subscribers = true;
 				}, response => {
 					// error --> show error message
 					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
 				});
 			},
 			loadMyTransmitters() {
-				this.isLoadingData.mytransmitters = true;
+				this.isReadyLoadingData.my.transmitters = false;
 				axios.get('transmitters/_my_count').then(response => {
 					// success --> save new data
 					if (response.data.count) {
-						this.countMyObjects.mytransmitters = response.data.count;
+						this.count_my.transmitters = response.data.count;
 					}
-					console.log('myTransmitters: ' + this.countMyObjects.mytransmitters);
-					this.isLoadingData.mysubscribers = false;
+					console.log('myTransmitters: ' + this.count_my.transmitters);
+					this.isReadyLoadingData.my.transmitters = true;
+				}, response => {
+					// error --> show error message
+					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+				});
+			},
+			loadTotalSubscribers() {
+				this.isReadyLoadingData.total.subscribers = false;
+				axios.get('subscribers/_count').then(response => {
+					// success --> save new data
+					if (response.data.count) {
+						this.count_total.subscribers = response.data.count;
+					}
+					console.log('Total Subscribers: ' + this.count_total.subscribers);
+					this.isReadyLoadingData.total.subscribers = true;
+				}, response => {
+					// error --> show error message
+					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+				});
+			},
+			loadTotalTransmitters() {
+				this.isReadyLoadingData.total.transmitters = false;
+				axios.get('transmitters/_count').then(response => {
+					// success --> save new data
+					if (response.data.count) {
+						this.count_total.transmitters = response.data.count;
+					}
+					console.log('Total Transmitters: ' + this.count_total.transmitters);
+					this.isReadyLoadingData.total.transmitters = true;
 				}, response => {
 					// error --> show error message
 					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
