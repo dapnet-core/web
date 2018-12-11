@@ -320,7 +320,10 @@
         "isrequired": "{fieldname} is required.",
         "onlyalphanumeric": "Only numbers and letters allowed.",
         "isvalidEmail": "The given email must be valid.",
-        "minonerole": "At least one role"
+        "minonerole": "At least one role",
+        "minoneowner": "At least one owner",
+        "ricOutOfRange": "{fieldname} must be between {min} and {max}",
+        "onlyInteger": "Only integer numbers allowed as {fieldname}"
     },
     "general": {
         "transmitters": "Transmitters",
@@ -441,8 +444,25 @@
         },
         "pager": {
           "title": "Pager",
-          "helprics": "Add one or more lines of pager RIC numbers.",
-          "helpnames": "Add a corresponding number for lines as a description for the RIC numbers given in the first box."
+          "ric": {
+            "title": "RIC",
+            "help": "Add a RIC"
+          },
+          "function": {
+            "title": "Function",
+            "help": "Some pagers can use SubRICs"
+          },
+          "name": {
+            "title": "Name",
+            "help": "Just a name"
+          },
+          "type": {
+            "title": "Type",
+            "help": "Select one of the types"
+          },
+          "enabled": {
+            "title": "Enabled"
+          }
         },
         "owner": {
           "help": "An owner of a subscriber association can edit its parameters."

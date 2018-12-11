@@ -25,7 +25,7 @@
 											v-bind:hint="$t('subscribers.new.subscriber.help')"
 											persistent-hint
 											type="text"
-											v-bind:readonly="userformReadonly ? true : false"
+											v-bind:readonly="isEditMode ? true : false"
 											:loading="isLoadingData.general"
 										>
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
@@ -51,6 +51,94 @@
 										</v-text-field>
 									</v-flex>
 								</v-layout>
+								<!-- pagers list -->
+								<v-layout
+									v-for="(pager, index) in form.pagers"
+									:key="`pager-${index}`"
+								>
+									<!-- Pager Type -->
+									<v-flex xs3>
+										<v-select
+											:items="formData.pagertypes"
+											item-text="label"
+											item-value="value"
+											required
+											v-model="pager.type"
+											v-bind:label="$t('subscribers.new.pager.type.title')"
+											v-bind:hint="$t('subscribers.new.pager.type.help')"
+											persistent-hint
+										>
+										</v-select>
+									</v-flex>
+									<!-- RIC -->
+									<v-flex xs3>
+										<v-text-field
+											required
+											v-bind:rules="validationRules.pagerRic"
+											v-model="pager.ric"
+											v-bind:label="$t('subscribers.new.pager.ric.title')"
+											v-bind:hint="$t('subscribers.new.pager.ric.help')"
+											persistent-hint
+											type="numeric"
+										>
+										</v-text-field>
+									</v-flex>
+									<!-- Pager.function -->
+									<v-flex xs2>
+										<v-select
+											:items="formData.functions"
+											item-text="label"
+											item-value="value"
+											required
+											v-model="pager.function"
+											v-bind:label="$t('subscribers.new.pager.function.title')"
+											v-bind:hint="$t('subscribers.new.pager.function.help')"
+											persistent-hint
+										>
+										</v-select>
+									</v-flex>
+									<!-- Pager.name -->
+									<v-flex xs4>
+										<v-text-field
+											required
+											:counter="20"
+											v-bind:rules="validationRules.pagerName"
+											v-model="pager.name"
+											v-bind:label="$t('subscribers.new.pager.name.title')"
+											v-bind:hint="$t('subscribers.new.pager.name.help')"
+											persistent-hint
+											type="text"
+										>
+										</v-text-field>
+									</v-flex>
+									<!-- Enabled -->
+									<v-flex xs2>
+										<v-switch
+											v-model="pager.enabled"
+											:label="$t('subscribers.new.pager.enabled.title')"
+										>
+										</v-switch>
+									</v-flex>
+									<v-flex xs1>
+										<v-btn
+											flat
+											icon
+											color="red"
+											v-on:click="deletePager(index)"
+											v-bind:disabled="onlyOnePagerleft ? true : false"
+										>
+											<v-icon>delete</v-icon>
+										</v-btn>
+									</v-flex>
+								</v-layout>
+								<v-btn
+									block
+									color="green"
+									v-on:click="addPager()"
+								>
+									Add new pager entry
+								</v-btn>
+
 								<!-- Third Party Service Selection -->
 								<v-layout>
 									<v-flex>
@@ -101,6 +189,7 @@
 										</v-combobox>
 									</v-flex>
 								</v-layout>
+								<!-- owners selection -->
 								<v-layout>
 									<v-flex>
 										<v-autocomplete
@@ -116,6 +205,7 @@
 											v-bind:hint="$t('subscribers.new.owner.help')"
 											persistent-hint
 											:loading="isLoadingData.subscribers"
+											v-bind:rules="validationRules.owners"
 										>
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
 										</v-autocomplete>
@@ -125,7 +215,7 @@
 						</v-card-text>
 						<v-card-text>
 							<!-- Timestamps -->
-							<v-card color="red lighten-2">
+							<v-card color="red lighten-2" v-if="isEditMode">
 								<v-card-text>
 									<v-layout row wrap class="dark--text">
 										<v-flex xs3>{{ $t('general.created_on') }}</v-flex>
@@ -185,7 +275,15 @@
 					_id: '',
 					_rev: '',
 					description: '',
-					pagers: [],
+					pagers: [
+						{
+							ric: '',
+							function: '',
+							name: '',
+							type: '',
+							enabled: true
+						}
+					],
 					third_party_services: [],
 					owners: [],
 					groups: []
@@ -196,21 +294,32 @@
 						'Brandmeister'
 					],
 					subscribers: [],
-					subscriber_groups: []
+					subscriber_groups: [],
+					functions: [
+						{ value: 0, label: '0/A' },
+						{ value: 1, label: '1/B' },
+						{ value: 2, label: '2/C' },
+						{ value: 3, label: '3/D' }
+					],
+					pagertypes: [
+						{ value: 'alphapoc', label: 'AlphaPoc' },
+						{ value: 'skyper', label: 'Skyper' },
+						{ value: 'quix', label: 'Quix' }
+					]
 				},
 				created_on: '',
 				created_by: '',
 				changed_on: '',
 				changed_by: '',
 				isEditMode: (!!(this.$route.params.id)),
-				subscriberGroupSearch : null
+				subscriberGroupSearch: null
 			};
 		},
 		computed: {
 			validationRules() {
 				return {
 					'_id': [
-						v => !!v || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.subscriber')}),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.subscriber') }),
 						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
 							fieldname: this.$t('general.subscriber'),
 							count: '20'
@@ -220,9 +329,44 @@
 							count: '3'
 						}),
 						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
+					],
+					'description': [
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('subscribers.new.description.title') }),
+						v => (v && v.length <= 30) || this.$t('formvalidation.overlength', {
+							fieldname: this.$t('subscribers.new.description.title'),
+							count: '30'
+						}),
+						v => (v && v.length >= 2) || this.$t('formvalidation.underlength', {
+							fieldname: this.$t('subscribers.new.description.title'),
+							count: '2'
+						})
+					],
+					'pagerRic': [
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('subscribers.new.pager.ric.title') }),
+						v => (v && /^[0-9]+$/i.test(v)) || this.$t('formvalidation.onlyInteger', {
+							fieldname: this.$t('subscribers.new.pager.ric.title')
+						}),
+						v => (v && v > 0 && v <= 2097151) || this.$t('formvalidation.ricOutOfRange', {
+							fieldname: this.$t('subscribers.new.pager.ric.title'),
+							min: '0',
+							max: '2097151'
+						})
+					],
+					'pagerName': [
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('subscribers.new.pager.name.title') }),
+						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
+							fieldname: this.$t('subscribers.new.pager.name.title'),
+							count: '20'
+						})
+					],
+					'owners': [
+						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('formvalidation.minoneowner') })
 					]
 				};
 			},
+			onlyOnePagerleft() {
+				return (this.form.pagers.length <= 1);
+			}
 		},
 		methods: {
 			loadData() {
@@ -253,7 +397,7 @@
 				this.isLoadingData.general = true;
 				if (this.$route.params.id) {
 					console.log('params:' + this.$route.params.id);
-					this.userformReadonly = true;
+					this.isEditMode = true;
 					this.$axios.get('subscribers/' + this.$route.params.id)
 						.then(response => {
 							this.form._id = response.data._id;
@@ -290,7 +434,7 @@
 							// this.$router.push('/users');
 					});
 				} else {
-					this.userformReadonly = false;
+					this.isEditMode = false;
 				}
 
 				console.log('this.$route.params.id ' + this.$route.params.id);
@@ -298,15 +442,30 @@
 				console.log(this.form);
 				this.isLoadingData.general = false;
 			},
+			addPager() {
+				this.form.pagers.push({
+					ric: '',
+					function: '',
+					name: '',
+					type: '',
+					enabled: true
+				});
+				console.log(this.form.pagers);
+			},
+			deletePager(index) {
+				this.form.pagers.splice(index, 1);
+			},
 			submitForm(event) {
 				event.preventDefault();
 				console.log(this.form);
 
 				if (this.$refs.form.validate()) {
-
-					console.log('Data2Send:');
+					if (!this.isEditMode) {
+						delete this.form._rev;
+					}
+					console.log('Data2Send von subscriber:');
 					console.log(this.form);
-					this.$helpers.sendData(this, 'users', this.form, '/users');
+					this.$helpers.sendData(this, 'subscribers', this.form, '/subscribers');
 
 					// TODO: Update auth if a user change their own password
 				}
