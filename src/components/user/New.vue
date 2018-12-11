@@ -540,6 +540,7 @@
 		},
 		computed: {
 			AvatarImageComputed() {
+				// TODO This only correct for the current user, but not in General
 				return this.$store.getters.avatarImage;
 			},
 			passwordLabel() {
@@ -783,10 +784,9 @@
 								this.form._attachments = {};
 							}
 							// TODO: continue integration of avatar
-							console.log(this.form._attachments['avatar.jpg'].content_type);
 						}).catch(e => {
 							console.log('Error getting user\'s individual details with axios or any exception in the get handler.');
-							this.$dialogs.passwordError(this, e);
+							console.log(e);
 							// this.$router.push('/users');
 					});
 				} else {
@@ -836,6 +836,10 @@
 				if (this.$refs.form.validate()) {
 					this.form2send = Object.assign({}, this.form);
 
+
+					if (!this.isEditMode) {
+						delete this.form2send._rev;
+					}
 					// Don't send password, if not changed
 					if (this.form.password === '') {
 						delete this.form2send.password;
