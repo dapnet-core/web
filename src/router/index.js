@@ -11,6 +11,10 @@ import SubscriberOverview from '@/components/subscriber/Overview';
 import SubscriberOverviewOnlyNames from '@/components/subscriber/OverviewOnlyNames';
 import SubscriberNew from '@/components/subscriber/New';
 import SubscriberMy from '@/components/subscriber/My';
+import TransmitterOverview from '@/components/transmitter/Overview';
+import TransmitterOverviewOnlyNames from '@/components/transmitter/OverviewOnlyNames';
+import TransmitterNew from '@/components/transmitter/New';
+import TransmitterMy from '@/components/transmitter/My';
 
 Vue.use(Router);
 
@@ -130,6 +134,51 @@ export default new Router({
 			component: SubscriberNew,
 			meta: {
 				titleTranslationKey: 'pagetitle.subscriber.edit',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/transmitters',
+			name: 'Transmitter Overview',
+			component: TransmitterOverview,
+			meta: {
+				titleTranslationKey: 'pagetitle.transmitter.overview',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/trasnmiitersonlynames',
+			name: 'Transmitter Overview Only Names',
+			component: TransmitterOverviewOnlyNames,
+			meta: {
+				titleTranslationKey: 'pagetitle.transmitter.overview',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/transmitters/new',
+			name: 'New Transmitter',
+			component: TransmitterNew,
+			meta: {
+				titleTranslationKey: 'pagetitle.transmitter.new',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/mytransmitters',
+			name: 'My Transmitters',
+			component: TransmitterMy,
+			meta: {
+				titleTranslationKey: 'pagetitle.transmitter.my',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/transmitters/edit/:id',
+			name: 'Edit Transmitter',
+			component: TransmitterNew,
+			meta: {
+				titleTranslationKey: 'pagetitle.transmitter.edit',
 				requireAuthentication: true
 			}
 		}

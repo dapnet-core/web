@@ -8,7 +8,7 @@
 			<v-flex xs12>
 				<v-card>
 					<v-card-title>
-						<div class="headline">{{ $t('subscribers.overview.allsubscribers') }}</div>
+						<div class="headline">{{ $t('navigation.transmitters.all') }}</div>
 						<v-spacer></v-spacer>
 						<v-text-field
 							v-model="search"
@@ -18,26 +18,26 @@
 							hide-details
 						>
 						</v-text-field>
-						<!-- Add Subscriber Button -->
-						<v-fab-transition v-if="this.$store.getters.permission('subscriber.create')">
+						<!-- Add Transmitter Button -->
+						<v-fab-transition v-if="this.$store.getters.permission('transmitter.create')">
 							<v-tooltip bottom>
 								<v-btn
 									color="pink"
 									fab
 									dark
 									small
-									to="/subscribers/new"
+									to="/transmitters/new"
 									slot="activator"
 								>
 										<v-icon>add</v-icon>
 								</v-btn>
-								<span>{{ $t('subscribers.overview.newsubscriber') }}</span>
+								<span>{{ $t('transmitter.overview.newtransmitter') }}</span>
 							</v-tooltip>
 						</v-fab-transition>
 					</v-card-title>
 					<v-data-table
 						:headers="getHeaders"
-						:items="subscriberrows"
+						:items="transmitterrows"
 						:pagination.sync="pagination"
 						:total-items="total_rows"
 						:loading="isLoadingData"
@@ -51,36 +51,11 @@
 							<!-- ID column -->
 							<td>{{ props.item._id }}</td>
 
-							<!-- Description column -->
-							<td class="text-xs-left">{{ props.item.description }}</td>
+							<!-- Usage column -->
+							<td class="text-xs-center">
+								<img v-bind:src="`${props.item.usage.image}`" v-bind:alt="`${props.item.usage.text}`">
+							</td>
 
-							<!-- Pager column -->
-							<td class="text-xs-left">
-								<span v-for="(pager, index) in props.item.pagers" v-bind:key="`pager-${index}`">
-									<v-chip
-										v-bind:color="`${pager.color}`"
-										text-color="white"
-										small
-									>
-										<v-avatar>
-											<img v-bind:src="`${pager.avatar}`" v-bind:alt="`${pager.type}`">
-										</v-avatar>
-										{{ pager.ric }}
-									</v-chip>
-								</span>
-							</td>
-							<!-- Third-Party-Services column -->
-							<td class="text-xs-left">
-								<span v-for="(service, index) in props.item.third_party_services" v-bind:key="`service-${index}`">
-									<v-chip
-										v-bind:color="`${service.color}`"
-										text-color="white"
-										small
-									>
-										{{ service.text }}
-									</v-chip>
-								</span>
-							</td>
 							<!-- owner column -->
 							<td class="text-xs-center">
 								<span v-for="(owner, index) in props.item.owners" v-bind:key="`owner-${index}`">
@@ -93,7 +68,7 @@
 									</v-chip>
 								</span>
 							</td>
-							<!-- Subscriber Groups column -->
+							<!-- Transmitter Groups column -->
 							<td class="text-xs-left">
 								<span v-for="(group, index) in props.item.groups" v-bind:key="`group-${index}`">
 									<v-chip
@@ -110,7 +85,7 @@
 								<!-- Edit -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('subscriber.update') === 'all'"
+											v-if="getPermissionsWrapper('transmitter.update') === 'all'"
 											flat
 											icon
 											small
@@ -126,7 +101,7 @@
 								<!-- Delete -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('subscriber.delete') === 'all'"
+											v-if="getPermissionsWrapper('transmitter.delete') === 'all'"
 											flat
 											icon
 											small
@@ -142,7 +117,7 @@
 								<!-- Send Email -->
 								<v-tooltip bottom class="action-buttons">
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('subscriber.update') === 'all'"
+											v-if="getPermissionsWrapper('transmitter.update') === 'all'"
 											flat
 											icon
 											small
@@ -184,7 +159,7 @@
 			return {
 				search: '',
 				total_rows: 0,
-				subscriberrows: [],
+				transmitterrows: [],
 				errorMessage: false,
 				isLoadingData: true,
 				table: {
@@ -216,19 +191,10 @@
 						value: '_id'
 					},
 					{
-						text: this.$i18n.t('general.description'),
+						text: this.$i18n.t('transmitters.usage.title'),
+						sortable: true,
 						align: 'center',
-						value: 'description'
-					},
-					{
-						text: this.$i18n.t('general.pagers'),
-						align: 'center',
-						value: 'pagers'
-					},
-					{
-						text: this.$i18n.t('general.thirdpartyservices'),
-						align: 'center',
-						value: 'third_party_services'
+						value: 'usage'
 					},
 					{
 						text: this.$i18n.t('general.owner'),
@@ -236,9 +202,10 @@
 						value: 'owners'
 					},
 					{
-						text: this.$i18n.t('general.subscriber_groups'),
+						text: this.$i18n.t('general.transmitter_groups'),
 						align: 'center',
-						value: 'groups'
+						value: 'groups',
+						sortable: true
 					}
 				];
 				if (this.displayActionsColumn()) {
@@ -254,15 +221,15 @@
 		},
 		methods: {
 			displayActionsColumn() {
-				return ((this.$store.getters.permission('subscriber.update') === 'all') ||
-				(this.$store.getters.permission('subscriber.delete') === 'all'));
+				return ((this.$store.getters.permission('transmitter.update') === 'all') ||
+				(this.$store.getters.permission('transmitter.delete') === 'all'));
 			},
 			getPermissionsWrapper(mypermission) {
 				return (this.$store.getters.permission(mypermission));
 			},
 			loadData() {
 				this.isLoadingData = true;
-				this.$axios.get('subscribers', {
+				this.$axios.get('transmitters', {
 					params: {
 						descending: !!this.pagination.descending,
 						limit: this.pagination.rowsPerPage,
@@ -279,70 +246,23 @@
 
 					// save rows
 					if (response.data.rows) {
-						response.data.rows.forEach(subscriber => {
-							// Set Description (if available)
-							if (subscriber.description === undefined) {
-								subscriber.description = '---';
+						response.data.rows.forEach(transmitter => {
+							// Render Widerange / Personal in a beautiful way
+							let usageRendered = [];
+							if (transmitter.usage === 'widerange') {
+								usageRendered.image = './img/icons/transmitter_widerange.png';
+								usageRendered.text =  'Widerange';
+							} else if (transmitter.usage === 'personal') {
+								usageRendered.image = './img/icons/transmitter_personal.png';
+								usageRendered.text = 'Personal';
 							}
-							// Render Pagers in a beautiful way  Rework, too much Copy here
-							let pagersRendered = [];
-							subscriber.pagers.forEach(pager => {
-								if (pager.type === 'alphapoc') {
-									pagersRendered.push({
-										color: 'green',
-										ric: pager.ric,
-										avatar: './img/pager/alphapoc.png',
-										type: pager.type,
-										enabled: pager.enabled
-									});
-								} else if (pager.type === 'skyper') {
-									pagersRendered.push({
-										color: 'red',
-										ric: pager.ric,
-										avatar: './img/pager/skyper.png',
-										type: pager.type,
-										enabled: pager.enabled
-									});
-								} else if (pager.type === 'swissphone') {
-									pagersRendered.push({
-										color: 'grey',
-										ric: pager.ric,
-										avatar: './img/pager/swissphone.png',
-										type: pager.type,
-										enabled: pager.enabled
-									});
-								} else if (pager.type === 'quix') {
-									pagersRendered.push({
-										color: 'purple',
-										ric: pager.ric,
-										avatar: './img/pager/quix.png',
-										type: pager.type,
-										enabled: pager.enabled
-									});
-								}
-							});
-							subscriber.pagers = pagersRendered;
-
-							// Render Third party assignments in a beautiful way
-							let thirdspartyRendered = [];
-							subscriber.third_party_services.forEach(service => {
-								if (service === 'APRS') {
-									thirdspartyRendered.push({
-										color: 'deep-orange',
-										text: 'APRS'
-									});
-								} else if (service === 'BM') {
-									thirdspartyRendered.push({
-										color: 'purple',
-										text: 'Brandmeister'
-									});
-								}
-							});
-							subscriber.third_party_services = thirdspartyRendered;
+							transmitter.usage = usageRendered;
 						});
-						this.subscriberrows = response.data.rows;
+
+						this.transmitterrows = response.data.rows;
 					}
 					this.isLoadingData = false;
+					console.log(this.transmitterrows);
 				}, response => {
 					// error --> show error message
 					this.isLoadingData = false;
@@ -353,11 +273,11 @@
 				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20User%3A%20' + element._id;
 			},
 			editElement(element) {
-				this.$router.push({ name: 'Edit Subscriber', params: { id: element._id } });
+				this.$router.push({ name: 'Edit Transmitter', params: { id: element._id } });
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('subscribers/' + element._id, {
+					this.axios.delete('transmitter/' + element._id, {
 						// before(request) {
 						//	request.headers.delete('Content-Type');
 						// }

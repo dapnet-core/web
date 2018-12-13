@@ -1,27 +1,9 @@
 <template>
-	<!--
-	<v-avatar
-		v-if="this.$store.getters.avatar"
-		size="80"
-	>
-		<img v-auth-image="'/users/' + this.$store.getters.username + '/avatar.jpg'">
-
-	</v-avatar>
-	<v-btn
-		absolute
-		icon
-		right
-		top
-	>
-		<v-icon>edit</v-icon>
-	</v-btn>
-	-->
-
 	<v-container fluid fill-height>
 		<v-layout align-center justify-center>
 			<v-flex xs12 sm9 md9>
 				<v-card class="elevation-12">
-					<!--General toolbar-->
+					<!--General Headline-->
 					<v-card-title>
 						<span class="headline">{{ this.isEditMode ? this.$t('users.edituser') :
 											this.$t('users.newuser') }}</span>
@@ -66,26 +48,32 @@
 									</v-flex>
 									<v-spacer></v-spacer>
 									<!-- Avatar -->
-									<div class="avatar-position">
-									<v-avatar
-										v-if="this.$store.getters.avatar"
-										size="80"
+									<div
+										class="avatar-position"
+										v-if="iseditingown"
 									>
-										<img v-bind:src="AvatarImageComputed" />
-										<div class="avatar-editicon-position">
-										<v-btn
-											flat
-											icon
-											color="red"
-											@click="editavatardialog = true"
+										<v-avatar
+											v-if="this.$store.getters.avatar"
+											size="80"
 										>
-											<v-icon>edit</v-icon>
-										</v-btn>
-										</div>
-									</v-avatar>
+											<img v-bind:src="AvatarImageComputed" />
+											<div class="avatar-editicon-position">
+											<v-btn
+												flat
+												icon
+												color="red"
+												@click="editavatardialog = true"
+											>
+												<v-icon>edit</v-icon>
+											</v-btn>
+											</div>
+										</v-avatar>
 									</div>
 									<!--Edit avatar Dialog-->
-									<v-dialog v-model="editavatardialog" max-width="430px">
+									<v-dialog
+										v-model="editavatardialog"
+										max-width="430px"
+									>
 										<v-card>
 											<v-card-title>
 												<span class="headline">Edit avatar picture</span>
@@ -589,6 +577,15 @@
 					]
 				};
 			},
+			iseditingown() {
+				if (this.$route.params.id) {
+					console.log('params:' + this.$route.params.id);
+					if (this.$store.getters.username === this.$route.params.id) {
+						return true
+					}
+				}
+				return false;
+			},
 			priority_labels() {
 				return [
 					this.$t('general.priorities.lowest'),
@@ -650,7 +647,6 @@
 				this.rotation = 0;
 			},
 			loadData() {
-				console.log('Created');
 				// Load avaiable user roles
 				this.isLoadingData.roles = true;
 				this.$axios.get('auth/users/roles')
@@ -709,7 +705,6 @@
 				// load data of given id
 				this.isLoadingData.general = true;
 				if (this.$route.params.id) {
-					console.log('params:' + this.$route.params.id);
 					this.userformReadonly = true;
 					this.$axios.get('users/' + this.$route.params.id)
 						.then(response => {
@@ -831,12 +826,8 @@
 			},
 			submitForm(event) {
 				event.preventDefault();
-				console.log(this.form);
-
 				if (this.$refs.form.validate()) {
 					this.form2send = Object.assign({}, this.form);
-
-
 					if (!this.isEditMode) {
 						delete this.form2send._rev;
 					}
@@ -856,6 +847,9 @@
 					console.log('Data2Send:');
 					console.log(this.form2send);
 					this.$helpers.sendData(this, 'users', this.form2send, '/users');
+
+					// Trigger Reload of sidebar Icons
+					this.$root.$emit('ReloadSidebarIcons');
 
 					// TODO: Update auth if a user change their own password
 				}

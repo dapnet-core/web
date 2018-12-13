@@ -2,10 +2,12 @@
     "navigation": {
         "home" : "Home",
         "calls": "Calls",
-        "subscribers": "Subscribers",
-        "subscribersonlynames": "Subscribers",
-        "allsubscribers": "All Subscribers",
-        "mysubscribers": "My Subscribers",
+        "subscribers": {
+          "title": "Subscribers",
+          "all": "All Subscribers",
+          "my": "My Subscribers",
+          "onlynames": " All Subscriber Names"
+        },
         "rubrics": {
             "title": "Rubrics",
             "all": "All Rubrics",
@@ -15,6 +17,8 @@
         "transmitters": {
             "title": "Transmitters",
             "all": "All Transmitters",
+            "my": "My Subscribers",
+            "onlynames": " All Subscriber Names",
             "map": "Map",
             "groups": "Transmitter Groups"
         },
@@ -99,8 +103,14 @@
             }
         }
     },
-    "transmitter": {
+    "transmitters": {
+        "usage": {
+          "title": "Usage",
+          "widerange": "Widerange",
+          "personal": "Personal"
+        },
         "overview": {
+            "newtransmitter": "New Transmitter",
             "table": {
                 "title": "All Transmitters",
                 "callsign": "Callsign",
@@ -115,8 +125,6 @@
                 "sendmailtoallowners": "Send a mail to all owners"
             },
             "statistics": {
-                "widerange": "Widerange",
-                "personal": "Personal",
                 "total": "Total",
                 "widerangeonly": "Widerange-transmitter only"
             },
@@ -134,9 +142,9 @@
             "import": {
                 "help": "Easy import of stations from hamnetdb.net. Location data of the selected transmitter site will be copied into the form."
             },
-            "password": {
-                "title": "Password",
-                "help": "Enter an authentication password for this transmitter. In the UniPager webinterface it’s called Auth Key."
+            "authkey": {
+                "title": "Auth-Key",
+                "help": "Enter an authentication key for this transmitter. Set the exact same on the transmitter itself."
             },
             "usage": {
                 "title": "Usage",

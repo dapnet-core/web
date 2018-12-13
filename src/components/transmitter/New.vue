@@ -5,8 +5,8 @@
 				<v-card class="elevation-12">
 					<!--General toolbar-->
 					<v-card-title>
-						<span class="headline">{{ this.isEditMode ? this.$t('subscribers.editsubscriber') :
-											this.$t('subscribers.newsubscriber') }}</span>
+						<span class="headline">{{ this.isEditMode ? this.$t('transmitters.new.edittransmitter') :
+											this.$t('transmitters.new.newtransmitter') }}</span>
 					</v-card-title>
 					<v-form v-model="isFormValid" ref="form">
 						<v-card-text>
@@ -21,8 +21,8 @@
 											:counter="20"
 											v-bind:rules="validationRules._id"
 											v-model="form._id"
-											v-bind:label="$t('subscribers.new.subscriber.title')"
-											v-bind:hint="$t('subscribers.new.subscriber.help')"
+											v-bind:label="$t('transmitters.new.callsign.title')"
+											v-bind:hint="$t('transmitters.new.callsign.help')"
 											persistent-hint
 											type="text"
 											v-bind:readonly="isEditMode ? true : false"
@@ -32,17 +32,17 @@
 										</v-text-field>
 									</v-flex>
 
-									<!-- Description-->
+									<!-- Auth Key-->
 									<v-flex xs12 sm6 md4>
 										<v-text-field
-											prepend-icon="description"
-											name="description"
+											prepend-icon="vpn_key"
+											name="auth_key"
 											required
 											:counter="30"
-											v-bind:rules="validationRules.description"
+											v-bind:rules="validationRules.authkey"
 											v-model="form.description"
-											v-bind:label="$t('subscribers.new.description.title')"
-											v-bind:hint="$t('subscribers.new.description.help')"
+											v-bind:label="$t('transmitters.new.authkey.title')"
+											v-bind:hint="$t('transmitters.new.authkey.help')"
 											persistent-hint
 											type="text"
 											:loading="isLoadingData.general"
@@ -51,117 +51,7 @@
 										</v-text-field>
 									</v-flex>
 								</v-layout>
-								<!-- pagers list -->
-								<v-layout
-									v-for="(pager, index) in form.pagers"
-									:key="`pager-${index}`"
-								>
-									<!-- Pager Type -->
-									<v-flex xs3>
-										<v-select
-											:items="formData.pagertypes"
-											item-text="label"
-											item-value="value"
-											required
-											v-model="pager.type"
-											v-bind:label="$t('subscribers.new.pager.type.title')"
-											v-bind:hint="$t('subscribers.new.pager.type.help')"
-											persistent-hint
-										>
-										</v-select>
-									</v-flex>
-									<!-- RIC -->
-									<v-flex xs3>
-										<v-text-field
-											required
-											v-bind:rules="validationRules.pagerRic"
-											v-model="pager.ric"
-											v-bind:label="$t('subscribers.new.pager.ric.title')"
-											v-bind:hint="$t('subscribers.new.pager.ric.help')"
-											persistent-hint
-											type="numeric"
-										>
-										</v-text-field>
-									</v-flex>
-									<!-- Pager.function -->
-									<v-flex xs2>
-										<v-select
-											:items="formData.functions"
-											item-text="label"
-											item-value="value"
-											required
-											v-model="pager.function"
-											v-bind:label="$t('subscribers.new.pager.function.title')"
-											v-bind:hint="$t('subscribers.new.pager.function.help')"
-											persistent-hint
-										>
-										</v-select>
-									</v-flex>
-									<!-- Pager.name -->
-									<v-flex xs4>
-										<v-text-field
-											required
-											:counter="20"
-											v-bind:rules="validationRules.pagerName"
-											v-model="pager.name"
-											v-bind:label="$t('subscribers.new.pager.name.title')"
-											v-bind:hint="$t('subscribers.new.pager.name.help')"
-											persistent-hint
-											type="text"
-										>
-										</v-text-field>
-									</v-flex>
-									<!-- Enabled -->
-									<v-flex xs2>
-										<v-switch
-											v-model="pager.enabled"
-											:label="$t('subscribers.new.pager.enabled.title')"
-										>
-										</v-switch>
-									</v-flex>
-									<v-flex xs1>
-										<v-btn
-											flat
-											icon
-											color="red"
-											v-on:click="deletePager(index)"
-											v-bind:disabled="onlyOnePagerleft ? true : false"
-										>
-											<v-icon>delete</v-icon>
-										</v-btn>
-									</v-flex>
-								</v-layout>
-								<v-btn
-									block
-									color="green"
-									v-on:click="addPager()"
-								>
-									Add new pager entry
-								</v-btn>
-
-								<!-- Third Party Service Selection -->
-								<v-layout>
-									<v-flex>
-										<v-autocomplete
-											chips
-											small-chips
-											deletable-chips
-											multiple
-											hide-selected
-											prepend-icon="cloud_upload"
-											v-model="form.third_party_services"
-											:items="formData.third_party_serivces"
-											v-bind:label="$t('general.thirdpartyservices')"
-											v-bind:hint="$t('subscribers.new.thirdpartyservices.help')"
-											persistent-hint
-											:loading="isLoadingData.general"
-										>
-											<v-progress-linear color="blue" indeterminate></v-progress-linear>
-										</v-autocomplete>
-									</v-flex>
-								</v-layout>
-
-								<!-- Subscriber Groups -->
+								<!-- Transmitter Groups -->
 								<v-layout>
 									<v-flex>
 										<v-combobox
