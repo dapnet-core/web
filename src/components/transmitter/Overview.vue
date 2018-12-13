@@ -31,7 +31,7 @@
 								>
 										<v-icon>add</v-icon>
 								</v-btn>
-								<span>{{ $t('transmitter.overview.newtransmitter') }}</span>
+								<span>{{ $t('transmitters.overview.newtransmitter') }}</span>
 							</v-tooltip>
 						</v-fab-transition>
 					</v-card-title>
@@ -49,7 +49,43 @@
 						<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
 						<template slot="items" slot-scope="props">
 							<!-- ID column -->
-							<td>{{ props.item._id }}</td>
+							<td class="text-xs-right">
+								{{ props.item._id }}
+							</td>
+
+							<!-- Status column -->
+							<td class="text-xs-right">
+								<v-icon v-if="props.item.status.online" color="green">signal_wifi_4_bar</v-icon>
+								<v-icon v-else color ="red">signal_wifi_off</v-icon>
+							</td>
+
+							<!-- Node column -->
+							<td class="text-xs-center">
+								<div v-if="props.item.status.node">
+									<v-chip
+										color="grey"
+										text-color="white"
+										small
+									>
+										{{ props.item.status.node }}
+									</v-chip>
+								</div>
+								<div v-else>---</div>
+							</td>
+
+							<!-- Software column -->
+							<td class="text-xs-center">
+								<div v-if="props.item.status.software">
+									<v-chip
+										color="grey"
+										text-color="white"
+										small
+									>
+										{{ props.item.status.software.name }} - {{ props.item.status.software.version }}
+									</v-chip>
+								</div>
+								<div v-else>---</div>
+							</td>
 
 							<!-- Usage column -->
 							<td class="text-xs-center">
@@ -68,6 +104,7 @@
 									</v-chip>
 								</span>
 							</td>
+
 							<!-- Transmitter Groups column -->
 							<td class="text-xs-left">
 								<span v-for="(group, index) in props.item.groups" v-bind:key="`group-${index}`">
@@ -80,6 +117,29 @@
 									</v-chip>
 								</span>
 							</td>
+
+							<!-- Last-seen column -->
+							<td class="text-xs-center">
+								{{ props.item.status.last_seen_localized }}
+							</td>
+
+							<!-- Emergency Power column -->
+							<td class="text-xs-center">
+								<v-icon
+									v-if="props.item.emergency_power && props.item.emergency_power.available"
+									color="green"
+								>
+									battery_charging_full
+								</v-icon>
+								<v-icon v-else color ="red">settings_input_hdmi</v-icon>
+							</td>
+
+							<!-- Enabled column -->
+							<td class="text-xs-center">
+								<v-icon v-if="props.item.enabled" color="green">toggle_on</v-icon>
+								<v-icon v-else color ="red">toggle_off</v-icon>
+							</td>
+
 							<!-- Action Buttons -->
 							<td class="text-xs-center" v-if="displayActionsColumn">
 								<!-- Edit -->
@@ -143,8 +203,11 @@
 </template>
 
 <script>
+	import moment from 'moment';
+
 	export default {
 		created() {
+			moment.locale(this.$root.$i18n.locale);
 			this.loadData();
 		},
 		watch: {
@@ -191,6 +254,24 @@
 						value: '_id'
 					},
 					{
+						text: this.$i18n.t('transmitters.status.title'),
+						sortable: true,
+						align: 'center',
+						value: 'status.online'
+					},
+					{
+						text: this.$i18n.t('transmitters.status.node'),
+						sortable: true,
+						align: 'center',
+						value: 'status.node'
+					},
+					{
+						text: this.$i18n.t('transmitters.status.software'),
+						sortable: true,
+						align: 'center',
+						value: 'status.software'
+					},
+					{
 						text: this.$i18n.t('transmitters.usage.title'),
 						sortable: true,
 						align: 'center',
@@ -206,6 +287,21 @@
 						align: 'center',
 						value: 'groups',
 						sortable: true
+					},
+					{
+						text: this.$i18n.t('transmitters.status.lastseen'),
+						align: 'center',
+						value: 'status.lastseen'
+					},
+					{
+						text: this.$i18n.t('transmitters.emergency_power.title'),
+						align: 'center',
+						value: 'emergency_power.available'
+					},
+					{
+						text: this.$i18n.t('general.enabled'),
+						align: 'center',
+						value: 'enabled'
 					}
 				];
 				if (this.displayActionsColumn()) {
@@ -219,7 +315,22 @@
 				return answer;
 			}
 		},
+		mounted() {
+			this.$root.$on('LanguageChanged', () => {
+				this.rerender_localized();
+			})
+		},
 		methods: {
+			rerender_localized() {
+				this.transmitterrows.forEach(transmitter => {
+					// Render last seen as prosa text
+					if (transmitter.status.last_seen) {
+						transmitter.status.last_seen_localized = moment(transmitter.status.last_seen).fromNow();
+					} else {
+						transmitter.status.last_seen_localized = '---';
+					}
+				});
+			},
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('transmitter.update') === 'all') ||
 				(this.$store.getters.permission('transmitter.delete') === 'all'));
@@ -257,12 +368,18 @@
 								usageRendered.text = 'Personal';
 							}
 							transmitter.usage = usageRendered;
+
+							// Render last seen as prosa text
+							if (transmitter.status.last_seen) {
+								transmitter.status.last_seen_localized = moment(transmitter.status.last_seen).fromNow();
+							} else {
+								transmitter.status.last_seen_localized = '---';
+							}
 						});
 
 						this.transmitterrows = response.data.rows;
 					}
 					this.isLoadingData = false;
-					console.log(this.transmitterrows);
 				}, response => {
 					// error --> show error message
 					this.isLoadingData = false;

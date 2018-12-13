@@ -1,8 +1,13 @@
 {
     "navigation": {
-    "home": "Heimat",
+    "home": "Startseite",
     "calls": "Rufe",
-    "subscribers": "Teilnehmer",
+      "subscribers": {
+        "title": "Teilnehmer",
+        "all": "Alle Teilnehmer",
+        "my": "Meine Teilnehmer",
+        "onlynames": "Namen aller Teilnehmer"
+      },
     "rubrics": {
       "title": "Rubriken",
       "all": "Alle Rubriken",
@@ -12,6 +17,8 @@
     "transmitters": {
       "title": "Sender",
       "all": "Alle Sender",
+      "my": "Meine Sender",
+      "onlynames": " Namne aller Sender",
       "map": "Karte",
       "groups": "Sendergruppen"
     },
@@ -104,7 +111,24 @@
       }
     }
   },
-  "transmitter": {
+  "transmitters": {
+    "usage": {
+      "title": "Nutzung",
+      "widerange": "Weitbereich",
+      "personal": "Persönlich"
+    },
+    "status": {
+      "title": "Status",
+      "online": "Online",
+      "offline": "Offline",
+      "software": "Software",
+      "IPaddress": "Adresse",
+      "node": "Knoten",
+      "lastseen": "Zuletzt gesehen"
+    },
+    "emergency_power": {
+      "title": "Notfall-Strom"
+    },
     "overview": {
       "table": {
         "title": "Alle Sender",

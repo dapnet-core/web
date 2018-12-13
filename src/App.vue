@@ -17,7 +17,11 @@
 		</v-navigation-drawer>
 		<v-toolbar color="indigo" dark fixed app>
 			<v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-			<v-toolbar-title>DAPNET</v-toolbar-title>
+			<v-toolbar-title>
+				<router-link to="/">
+					<img src="./assets/img/dapnet-logo.png" alt="DAPNET-Logo" height="60">
+				</router-link>
+			</v-toolbar-title>
 			<v-spacer></v-spacer>
 
 			<v-toolbar-items>
@@ -44,22 +48,6 @@
 
 				<v-spacer></v-spacer>
 
-				<!-- Replaced by v-menu
-				<v-select
-						:items="languages"
-						v-model="selectedLanguage"
-						@change="changeLanguage"
-						placeholder="Language Selector"
-						dense
-				>
-					<template slot="selection" slot-scope="data">
-						<span :class="['flag-icon', `flag-icon-${data.item.icon.toLowerCase()}`]"></span> {{ data.item.text }}
-					</template>
-					<template slot="item" slot-scope="data">
-						<span :class="['flag-icon', `flag-icon-${data.item.icon.toLowerCase()}`]"></span> {{ data.item.text }}
-					</template>
-				</v-select>
--->
 				<v-btn
 					v-if="!this.$store.getters.isUserLoggedIn"
 					flat
@@ -123,6 +111,7 @@
 <script>
 	import 'flag-icon-css/css/flag-icon.min.css';
 	import Sidebar from './components/partials/Sidebar';
+	import moment from 'moment';
 
 	export default {
 		name: 'app',
@@ -206,6 +195,10 @@
 				this.languages[5].text = this.$i18n.t('footer.language.it');
 				this.languages[6].text = this.$i18n.t('footer.language.pl');
 				this.languages[7].text = this.$i18n.t('footer.language.se');
+
+				moment.locale(lang);
+				// Trigger Change of Language
+				this.$root.$emit('LanguageChanged');
 			},
 			getLanguage() {
 				return this.$root.$i18n.locale;

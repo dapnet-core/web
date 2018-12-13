@@ -11,6 +11,7 @@
 				</button>
 			</div>
 			<div class="navbar-collapse collapse" id="navbar-main">
+				<!--
 				<ul v-if="this.$store.getters.isUserLoggedIn" class="nav navbar-nav">
 					<li class="divider-vertical"></li>
 					<li><router-link to="/calls">{{ $t('navigation.calls') }}</router-link></li>
@@ -49,10 +50,14 @@
 					</li>
 					<li class="divider-vertical"></li>
 				</ul>
-
+-->
 				<ul class="nav navbar-nav navbar-right">
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="flag-icon" :class="'flag-icon-' + this.$store.getters.languageFlag"></span> {{ $t('footer.language.' + this.$store.getters.language) }} <span class="caret"></span></a>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+							<span class="flag-icon" :class="'flag-icon-' + this.$store.getters.languageFlag"></span>
+							{{ $t('footer.language.' + this.$store.getters.language) }}
+							<span class="caret"></span>
+						</a>
 						<ul class="dropdown-menu" role="menu">
 							<li class="clickable"><a v-on:click="changeLanguage('nl')"><span class="flag-icon flag-icon-nl"></span> {{ $t('footer.language.nl') }}</a></li>
 							<li class="clickable"><a v-on:click="changeLanguage('en')"><span class="flag-icon flag-icon-gb"></span> {{ $t('footer.language.en') }}</a></li>
@@ -66,7 +71,10 @@
 						</ul>
 					</li>
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ this.$store.getters.username }} <span class="caret"></span></a>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+							{{ this.$store.getters.username }}
+							<span class="caret"></span>
+						</a>
 						<ul class="dropdown-menu" role="menu">
 							<li v-if="this.$store.getters.isUserLoggedIn"><router-link :to="{ name: 'Edit User', params: { id: this.$store.getters.username }}">{{ $t('navigation.settings') }}</router-link></li>
 							<div v-if="this.$store.getters.isUserLoggedIn" class="divider"></div>
@@ -86,6 +94,7 @@
 	export default {
 		methods: {
 			changeLanguage(lang) {
+				console.log('adsadada');
 				this.$root.$i18n.locale = lang;
 				this.$store.commit('changeLanguage', {
 					language: lang

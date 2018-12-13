@@ -17,7 +17,7 @@
         "transmitters": {
             "title": "Transmitters",
             "all": "All Transmitters",
-            "my": "My Subscribers",
+            "my": "My Transmitters",
             "onlynames": " All Subscriber Names",
             "map": "Map",
             "groups": "Transmitter Groups"
@@ -109,7 +109,19 @@
           "widerange": "Widerange",
           "personal": "Personal"
         },
-        "overview": {
+        "status": {
+          "title": "Status",
+          "online": "Online",
+          "offline": "Offline",
+          "software": "Software",
+          "IPaddress": "Address",
+          "node": "Node",
+          "lastseen": "Last seen"
+         },
+         "emergency_power": {
+           "title": "Emerg. Power"
+         },
+         "overview": {
             "newtransmitter": "New Transmitter",
             "table": {
                 "title": "All Transmitters",

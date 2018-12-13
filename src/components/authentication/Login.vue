@@ -123,6 +123,9 @@
 								console.log(e);
 						});
 					}
+					// Trigger Reload of sidebar Icons
+					this.$root.$emit('ReloadSidebarIcons');
+
 					this.$router.push('/');
 				}, response => {
 					// error --> show error message
