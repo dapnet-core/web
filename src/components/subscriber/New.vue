@@ -206,7 +206,7 @@
 											v-bind:label="$t('general.owners')"
 											v-bind:hint="$t('subscribers.new.owner.help')"
 											persistent-hint
-											:loading="isLoadingData.subscribers"
+											:loading="isLoadingData.owners"
 											v-bind:rules="validationRules.owners"
 										>
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
@@ -245,7 +245,7 @@
 							</v-btn>
 							<v-btn
 								color="red"
-								exact to="/"
+								@click="abortButton"
 							>
 								{{ $t('general.abort') }}
 							</v-btn>
@@ -473,11 +473,15 @@
 					}
 					console.log('Data2Send von subscriber:');
 					console.log(this.form);
-					this.$helpers.sendData(this, 'subscribers', this.form, '/subscribers');
+					this.$helpers.sendData(this, 'subscribers', this.form, '');
 
 					// Trigger Reload of sidebar Icons
 					this.$root.$emit('ReloadSidebarIcons');
+					this.$router.go(-1);
 				}
+			},
+			abortButton(event) {
+				this.$router.go(-1);
 			}
 		}
 	};
