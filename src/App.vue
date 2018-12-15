@@ -19,7 +19,7 @@
 			<v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
 			<v-toolbar-title>
 				<router-link to="/">
-					<img src="./assets/img/dapnet-logo.png" alt="DAPNET-Logo" height="60">
+					<img v-if="$vuetify.breakpoint.smAndUp" src="./assets/img/dapnet-logo.png" alt="DAPNET-Logo" height="50">
 				</router-link>
 			</v-toolbar-title>
 			<v-spacer></v-spacer>
@@ -28,8 +28,7 @@
 				<v-menu offset-y>
 					<v-btn
 						slot="activator"
-						color="primary"
-						dark
+						flat
 					>
 						<span :class="['flag-icon', `flag-icon-${this.$store.getters.languageFlag}`]"></span> {{ this.$store.getters.language }}
 					</v-btn>
@@ -61,8 +60,7 @@
 				>
 					<v-btn
 						slot="activator"
-						color="primary"
-						dark
+						flat
 					>
 						<v-avatar
 							v-if="this.$store.getters.avatar"
