@@ -8,11 +8,6 @@
                 <h1 class="display-2 font-weight-bold mb-3">
                     {{ $t('navigation.home') }}
                 </h1>
-				<v-btn
-					@click="sendEvent"
-				>
-				Test send event
-				</v-btn>
             </v-flex>
         </v-layout>
 
