@@ -24,7 +24,6 @@
 								</v-list-tile-sub-title>
 							</v-list-tile-content>
 							<v-list-tile-action>
-
 								<!-- Edit -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
@@ -33,7 +32,7 @@
 										   small
 										   fab
 										   color="blue"
-										   v-on:click="editElement(props.item)"
+										   v-on:click="editElement(mysubscriber)"
 										   slot="activator"
 									>
 										<v-icon>edit</v-icon>
@@ -110,6 +109,9 @@
 					console.log(e);
 				});
 				console.log(this.mysubscribers);
+			},
+			editElement(element) {
+				this.$router.push({ name: 'Edit Subscriber', params: { id: element._id } });
 			}
 		}
 	};
