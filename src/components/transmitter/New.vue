@@ -51,28 +51,61 @@
 										</v-text-field>
 									</v-flex>
 								</v-layout>
+								<v-layout wrap>
+									<!-- Usage Select -->
+									<v-flex xs12 sm6 md4>
+										<v-select
+											:items="usagesSelect"
+											item-text="label"
+											item-value="value"
+											required
+											v-model="form.usage"
+											v-bind:label="$t('transmitters.power')"
+											v-bind:hint="$t('transmitters.new.power.help')"
+											persistent-hint
+											prepend-icon="settings_input_antenna"
+										>
+										</v-select>
+									</v-flex>
+									<!-- Power output -->
+									<v-flex xs12 sm6 md4>
+										<v-select
+											:items="usagesSelect"
+											item-text="label"
+											item-value="value"
+											required
+											v-model="form.usage"
+											v-bind:label="$t('transmitters.usage.title')"
+											v-bind:hint="$t('transmitters.new.usage.help')"
+											persistent-hint
+											prepend-icon="settings_input_antenna"
+										>
+										</v-select>
+									</v-flex>
+
+								</v-layout>
 								<!-- Transmitter Groups -->
 								<v-layout>
 									<v-flex>
 										<v-combobox
 											v-model="form.groups"
-											:items="formData.subscriber_groups"
-											:search-input.sync="subscriberGroupSearch"
+											:items="formData.transmitter_groups"
+											:search-input.sync="transmitterGroupSearch"
 											hide-selected
 											prepend-icon="people"
-											v-bind:label="$t('general.subscriber_groups')"
-											v-bind:hint="$t('subscribers.new.subscriber_groups.help')"
+											v-bind:label="$t('general.transmitter_groups')"
+											v-bind:hint="$t('transmitters.new.transmitter_groups.help')"
 											persistent-hint
 											multiple
 											small-chips
 											deletable-chips
-											:loading="isLoadingData.subscriber_groups"
+											:loading="isLoadingData.transmitter_groups"
 										>
 											<template slot="no-data">
 												<v-list-tile>
 													<v-list-tile-content>
 														<v-list-tile-title>
-															No results matching "<strong>{{ subscriberGroupSearch }}</strong>". Press <kbd>enter</kbd> to create a new one
+															No results matching "<strong>{{ transmitterGroupSearch }}</strong>". Press <kbd>enter</kbd> to create a new one
 														</v-list-tile-title>
 													</v-list-tile-content>
 												</v-list-tile>
@@ -94,9 +127,9 @@
 											v-model="form.owners"
 											:items="formData.users"
 											v-bind:label="$t('general.owners')"
-											v-bind:hint="$t('subscribers.new.owner.help')"
+											v-bind:hint="$t('transmitters.new.owner.help')"
 											persistent-hint
-											:loading="isLoadingData.subscribers"
+											:loading="isLoadingData.users"
 											v-bind:rules="validationRules.owners"
 										>
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
@@ -135,7 +168,7 @@
 							</v-btn>
 							<v-btn
 								color="red"
-								exact to="/"
+								@click="abortButton"
 							>
 								{{ $t('general.abort') }}
 							</v-btn>
@@ -160,66 +193,59 @@
 				isLoadingData: {
 					general: true,
 					users: true,
-					subscribers: true,
-					subscriber_groups: true,
+					transmitters: true,
+					transmitter_groups: true,
 				},
 				isFormValid: true,
 				form: {
 					_id: '',
 					_rev: '',
-					description: '',
-					pagers: [
-						{
-							ric: '',
-							function: '',
-							name: '',
-							type: '',
-							enabled: true
-						}
-					],
 					third_party_services: [],
 					owners: [],
 					groups: []
 				},
+
+
 				formData: {
 					third_party_serivces: [
 						'APRS',
 						'Brandmeister'
 					],
 					users: [],
-					subscribers: [],
-					subscriber_groups: [],
-					functions: [
-						{ value: 0, label: '0/A' },
-						{ value: 1, label: '1/B' },
-						{ value: 2, label: '2/C' },
-						{ value: 3, label: '3/D' }
-					],
-					pagertypes: [
-						{ value: 'alphapoc', label: 'AlphaPoc' },
-						{ value: 'skyper', label: 'Skyper' },
-						{ value: 'quix', label: 'Quix' }
-					]
+					transmitters: [],
+					transmitter_groups: []
 				},
 				created_on: '',
 				created_by: '',
 				changed_on: '',
 				changed_by: '',
 				isEditMode: (!!(this.$route.params.id)),
-				subscriberGroupSearch: null
+				transmitterGroupSearch: null
 			};
 		},
 		computed: {
+			usagesSelect() {
+				return [
+					{
+						value: 'personal',
+						label: this.$t('transmitters.usage.personal')
+					},
+					{
+						value: 'widerange',
+						label: this.$t('transmitters.usage.widerange')
+					},
+				]
+			},
 			validationRules() {
 				return {
 					'_id': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.subscriber') }),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.transmitter') }),
 						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
-							fieldname: this.$t('general.subscriber'),
+							fieldname: this.$t('general.transmitter'),
 							count: '20'
 						}),
 						v => (v && v.length >= 3) || this.$t('formvalidation.underlength', {
-							fieldname: this.$t('general.subscriber'),
+							fieldname: this.$t('general.transmitter'),
 							count: '3'
 						}),
 						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
@@ -257,9 +283,6 @@
 						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('formvalidation.minoneowner') })
 					]
 				};
-			},
-			onlyOnePagerleft() {
-				return (this.form.pagers.length <= 1);
 			}
 		},
 		methods: {
@@ -272,27 +295,27 @@
 						this.formData.users = response.data;
 						this.isLoadingData.users = false;
 					}).catch(e => {
-					console.log('Error getting user names in subscriber/new.vue');
+					console.log('Error getting user names in transmitter/new.vue');
 				});
 
-				// Load available subscriber names
-				this.isLoadingData.subscribers = true;
-				this.$axios.get('subscribers/_names')
+				// Load available transmitters names
+				this.isLoadingData.transmitters = true;
+				this.$axios.get('transmitters/_names')
 					.then(response => {
-						this.formData.subscribers = response.data;
-						this.isLoadingData.subscribers = false;
+						this.formData.transmitters = response.data;
+						this.isLoadingData.transmitters = false;
 					}).catch(e => {
-						console.log('Error getting subscriber names in subscriber/new.vue');
+						console.log('Error getting transmitter names in transmitter/new.vue');
 				});
 
-				// Load available subscriber groups
-				this.isLoadingData.subscriber_groups = true;
-				this.$axios.get('subscribers/_groups')
+				// Load available transmitters groups
+				this.isLoadingData.transmitter_groups = true;
+				this.$axios.get('transmitter/_groups')
 					.then(response => {
-						this.formData.subscriber_groups = response.data;
-						this.isLoadingData.subscriber_groups = false;
+						this.formData.transmitter_groups = response.data;
+						this.isLoadingData.transmitter_groups = false;
 					}).catch(e => {
-						console.log('Error getting subscriber groups in subscriber/new.vue');
+						console.log('Error getting transmitter groups in transmitter/new.vue');
 				});
 
 				// load data of given id
@@ -300,10 +323,12 @@
 				if (this.$route.params.id) {
 					console.log('params:' + this.$route.params.id);
 					this.isEditMode = true;
-					this.$axios.get('subscribers/' + this.$route.params.id)
+					this.$axios.get('transmitters/' + this.$route.params.id)
 						.then(response => {
 							this.form._id = response.data._id;
 							this.form._rev = response.data._rev;
+
+
 							this.form.description = response.data.description;
 							this.form.pagers = response.data.pagers;
 							this.form.third_party_services = response.data.third_party_serivces;
@@ -331,7 +356,7 @@
 								this.changed_by = '';
 							}
 						}).catch(e => {
-							console.log('Error getting subscribers\'s individual details with axios or any exception in the get handler.');
+							console.log('Error getting transmitter\'s individual details with axios or any exception in the get handler.');
 							this.$dialogs.passwordError(this, e);
 							// this.$router.push('/users');
 					});
@@ -339,19 +364,6 @@
 					this.isEditMode = false;
 				}
 				this.isLoadingData.general = false;
-			},
-			addPager() {
-				this.form.pagers.push({
-					ric: '',
-					function: '',
-					name: '',
-					type: '',
-					enabled: true
-				});
-				console.log(this.form.pagers);
-			},
-			deletePager(index) {
-				this.form.pagers.splice(index, 1);
 			},
 			submitForm(event) {
 				event.preventDefault();
@@ -361,13 +373,17 @@
 					if (!this.isEditMode) {
 						delete this.form._rev;
 					}
-					console.log('Data2Send von subscriber:');
+					console.log('Data2Send von transmitter:');
 					console.log(this.form);
-					this.$helpers.sendData(this, 'subscribers', this.form, '/subscribers');
+					this.$helpers.sendData(this, 'transmitters', this.form, '');
 
 					// Trigger Reload of sidebar Icons
 					this.$root.$emit('ReloadSidebarIcons');
+					this.$router.go(-1);
 				}
+			},
+			abortButton(event) {
+				this.$router.go(-1);
 			}
 		}
 	};

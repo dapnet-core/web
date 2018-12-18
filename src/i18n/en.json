@@ -121,6 +121,7 @@
          "emergency_power": {
            "title": "Emerg. Power"
          },
+         "power": "Output Power",
          "overview": {
             "newtransmitter": "New Transmitter",
             "table": {
@@ -158,10 +159,13 @@
                 "title": "Auth-Key",
                 "help": "Enter an authentication key for this transmitter. Set the exact same on the transmitter itself."
             },
+            "transmitter_groups": {
+              "help": "Select one or more existing transmitter groups or create a new one by typing."
+            },
+            "owner": {
+              "help": "An owner of a transmitter association can edit its parameters."
+            },
             "usage": {
-                "title": "Usage",
-                "personal": "Personal",
-                "widerange": "Widerange",
                 "help": "For classification of the transmitters, there are two categories: Personal (Transmitters with low output power like RasPager) and Wide Range (Higher output power and elevated location site)."
             },
             "antennatype": {
@@ -174,27 +178,21 @@
             "antennadirection": {
                 "help": "<b>Antenna main beam direction</b>: Enter the antenna main beam direction in degrees according to \"True North\" (in German \"rechtweisend Nord\")."
             },
-            "other": {
-                "title": "Other",
-                "power": {
-                    "help": "<b>Transmitter Power</b>: Enter the transmitter output power in Watts including your cable losses."
-                },
-                "antennalevel": {
-                    "help": "<b>Antenna elevation over ground</b>: Enter the antenna elevation over ground; NOT over NN (!) in meters."
-                },
-                "antennagain": {
-                    "help": "<b>Antenna gain</b>: Enter the antenna gain in the main lobe direction for directional antennas and the average gain for omnidirectional antennas in dBi (dBi: Gain over isotropic radiator)."
-                },
-                "txidentric": {
-                    "help": "<b>Transmitter identification RIC</b>: Enter a RIC (default value is 8) which will be used to generate an artificial paging message containing the amateur radio callsign as given in this form."
-                }
+            "power": {
+                "help": "Enter the transmitter output power in Watts including your cable losses."
             },
+            "antennalevel": {
+                "help": "<b>Antenna elevation over ground</b>: Enter the antenna elevation over ground; NOT over NN (!) in meters."
+            },
+            "antennagain": {
+                "help": "<b>Antenna gain</b>: Enter the antenna gain in the main lobe direction for directional antennas and the average gain for omnidirectional antennas in dBi (dBi: Gain over isotropic radiator)."
+            },
+            "txidentric": {
+                "help": "<b>Transmitter identification RIC</b>: Enter a RIC (default value is 8) which will be used to generate an artificial paging message containing the amateur radio callsign as given in this form."
+            }
             "timeslots": {
                 "title": "Timeslots",
                 "help": "As all transmitters use the same frequency a time division multiplex access scheme is used. There are 16 timeslots available. Assign the slots of this transmitter according to you surrounding transmitters in your neighborhood without overlapping timeslots that are assigned to more than one transmitter. You can use the transmitter map to check already assigned timeslots of adjacent transmitters. In case that you cannot fulfill your requirements, contact the adjacent transmitter owners and try to get an agreement. Normally four 4 or less timeslots per transmitter are more than enough."
-            },
-            "owner": {
-                "help": "If you are an owner, you can change the parameters for this transmitter."
             },
             "table": {
                 "description": "This table shows the registered paging transmitters, their online status and additional information. Personal transmitters have low output power and a very small coverage. Wide range transmitters are usually installed at elevated locations leading to a wide coverage area."

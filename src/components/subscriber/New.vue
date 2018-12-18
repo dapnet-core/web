@@ -397,7 +397,7 @@
 
 				// Load available subscriber groups
 				this.isLoadingData.subscriber_groups = true;
-				this.$axios.get('subscribers/_groups')
+				this.$axios.get('subscriber/_groups')
 					.then(response => {
 						this.formData.subscriber_groups = response.data;
 						this.isLoadingData.subscriber_groups = false;
