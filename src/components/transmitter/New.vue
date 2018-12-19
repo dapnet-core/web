@@ -67,7 +67,7 @@
 										>
 										</v-select>
 									</v-flex>
-									<!-- Power output -->
+									<!-- Power at Antenna feeding point -->
 									<v-flex xs12 sm6 md4>
 										<v-select
 											:items="usagesSelect"
@@ -198,19 +198,29 @@
 				},
 				isFormValid: true,
 				form: {
-					_id: '',
-					_rev: '',
-					third_party_services: [],
-					owners: [],
-					groups: []
+					'_id': '',
+					'_rev': '',
+					'usage': '',
+					'timeslots': [],
+					'power': 0,
+					'owners': [],
+					'groups': [],
+					'emergency_power': {
+						'available': false,
+						'infinite': false,
+						'duration': 0
+					},
+					'coordinates': [],
+					'created_on': '',
+					'created_by': 'dh3wr',
+					'changed_on': '',
+					'changed_by': 'dh3wr',
+					'aprs_broadcast': false,
+					'enabled': false,
+					'auth_key': '',
+					'antenna': {}
 				},
-
-
 				formData: {
-					third_party_serivces: [
-						'APRS',
-						'Brandmeister'
-					],
 					users: [],
 					transmitters: [],
 					transmitter_groups: []
@@ -259,17 +269,6 @@
 						v => (v && v.length >= 2) || this.$t('formvalidation.underlength', {
 							fieldname: this.$t('subscribers.new.description.title'),
 							count: '2'
-						})
-					],
-					'pagerRic': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('subscribers.new.pager.ric.title') }),
-						v => (v && /^[0-9]+$/i.test(v)) || this.$t('formvalidation.onlyInteger', {
-							fieldname: this.$t('subscribers.new.pager.ric.title')
-						}),
-						v => (v && v > 0 && v <= 2097151) || this.$t('formvalidation.ricOutOfRange', {
-							fieldname: this.$t('subscribers.new.pager.ric.title'),
-							min: '0',
-							max: '2097151'
 						})
 					],
 					'pagerName': [
@@ -327,13 +326,35 @@
 						.then(response => {
 							this.form._id = response.data._id;
 							this.form._rev = response.data._rev;
-
-
-							this.form.description = response.data.description;
-							this.form.pagers = response.data.pagers;
-							this.form.third_party_services = response.data.third_party_serivces;
+							this.form.usage = response.data.usage;
+							this.form.timeslots = response.data.timeslots;
+							this.form.power = response.data.power;
 							this.form.owners = response.data.owners;
 							this.form.groups = response.data.groups;
+
+							// Set default values, to be overwritten eventually now:
+							this.form.emergency_power.available = false;
+							this.form.emergency_power.infinite = false;
+							this.form.emergency_power.duration = 0;
+
+							if (response.data.emergency_power && response.data.emergency_power.available) {
+								this.form.emergency_power.available.response.data.emergency_power.available;
+								if (response.data.emergency_power.infinite) {
+									this.form.emergency_power.infinite = response.data.emergency_power.infinite;
+								} else {
+									this.form.emergency_power.infinite = false;
+								}
+								if (response.data.emergency_power.duration && (!response.data.emergency_power.infinite)) {
+									this.form.emergency_power.duration = response.data.emergency_power.duration;
+								}
+							}
+
+							if (response.data.coordinates &&
+								Array.isArray(response.data.coordinates) &&
+								response.data.coordinates.length === 2) {
+								this.form.coordinates = response.data.coordinates;
+							}
+
 							// Format timestamp into readable version
 							if (response.data.created_on) {
 								this.created_on = moment(response.data.created_on).format('DD.MM.YYYY HH:mm:ss');
@@ -354,6 +375,19 @@
 								this.changed_by = response.data.changed_by;
 							} else {
 								this.changed_by = '';
+							}
+
+							if (response.data.aprs_broadcast) {
+								this.form.aprs_broadcast = response.data.aprs_broadcast;
+							}
+							if (response.data.enabled) {
+								this.form.enabled = response.data.enabled;
+							}
+							if (response.data.auth_key) {
+								this.form.auth_key = response.data.auth_key;
+							}
+							if (response.data.antenna) {
+								this.form.antenna = response.data.antenna;
 							}
 						}).catch(e => {
 							console.log('Error getting transmitter\'s individual details with axios or any exception in the get handler.');

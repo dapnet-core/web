@@ -189,7 +189,7 @@
             },
             "txidentric": {
                 "help": "<b>Transmitter identification RIC</b>: Enter a RIC (default value is 8) which will be used to generate an artificial paging message containing the amateur radio callsign as given in this form."
-            }
+            },
             "timeslots": {
                 "title": "Timeslots",
                 "help": "As all transmitters use the same frequency a time division multiplex access scheme is used. There are 16 timeslots available. Assign the slots of this transmitter according to you surrounding transmitters in your neighborhood without overlapping timeslots that are assigned to more than one transmitter. You can use the transmitter map to check already assigned timeslots of adjacent transmitters. In case that you cannot fulfill your requirements, contact the adjacent transmitter owners and try to get an agreement. Normally four 4 or less timeslots per transmitter are more than enough."
