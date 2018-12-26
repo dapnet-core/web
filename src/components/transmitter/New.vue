@@ -60,21 +60,6 @@
 											item-value="value"
 											required
 											v-model="form.usage"
-											v-bind:label="$t('transmitters.power')"
-											v-bind:hint="$t('transmitters.new.power.help')"
-											persistent-hint
-											prepend-icon="settings_input_antenna"
-										>
-										</v-select>
-									</v-flex>
-									<!-- Power at Antenna feeding point -->
-									<v-flex xs12 sm6 md4>
-										<v-select
-											:items="usagesSelect"
-											item-text="label"
-											item-value="value"
-											required
-											v-model="form.usage"
 											v-bind:label="$t('transmitters.usage.title')"
 											v-bind:hint="$t('transmitters.new.usage.help')"
 											persistent-hint
@@ -82,8 +67,71 @@
 										>
 										</v-select>
 									</v-flex>
-
+									<!-- Power at Antenna feeding point -->
+									<v-flex xs12 sm6 md4>
+										<v-text-field
+											required
+											v-bind:value="form.power"
+											v-bind:label="$t('transmitters.power')"
+											v-bind:hint="$t('transmitters.new.power.help')"
+											persistent-hint
+											prepend-icon="waves"
+											type="number"
+										>
+										</v-text-field>
+									</v-flex>
 								</v-layout>
+								<!-- APRS Broadcast and Enabled-->
+								<v-layout wrap>
+									<!-- APRS Broadcast -->
+									<v-flex xs12 sm6 md4>
+										<v-switch
+											v-model="form.aprs_broadcast"
+											v-bind:label="$t('transmitters.new.aprs_broadcast.title')"
+											v-bind:hint="$t('transmitters.new.aprs_broadcast.help')"
+											persistent-hint
+										>
+										</v-switch>
+									</v-flex>
+									<!-- Enabled -->
+									<v-flex xs12 sm6 md4>
+										<v-switch
+											v-model="form.enabled"
+											v-bind:label="$t('general.enabled')"
+										>
+										</v-switch>
+									</v-flex>
+								</v-layout>
+								<!-- Emergency power-->
+								<v-card
+								>
+									<v-card-title>{{ this.$t('transmitters.new.emergency.title') }}</v-card-title>
+									<v-card-text>
+										<v-layout wrap>
+											<!-- Emergency Power available -->
+											<v-flex xs12 sm6 md4>
+												<v-switch
+													v-model="form.emergency_power.available"
+													v-bind:label="$t('transmitters.new.emergency.available.title')"
+													v-bind:hint="$t('transmitters.new.emergency.available.help')"
+													persistent-hint
+												>
+												</v-switch>
+											</v-flex>
+											<!-- Emergency Power infinite? -->
+											<v-flex xs12 sm6 md4>
+												<v-switch
+													v-bind:disabled="!form.emergency_power.available"
+													v-model="form.emergency_power.infinite"
+													v-bind:label="$t('transmitters.new.emergency.infinite.title')"
+													v-bind:hint="$t('transmitters.new.emergency.infinite.help')"
+													persistent-hint
+												>
+												</v-switch>
+											</v-flex>
+										</v-layout>
+									</v-card-text>
+								</v-card>
 								<!-- Transmitter Groups -->
 								<v-layout>
 									<v-flex>
@@ -249,27 +297,28 @@
 			validationRules() {
 				return {
 					'_id': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.transmitter') }),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.callsign') }),
 						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
-							fieldname: this.$t('general.transmitter'),
+							fieldname: this.$t('general.callsign'),
 							count: '20'
 						}),
 						v => (v && v.length >= 3) || this.$t('formvalidation.underlength', {
-							fieldname: this.$t('general.transmitter'),
+							fieldname: this.$t('general.callsign'),
 							count: '3'
 						}),
 						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
 					],
-					'description': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('subscribers.new.description.title') }),
+					'authkey': [
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('transmitters.new.authkey.title') }),
 						v => (v && v.length <= 30) || this.$t('formvalidation.overlength', {
-							fieldname: this.$t('subscribers.new.description.title'),
+							fieldname: this.$t('transmitters.new.authkey.title'),
 							count: '30'
 						}),
-						v => (v && v.length >= 2) || this.$t('formvalidation.underlength', {
-							fieldname: this.$t('subscribers.new.description.title'),
-							count: '2'
-						})
+						v => (v && v.length >= 4) || this.$t('formvalidation.underlength', {
+							fieldname: this.$t('transmitters.new.authkey.title'),
+							count: '4'
+						}),
+						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
 					],
 					'pagerName': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('subscribers.new.pager.name.title') }),
@@ -309,7 +358,7 @@
 
 				// Load available transmitters groups
 				this.isLoadingData.transmitter_groups = true;
-				this.$axios.get('transmitter/_groups')
+				this.$axios.get('transmitters/_groups')
 					.then(response => {
 						this.formData.transmitter_groups = response.data;
 						this.isLoadingData.transmitter_groups = false;

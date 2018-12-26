@@ -168,6 +168,25 @@
             "usage": {
                 "help": "For classification of the transmitters, there are two categories: Personal (Transmitters with low output power like RasPager) and Wide Range (Higher output power and elevated location site)."
             },
+            "aprs_broadcast": {
+                "title": "APRS Beacon Broadcast?",
+                "help": "Selectes weather the position of this transmitter is published by the DAPNET System on APRS."
+            },
+            "emergency": {
+                "title": "Off-grid emerency power supply",
+                "available": {
+                    "title": "Available?",
+                    "help": "Is off-grid power supply for this transmitter available?"
+                },
+                "infinite":{
+                    "title": "Quasi Infinite?",
+                    "help": "Is the off-grid power for an quasi infinite periode of time available (e.g. photovoltaic or DFMG tower petrol generator)?"
+                },
+                "duration":{
+                    "title": "Duration",
+                    "help": "Enter the duration time of off-grid power in hours."
+                }
+            },
             "antennatype": {
                 "title": "Antenna Type",
                 "omni": "Omni",
@@ -344,6 +363,7 @@
         "onlyInteger": "Only integer numbers allowed as {fieldname}"
     },
     "general": {
+        "callsign": "Callsign",
         "transmitters": "Transmitters",
         "transmitter_groups": "Transmitter Groups",
         "subscribers": "Subscribers",
