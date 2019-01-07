@@ -15,12 +15,27 @@ import store from './store';
 import VueClipboard from 'vue-clipboard2';
 import globalMethods from './global';
 import swal from 'sweetalert2';
+import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 Vue.use(globalMethods);
 
 Vue.use(VueAxios, axios);
 
 Vue.use(VueClipboard);
+
+// Leaflet
+Vue.component('l-map', LMap);
+Vue.component('l-tile-layer', LTileLayer);
+Vue.component('l-marker', LMarker);
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+	iconUrl: require('leaflet/dist/images/marker-icon.png'),
+	shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+});
 
 // Vue Resource
 Vue.config.productionTip = false;

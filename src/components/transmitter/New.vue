@@ -31,7 +31,6 @@
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
 										</v-text-field>
 									</v-flex>
-
 									<!-- Auth Key-->
 									<v-flex xs12 sm6 md4>
 										<v-text-field
@@ -51,9 +50,88 @@
 										</v-text-field>
 									</v-flex>
 								</v-layout>
+								<!--Location-->
+								<v-layout wrap>
+									<v-card>
+										<v-card-title>
+											<v-icon>my_location</v-icon>
+											{{ this.$t('general.latlong.title') }}
+										</v-card-title>
+										<v-card-text>
+											<v-layout wrap>
+												<v-flex>
+													<v-select xs3 sm1 md1
+															  :items="northsouthSelect"
+															  item-text="label"
+															  item-value="value"
+															  required
+															  v-model="form.latlong.northsouth"
+															  @input="updateLocationFromUserInput"
+													>
+													</v-select>
+												</v-flex>
+												<v-flex xs9 sm2 md2>
+													<v-text-field
+														required
+														v-bind:rules="validationRules.latitude"
+														v-model="form.latlong.absolute.latitude"
+														v-bind:label="$t('general.latlong.latitude')"
+														type="number"
+														@input="updateLocationFromUserInput"
+														suffix="°"
+													>
+													</v-text-field>
+												</v-flex>
+												<v-flex>
+													<v-select xs3 sm1 md1
+															  :items="westeastSelect"
+															  item-text="label"
+															  item-value="value"
+															  required
+															  v-model="form.latlong.westeast"
+															  @input="updateLocationFromUserInput"
+													>
+													</v-select>
+												</v-flex>
+												<v-flex xs3 sm md2>
+													<v-text-field
+														required
+														v-bind:rules="validationRules.longitude"
+														v-model="form.latlong.absolute.longitude"
+														v-bind:label="$t('general.latlong.longitude')"
+														type="number"
+														@input="updateLocationFromUserInput"
+														suffix="°"
+													>
+													</v-text-field>
+												</v-flex>
+											</v-layout>
+										</v-card-text>
+										<!--OSM Map-->
+										<v-card-media>
+											<l-map
+												:zoom="map.zoom"
+												:center="form.coordinates"
+												@click="mapClicked"
+												style="height: 30em"
+											>
+												<l-tile-layer
+													:url="map.url"
+													:attribution="map.attribution"
+												>
+												</l-tile-layer>
+												<l-marker
+													:lat-lng="map.marker"
+												>
+												</l-marker>
+											</l-map>
+										</v-card-media>
+									</v-card>
+								</v-layout>
+								<!--Usage and Power-->
 								<v-layout wrap>
 									<!-- Usage Select -->
-									<v-flex xs12 sm6 md4>
+									<v-flex xs12 sm6 md6>
 										<v-select
 											:items="usagesSelect"
 											item-text="label"
@@ -68,15 +146,76 @@
 										</v-select>
 									</v-flex>
 									<!-- Power at Antenna feeding point -->
-									<v-flex xs12 sm6 md4>
+									<v-flex xs12 sm6 md6>
 										<v-text-field
 											required
-											v-bind:value="form.power"
+											v-model="form.power"
 											v-bind:label="$t('transmitters.power')"
 											v-bind:hint="$t('transmitters.new.power.help')"
 											persistent-hint
-											prepend-icon="waves"
+											prepend-icon="network_check"
 											type="number"
+											suffix="Watt"
+										>
+										</v-text-field>
+									</v-flex>
+								</v-layout>
+								<v-layout wrap>
+									<v-flex xs12 sm6 md6>
+										<v-select
+											:items="antennaTypeSelect"
+											item-text="label"
+											item-value="value"
+											required
+											v-model="form.antenna.type"
+											v-bind:label="$t('transmitters.new.antennatype.title')"
+											v-bind:hint="$t('transmitters.new.antennatype.help')"
+											persistent-hint
+											prepend-icon="wifi_tethering"
+										>
+										</v-select>
+									</v-flex>
+									<v-flex xs12 sm6 md6
+											v-if="form.antenna.type !== 'omni'"
+									>
+										<v-text-field
+											required
+											v-model="form.antenna.direction"
+											v-bind:label="$t('transmitters.new.antennadirection.title')"
+											v-bind:hint="$t('transmitters.new.antennadirection.help')"
+											v-bind:rules="validationRules.antennaDirection"
+											persistent-hint
+											prepend-icon="360"
+											type="number"
+											suffix="°"
+										>
+										</v-text-field>
+									</v-flex>
+								</v-layout>
+								<v-layout wrap>
+									<v-flex xs12 sm6 md6>
+										<v-text-field
+											required
+											v-model="form.antenna.gain"
+											v-bind:label="$t('transmitters.new.antennagain.title')"
+											v-bind:hint="$t('transmitters.new.antennagain.help')"
+											persistent-hint
+											prepend-icon="360"
+											type="number"
+											suffix="dBi"
+										>
+										</v-text-field>
+									</v-flex>
+									<v-flex xs12 sm6 md6>
+										<v-text-field
+											required
+											v-model="form.antenna.agl"
+											v-bind:label="$t('transmitters.new.antennalevel.title')"
+											v-bind:hint="$t('transmitters.new.antennalevel.help')"
+											persistent-hint
+											prepend-icon="360"
+											type="number"
+											suffix="m"
 										>
 										</v-text-field>
 									</v-flex>
@@ -90,6 +229,7 @@
 											v-bind:label="$t('transmitters.new.aprs_broadcast.title')"
 											v-bind:hint="$t('transmitters.new.aprs_broadcast.help')"
 											persistent-hint
+											prepend-icon="location_on"
 										>
 										</v-switch>
 									</v-flex>
@@ -97,41 +237,54 @@
 									<v-flex xs12 sm6 md4>
 										<v-switch
 											v-model="form.enabled"
-											v-bind:label="$t('general.enabled')"
+											v-bind:label="$t('transmitters.new.enabled.title')"
+											v-bind:hint="$t('transmitters.new.enabled.help')"
+											persistent-hint
+											prepend-icon="power_settings_new"
 										>
 										</v-switch>
 									</v-flex>
 								</v-layout>
 								<!-- Emergency power-->
-								<v-card
-								>
-									<v-card-title>{{ this.$t('transmitters.new.emergency.title') }}</v-card-title>
-									<v-card-text>
-										<v-layout wrap>
-											<!-- Emergency Power available -->
-											<v-flex xs12 sm6 md4>
-												<v-switch
-													v-model="form.emergency_power.available"
-													v-bind:label="$t('transmitters.new.emergency.available.title')"
-													v-bind:hint="$t('transmitters.new.emergency.available.help')"
-													persistent-hint
-												>
-												</v-switch>
-											</v-flex>
-											<!-- Emergency Power infinite? -->
-											<v-flex xs12 sm6 md4>
-												<v-switch
-													v-bind:disabled="!form.emergency_power.available"
-													v-model="form.emergency_power.infinite"
-													v-bind:label="$t('transmitters.new.emergency.infinite.title')"
-													v-bind:hint="$t('transmitters.new.emergency.infinite.help')"
-													persistent-hint
-												>
-												</v-switch>
-											</v-flex>
-										</v-layout>
-									</v-card-text>
-								</v-card>
+								<v-layout wrap>
+									<!-- Emergency Power available -->
+									<v-flex xs12 sm12 md12>
+										<v-switch
+											v-model="form.emergency_power.available"
+											v-bind:label="$t('transmitters.new.emergency.available.title')"
+											v-bind:hint="$t('transmitters.new.emergency.available.help')"
+											persistent-hint
+										>
+										</v-switch>
+									</v-flex>
+								</v-layout>
+								<v-layout v-if="form.emergency_power.available">
+									<!-- Emergency Power infinite? -->
+									<v-flex xs12 sm6 md4>
+										<v-switch
+											v-bind:disabled="!form.emergency_power.available"
+											v-model="form.emergency_power.infinite"
+											v-bind:label="$t('transmitters.new.emergency.infinite.title')"
+											v-bind:hint="$t('transmitters.new.emergency.infinite.help')"
+											persistent-hint
+										>
+										</v-switch>
+									</v-flex>
+									<!-- Emergency Power duration -->
+									<v-flex xs12 sm6 md4 v-if="(form.emergency_power.available) && (!form.emergency_power.infinite)">
+										<v-text-field
+											required
+											v-bind:value="form.emergency_power.duration"
+											v-bind:label="$t('transmitters.new.emergency.duration.title')"
+											v-bind:hint="$t('transmitters.new.emergency.duration.help')"
+											persistent-hint
+											prepend-icon="timer"
+											type="number"
+											v-bind:rules="validationRules.emergency_duration"
+										>
+										</v-text-field>
+									</v-flex>
+								</v-layout>
 								<!-- Transmitter Groups -->
 								<v-layout>
 									<v-flex>
@@ -246,27 +399,40 @@
 				},
 				isFormValid: true,
 				form: {
-					'_id': '',
-					'_rev': '',
-					'usage': '',
-					'timeslots': [],
-					'power': 0,
-					'owners': [],
-					'groups': [],
-					'emergency_power': {
-						'available': false,
-						'infinite': false,
-						'duration': 0
+					_id: '',
+					_rev: '',
+					usage: '',
+					timeslots: [],
+					power: 0,
+					owners: [],
+					groups: [],
+					emergency_power: {
+						available: false,
+						infinite: false,
+						duration: 0
 					},
-					'coordinates': [],
-					'created_on': '',
-					'created_by': 'dh3wr',
-					'changed_on': '',
-					'changed_by': 'dh3wr',
-					'aprs_broadcast': false,
-					'enabled': false,
-					'auth_key': '',
-					'antenna': {}
+					coordinates: [0, 0],
+					latlong: {
+						northsouth: '1',
+						westeast: '1',
+						absolute: {
+							latitude: 0,
+							longitude: 0
+						}
+					},
+					created_on: '',
+					created_by: 'dh3wr',
+					changed_on: '',
+					changed_by: 'dh3wr',
+					aprs_broadcast: false,
+					enabled: false,
+					auth_key: '',
+					antenna: {
+						type: '',
+						gain: 0,
+						direction: 0,
+						agl: 0
+					}
 				},
 				formData: {
 					users: [],
@@ -278,7 +444,16 @@
 				changed_on: '',
 				changed_by: '',
 				isEditMode: (!!(this.$route.params.id)),
-				transmitterGroupSearch: null
+				transmitterGroupSearch: null,
+				map: {
+					zoom: this.$store.getters.map.zoom,
+					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
+					url: this.$store.getters.url.map,
+					marker: {
+						lat: 0,
+						lng: 0
+					}
+				}
 			};
 		},
 		computed: {
@@ -291,9 +466,46 @@
 					{
 						value: 'widerange',
 						label: this.$t('transmitters.usage.widerange')
-					},
-				]
+					}
+				];
 			},
+			northsouthSelect() {
+				return [
+					{
+						value: 1,
+						label: this.$t('general.latlong.north')
+					},
+					{
+						value: -1,
+						label: this.$t('general.latlong.south')
+					}
+				];
+			},
+			westeastSelect() {
+				return [
+					{
+						value: 1,
+						label: this.$t('general.latlong.east')
+					},
+					{
+						value: -1,
+						label: this.$t('general.latlong.west')
+					}
+				];
+			},
+			antennaTypeSelect() {
+				return [
+					{
+						value: 'omni',
+						label: this.$t('transmitters.new.antennatype.omni')
+					},
+					{
+						value: 'directional',
+						label: this.$t('transmitters.new.antennatype.directional')
+					}
+				];
+			},
+
 			validationRules() {
 				return {
 					'_id': [
@@ -329,13 +541,58 @@
 					],
 					'owners': [
 						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('formvalidation.minoneowner') })
+					],
+					'emergency_duration': [
+						v => (v && v > 0) || this.$t('formvalidation.notzeroornegative', { fieldname: this.$t('transmitters.new.emergency.duration.title_short') })
+					],
+					'latitude': [
+						v => (v && v >= 0) || this.$t('formvalidation.notnegative', { fieldname: this.$t('general.latlong.latitude') }),
+						v => (v && v <= 90) || this.$t('formvalidation.notgreateras', {
+							fieldname: this.$t('general.latlong.latitude'),
+							max: 90
+						})
+					],
+					'longitude': [
+						v => (v && v >= 0) || this.$t('formvalidation.notnegative', { fieldname: this.$t('general.latlong.longitude') }),
+						v => (v && v <= 180) || this.$t('formvalidation.notgreateras', {
+							fieldname: this.$t('general.latlong.longitude'),
+							max: 180
+						})
+					],
+					'antennaDirection': [
+						v => (v && v >= 0 && v < 360) || this.$t('formvalidation.OutOfRange', {
+							fieldname: this.$t('transmitters.new.antennadirection.title'),
+							min: 0,
+							max: 360
+						})
 					]
 				};
 			}
 		},
 		methods: {
-			loadData() {
+			updateLocationFromUserInput() {
+				this.form.coordinates[0] = this.form.latlong.absolute.latitude * this.form.latlong.northsouth;
+				this.form.coordinates[1] = this.form.latlong.absolute.longitude * this.form.latlong.westeast;
+				this.map.marker = {
+					lat: this.form.coordinates[0],
+					lng: this.form.coordinates[1]
+				};
+			},
+			mapClicked(e) {
+				this.map.marker = {
+					lat: e.latlng.lat,
+					lng: e.latlng.lng
+				};
 
+				// set position in form
+				this.form.latlong.absolute.latitude = Math.abs(e.latlng.lat).toFixed(6);
+				this.form.latlong.northsouth = (e.latlng.lat >= 0 ? 1 : -1);
+				this.form.latlong.absolute.longitude = Math.abs(e.latlng.lng).toFixed(6);
+				this.form.latlong.westeast = (e.latlng.lng >= 0 ? 1 : -1);
+				this.form.coordinates[0] = this.form.latlong.absolute.latitude * this.form.latlong.northsouth;
+				this.form.coordinates[1] = this.form.latlong.absolute.longitude * this.form.latlong.westeast;
+			},
+			loadData() {
 				// Load avaiable user roles
 				this.isLoadingData.users = true;
 				this.$axios.get('users/_usernames')
@@ -353,7 +610,7 @@
 						this.formData.transmitters = response.data;
 						this.isLoadingData.transmitters = false;
 					}).catch(e => {
-						console.log('Error getting transmitter names in transmitter/new.vue');
+					console.log('Error getting transmitter names in transmitter/new.vue');
 				});
 
 				// Load available transmitters groups
@@ -363,7 +620,7 @@
 						this.formData.transmitter_groups = response.data;
 						this.isLoadingData.transmitter_groups = false;
 					}).catch(e => {
-						console.log('Error getting transmitter groups in transmitter/new.vue');
+					console.log('Error getting transmitter groups in transmitter/new.vue');
 				});
 
 				// load data of given id
@@ -387,7 +644,6 @@
 							this.form.emergency_power.duration = 0;
 
 							if (response.data.emergency_power && response.data.emergency_power.available) {
-								this.form.emergency_power.available.response.data.emergency_power.available;
 								if (response.data.emergency_power.infinite) {
 									this.form.emergency_power.infinite = response.data.emergency_power.infinite;
 								} else {
@@ -402,6 +658,13 @@
 								Array.isArray(response.data.coordinates) &&
 								response.data.coordinates.length === 2) {
 								this.form.coordinates = response.data.coordinates;
+								console.log(this.form.coordinates);
+								this.form.latlong.northsouth = (this.form.coordinates[0] > 0 ? 1 : -1);
+								this.form.latlong.westeast = (this.form.coordinates[1] > 0 ? 1 : -1);
+								this.form.latlong.absolute.latitude = Math.abs(this.form.coordinates[0]).toFixed(6);
+								this.form.latlong.absolute.longitude = Math.abs(this.form.coordinates[1]).toFixed(6);
+								this.map.marker.lat = this.form.coordinates[0];
+								this.map.marker.lng = this.form.coordinates[1];
 							}
 
 							// Format timestamp into readable version
@@ -436,12 +699,23 @@
 								this.form.auth_key = response.data.auth_key;
 							}
 							if (response.data.antenna) {
-								this.form.antenna = response.data.antenna;
+								if (response.data.antenna.type) {
+									this.form.antenna.type = response.data.antenna.type;
+								}
+								if (response.data.antenna.gain) {
+									this.form.antenna.gain = response.data.antenna.gain;
+								}
+								if (response.data.antenna.direction) {
+									this.form.antenna.direction = response.data.antenna.direction;
+								}
+								if (response.data.antenna.agl) {
+									this.form.antenna.agl = response.data.antenna.agl;
+								}
 							}
 						}).catch(e => {
-							console.log('Error getting transmitter\'s individual details with axios or any exception in the get handler.');
-							this.$dialogs.passwordError(this, e);
-							// this.$router.push('/users');
+						console.log('Error getting transmitter\'s individual details with axios or any exception in the get handler.');
+						this.$dialogs.passwordError(this, e);
+						// this.$router.push('/users');
 					});
 				} else {
 					this.isEditMode = false;
