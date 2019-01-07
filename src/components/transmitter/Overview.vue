@@ -318,7 +318,7 @@
 		mounted() {
 			this.$root.$on('LanguageChanged', () => {
 				this.rerender_localized();
-			})
+			});
 		},
 		methods: {
 			rerender_localized() {
@@ -362,7 +362,7 @@
 							let usageRendered = [];
 							if (transmitter.usage === 'widerange') {
 								usageRendered.image = './img/icons/transmitter_widerange.png';
-								usageRendered.text =  'Widerange';
+								usageRendered.text = 'Widerange';
 							} else if (transmitter.usage === 'personal') {
 								usageRendered.image = './img/icons/transmitter_personal.png';
 								usageRendered.text = 'Personal';

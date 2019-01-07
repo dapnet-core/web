@@ -27,13 +27,13 @@
 								<!-- Edit -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
-										   flat
-										   icon
-										   small
-										   fab
-										   color="blue"
-										   v-on:click="editElement(mysubscriber)"
-										   slot="activator"
+										flat
+										icon
+										small
+										fab
+										color="blue"
+										v-on:click="editElement(mysubscriber)"
+										slot="activator"
 									>
 										<v-icon>edit</v-icon>
 									</v-btn>
@@ -42,13 +42,13 @@
 								<!-- Delete -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
-										   flat
-										   icon
-										   small
-										   fab
-										   color="pink"
-										   v-on:click="deleteElement(props.item)"
-										   slot="activator"
+										flat
+										icon
+										small
+										fab
+										color="pink"
+										v-on:click="deleteElement(props.item)"
+										slot="activator"
 									>
 										<v-icon>delete</v-icon>
 									</v-btn>
@@ -100,13 +100,13 @@
 				// load data of given id
 				this.isLoadingData.general = true;
 				this.$axios.get('subscribers/_my')
-				.then(response => {
-					console.log(response.data);
-					this.mysubscribers = response.data;
-					this.isLoadingData.general = false;
-				}).catch(e => {
-					console.log('Error getting subscribers\'s individual details with axios or any exception in the get handler.');
-					console.log(e);
+					.then(response => {
+						console.log(response.data);
+						this.mysubscribers = response.data;
+						this.isLoadingData.general = false;
+					}).catch(e => {
+						console.log('Error getting subscribers\'s individual details with axios or any exception in the get handler.');
+						console.log(e);
 				});
 				console.log(this.mysubscribers);
 			},

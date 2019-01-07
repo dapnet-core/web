@@ -61,12 +61,12 @@
 											<v-layout wrap>
 												<v-flex>
 													<v-select xs3 sm1 md1
-															  :items="northsouthSelect"
-															  item-text="label"
-															  item-value="value"
-															  required
-															  v-model="form.latlong.northsouth"
-															  @input="updateLocationFromUserInput"
+														:items="northsouthSelect"
+														item-text="label"
+														item-value="value"
+														required
+														v-model="form.latlong.northsouth"
+														@input="updateLocationFromUserInput"
 													>
 													</v-select>
 												</v-flex>
@@ -84,12 +84,12 @@
 												</v-flex>
 												<v-flex>
 													<v-select xs3 sm1 md1
-															  :items="westeastSelect"
-															  item-text="label"
-															  item-value="value"
-															  required
-															  v-model="form.latlong.westeast"
-															  @input="updateLocationFromUserInput"
+														:items="westeastSelect"
+														item-text="label"
+														item-value="value"
+														required
+														v-model="form.latlong.westeast"
+														@input="updateLocationFromUserInput"
 													>
 													</v-select>
 												</v-flex>
@@ -395,7 +395,7 @@
 					general: true,
 					users: true,
 					transmitters: true,
-					transmitter_groups: true,
+					transmitter_groups: true
 				},
 				isFormValid: true,
 				form: {
@@ -600,7 +600,7 @@
 						this.formData.users = response.data;
 						this.isLoadingData.users = false;
 					}).catch(e => {
-					console.log('Error getting user names in transmitter/new.vue');
+						console.log('Error getting user names in transmitter/new.vue');
 				});
 
 				// Load available transmitters names
@@ -610,7 +610,7 @@
 						this.formData.transmitters = response.data;
 						this.isLoadingData.transmitters = false;
 					}).catch(e => {
-					console.log('Error getting transmitter names in transmitter/new.vue');
+						console.log('Error getting transmitter names in transmitter/new.vue');
 				});
 
 				// Load available transmitters groups
@@ -620,7 +620,7 @@
 						this.formData.transmitter_groups = response.data;
 						this.isLoadingData.transmitter_groups = false;
 					}).catch(e => {
-					console.log('Error getting transmitter groups in transmitter/new.vue');
+						console.log('Error getting transmitter groups in transmitter/new.vue');
 				});
 
 				// load data of given id
@@ -657,15 +657,15 @@
 							if (response.data.coordinates &&
 								Array.isArray(response.data.coordinates) &&
 								response.data.coordinates.length === 2) {
-								this.form.coordinates = response.data.coordinates;
-								console.log(this.form.coordinates);
-								this.form.latlong.northsouth = (this.form.coordinates[0] > 0 ? 1 : -1);
-								this.form.latlong.westeast = (this.form.coordinates[1] > 0 ? 1 : -1);
-								this.form.latlong.absolute.latitude = Math.abs(this.form.coordinates[0]).toFixed(6);
-								this.form.latlong.absolute.longitude = Math.abs(this.form.coordinates[1]).toFixed(6);
-								this.map.marker.lat = this.form.coordinates[0];
-								this.map.marker.lng = this.form.coordinates[1];
-							}
+									this.form.coordinates = response.data.coordinates;
+									console.log(this.form.coordinates);
+									this.form.latlong.northsouth = (this.form.coordinates[0] > 0 ? 1 : -1);
+									this.form.latlong.westeast = (this.form.coordinates[1] > 0 ? 1 : -1);
+									this.form.latlong.absolute.latitude = Math.abs(this.form.coordinates[0]).toFixed(6);
+									this.form.latlong.absolute.longitude = Math.abs(this.form.coordinates[1]).toFixed(6);
+									this.map.marker.lat = this.form.coordinates[0];
+									this.map.marker.lng = this.form.coordinates[1];
+								}
 
 							// Format timestamp into readable version
 							if (response.data.created_on) {
@@ -713,9 +713,9 @@
 								}
 							}
 						}).catch(e => {
-						console.log('Error getting transmitter\'s individual details with axios or any exception in the get handler.');
-						this.$dialogs.passwordError(this, e);
-						// this.$router.push('/users');
+							console.log('Error getting transmitter\'s individual details with axios or any exception in the get handler.');
+							this.$dialogs.passwordError(this, e);
+							// this.$router.push('/users');
 					});
 				} else {
 					this.isEditMode = false;

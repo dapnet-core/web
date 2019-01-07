@@ -1,34 +1,34 @@
 <template>
-    <div>
+	<div>
 <!--        <div>
-            <clock></clock>
-            <status></status>
-        </div>
+			<clock></clock>
+			<status></status>
+		</div>
 -->
 
-        <v-list>
+		<v-list>
 			<!-- Home -->
-            <v-list-tile exact to="/">
-                <v-list-tile-action>
-                    <v-icon>home</v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{ $t('navigation.home') }}</v-list-tile-title>
-                </v-list-tile-content>
-            </v-list-tile>
+			<v-list-tile exact to="/">
+				<v-list-tile-action>
+					<v-icon>home</v-icon>
+				</v-list-tile-action>
+				<v-list-tile-content>
+					<v-list-tile-title>{{ $t('navigation.home') }}</v-list-tile-title>
+				</v-list-tile-content>
+			</v-list-tile>
 
 			<!-- Calls -->
-            <v-list-tile exact to="/calls">
-                <v-list-tile-action>
-                    <v-icon>message</v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{ $t('navigation.calls') }}</v-list-tile-title>
-                </v-list-tile-content>
-            </v-list-tile>
+			<v-list-tile exact to="/calls">
+				<v-list-tile-action>
+					<v-icon>message</v-icon>
+				</v-list-tile-action>
+				<v-list-tile-content>
+					<v-list-tile-title>{{ $t('navigation.calls') }}</v-list-tile-title>
+				</v-list-tile-content>
+			</v-list-tile>
 
 			<!-- Users -->
-            <v-list-tile
+			<v-list-tile
 				v-if="this.$store.getters.permission('user.read') === 'all'"
 				exact to="/users"
 			>
@@ -42,10 +42,10 @@
 						<v-icon>account_box</v-icon>
 					</v-badge>
 				</v-list-tile-action>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{ $t('navigation.users') }}</v-list-tile-title>
-                </v-list-tile-content>
-            </v-list-tile>
+				<v-list-tile-content>
+					<v-list-tile-title>{{ $t('navigation.users') }}</v-list-tile-title>
+				</v-list-tile-content>
+			</v-list-tile>
 
 			<v-list-tile
 				v-if="!(this.$store.getters.permission('user.read') === 'all')"
@@ -206,16 +206,16 @@
 		</v-list>
 
 <!--        <div class="version">Version {{version}}</div>-->
-    </div>
+	</div>
 </template>
 
 <style scoped>
-    .version {
-        text-align: center;
-        padding: 5px 0;
-        font-size: 13px;
-        opacity: .54;
-    }
+	.version {
+		text-align: center;
+		padding: 5px 0;
+		font-size: 13px;
+		opacity: .54;
+	}
 </style>
 
 <script>
@@ -264,7 +264,7 @@
 			this.$root.$on('ReloadSidebarIcons', () => {
 				console.log('Received ReloadSidebarIcons event');
 				this.loadAllSidebarIndicatiors();
-			})
+			});
 		},
 		methods: {
 			loadAllSidebarIndicatiors() {

@@ -581,7 +581,7 @@
 				if (this.$route.params.id) {
 					console.log('params:' + this.$route.params.id);
 					if (this.$store.getters.username === this.$route.params.id) {
-						return true
+						return true;
 					}
 				}
 				return false;

@@ -14,96 +14,96 @@
 							</div>
 						</v-card-title>
 						<v-form v-model="isFormValid" ref="form">
-                            <v-card-text>
+							<v-card-text>
 								<!-- Message -->
-                                <v-card color ="white">
-                                    <v-layout>
-                                        <v-flex>
-                                            <v-textarea
-                                                prepend-icon="message"
-                                                name="message"
-                                                v-model="form.message"
-                                                v-bind:label="$t('calls.new.message.title')"
-                                                outline
-                                                rows="2"
-                                                persistent-hint
+								<v-card color ="white">
+									<v-layout>
+										<v-flex>
+											<v-textarea
+												prepend-icon="message"
+												name="message"
+												v-model="form.message"
+												v-bind:label="$t('calls.new.message.title')"
+												outline
+												rows="2"
+												persistent-hint
 												:counter="80"
 												v-bind:rules="validationRules.message"
-                                            >
-                                            </v-textarea>
-                                        </v-flex>
-                                    </v-layout>
+											>
+											</v-textarea>
+										</v-flex>
+									</v-layout>
 									<!-- Subscriber selection -->
-                                    <v-layout>
+									<v-layout>
 										<!-- Display default subscriber selection-->
-                                        <v-flex xs5>
-                                            <v-autocomplete
+										<v-flex xs5>
+											<v-autocomplete
 												:loading="isLoadingData.subscribers"
-                                                chips
-                                                small-chips
-                                                deletable-chips
-                                                multiple
-                                                hide-selected
-                                                prepend-icon="person"
-                                                v-model="form.subscribers"
-                                                :items="formData.subscribers"
+												chips
+												small-chips
+												deletable-chips
+												multiple
+												hide-selected
+												prepend-icon="person"
+												v-model="form.subscribers"
+												:items="formData.subscribers"
 												v-bind:label="$t('general.subscribers')"
-                                            >
-                                            </v-autocomplete>
-                                        </v-flex>
+											>
+											</v-autocomplete>
+										</v-flex>
 										<v-spacer></v-spacer>
-                                        <!-- Display default subscriber groups selection-->
-                                        <v-flex xs5>
-                                            <v-autocomplete
+										<!-- Display default subscriber groups selection-->
+										<v-flex xs5>
+											<v-autocomplete
 												:loading="isLoadingData.subscriber_groups"
-                                                chips
-                                                small-chips
-                                                deletable-chips
-                                                multiple
+												chips
+												small-chips
+												deletable-chips
+												multiple
 												hide-selected
-                                                prepend-icon="people"
-                                                v-model="form.subscriber_groups"
-                                                :items="formData.subscriber_groups"
-                                                v-bind:label="$t('general.subscriber_groups')"
-                                            >
-                                            </v-autocomplete>
-                                        </v-flex>
-                                    </v-layout>
-                                    <v-layout>
-                                        <!-- Display default transmitter names selection-->
-                                        <v-flex xs5>
-                                            <v-autocomplete
+												prepend-icon="people"
+												v-model="form.subscriber_groups"
+												:items="formData.subscriber_groups"
+												v-bind:label="$t('general.subscriber_groups')"
+											>
+											</v-autocomplete>
+										</v-flex>
+									</v-layout>
+									<v-layout>
+										<!-- Display default transmitter names selection-->
+										<v-flex xs5>
+											<v-autocomplete
 												:loading="isLoadingData.transmitters"
-                                                chips
-                                                small-chips
-                                                deletable-chips
-                                                multiple
+												chips
+												small-chips
+												deletable-chips
+												multiple
 												hide-selected
-                                                prepend-icon="wifi"
-                                                v-model="form.transmitters"
-                                                :items="formData.transmitters"
-                                                v-bind:label="$t('general.transmitters')"
-                                            >
-                                            </v-autocomplete>
-                                        </v-flex>
-                                        <v-flex xs2></v-flex>
-                                        <!-- Display default transmitter groups selection-->
-                                        <v-flex xs5>
-                                            <v-autocomplete
+												prepend-icon="wifi"
+												v-model="form.transmitters"
+												:items="formData.transmitters"
+												v-bind:label="$t('general.transmitters')"
+											>
+											</v-autocomplete>
+										</v-flex>
+										<v-flex xs2></v-flex>
+										<!-- Display default transmitter groups selection-->
+										<v-flex xs5>
+											<v-autocomplete
 												:loading="isLoadingData.transmitter_groups"
-                                                chips
-                                                small-chips
-                                                deletable-chips
-                                                multiple
-                                                hide-selected
-                                                prepend-icon="wifi_tethering"
-                                                v-model="form.transmitter_groups"
-                                                :items="formData.transmitter_groups"
-                                                v-bind:label="$t('general.transmitter_groups')"
-                                            >
-                                            </v-autocomplete>
-                                        </v-flex>
-                                    </v-layout>
+												chips
+												small-chips
+												deletable-chips
+												multiple
+												hide-selected
+												prepend-icon="wifi_tethering"
+												v-model="form.transmitter_groups"
+												:items="formData.transmitter_groups"
+												v-bind:label="$t('general.transmitter_groups')"
+											>
+											</v-autocomplete>
+										</v-flex>
+									</v-layout>
 									<v-layout>
 										<!-- Display default priority-->
 										<v-flex xs5>
@@ -145,8 +145,8 @@
 											</v-select>
 										</v-flex>
 									</v-layout>
-                                </v-card>
-                            </v-card-text>
+								</v-card>
+							</v-card-text>
 							<!-- Buttons -->
 							<v-card-actions>
 								<v-btn
