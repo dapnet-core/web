@@ -366,7 +366,7 @@
         "isvalidEmail": "The given email must be valid.",
         "minonerole": "At least one role",
         "minoneowner": "At least one owner",
-        "ricOutOfRange": "{fieldname} must be between {min} and {max}",
+        "OutOfRange": "{fieldname} must be between {min} and {max}",
         "onlyInteger": "Only integer numbers allowed as {fieldname}",
         "notzeroornegative": "{fieldname} must be greater than 0.",
         "notnegative": "{fieldname} must be not negative.",

@@ -39,7 +39,7 @@
 											required
 											:counter="30"
 											v-bind:rules="validationRules.authkey"
-											v-model="form.description"
+											v-model="form.auth_key"
 											v-bind:label="$t('transmitters.new.authkey.title')"
 											v-bind:hint="$t('transmitters.new.authkey.help')"
 											persistent-hint
@@ -52,6 +52,7 @@
 								</v-layout>
 								<!--Location-->
 								<v-layout wrap>
+									<!--TODO: Make aligment of boxes better -->
 									<v-card>
 										<v-card-title>
 											<v-icon>my_location</v-icon>
@@ -284,6 +285,90 @@
 										>
 										</v-text-field>
 									</v-flex>
+								</v-layout>
+								<!--Timeslots-->
+								<v-card>
+									<v-card-title>
+										{{ this.$t('transmitters.new.timeslots.title') }}
+									</v-card-title>
+									<v-card-text>
+										<v-layout wrap>
+											<v-flex xs1 v-for="(index,i) in 12" :key="i">
+												<v-checkbox
+													v-model="form.timeslots[i]"
+													:label="i.toString(16).toUpperCase()"
+												>
+												</v-checkbox>
+											</v-flex>
+										</v-layout>
+										<v-layout wrap>
+											<v-flex xs1 v-for="(index,i) in 4" :key="i">
+												<v-checkbox
+													v-model="form.timeslots[i+12]"
+													on-icon="wifi_tethering"
+													off-icon="portable_wifi_off"
+													:label="(i+12).toString(16).toUpperCase()"
+												>
+												</v-checkbox>
+											</v-flex>
+											<v-spacer></v-spacer>
+											<v-flex xs3>
+												<v-btn
+													v-on:click="EnableAllTimeslots"
+												>
+													Select all
+												</v-btn>
+											</v-flex>
+										</v-layout>
+									</v-card-text>
+								</v-card>
+
+								<v-layout wrap>
+									<table style="width: 100%">
+										<tbody style="text-align: center">
+											<tr>
+												<td>0</td>
+												<td>1</td>
+												<td>2</td>
+												<td>3</td>
+												<td>4</td>
+												<td>5</td>
+												<td>6</td>
+												<td>7</td>
+												<td>8</td>
+												<td>9</td>
+												<td>A</td>
+												<td>B</td>
+												<td>C</td>
+												<td>D</td>
+												<td>E</td>
+												<td>F</td>
+											</tr>
+											<tr>
+												<td><v-checkbox
+														v-model="form.timeslots[0]"
+														on-icon="wifi_tethering"
+														off-icon="portable_wifi_off"
+														label="0"
+													></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[1]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[2]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[3]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[4]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[5]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[6]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[7]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[8]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[9]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[10]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[11]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[12]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[13]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[14]"></v-checkbox></td>
+												<td><v-checkbox v-model="form.timeslots[15]"></v-checkbox></td>
+											</tr>
+										</tbody>
+									</table>
 								</v-layout>
 								<!-- Transmitter Groups -->
 								<v-layout>
