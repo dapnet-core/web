@@ -298,11 +298,13 @@
 												<v-btn-toggle
 													v-model="timeslots_numeric"
 													multiple
-													active-class="red"
 													mandatory
 													@change="updateTimeslotsToBoolean"
 												>
-													<v-btn v-for="(index,i) in 16" :key="i">
+													<v-btn
+														v-for="(index,i) in 16" :key="i"
+														color="primary"
+													>
 														{{ i.toString(16).toUpperCase() }}</v-btn>
 
 												</v-btn-toggle>
@@ -454,9 +456,9 @@
 						}
 					},
 					created_on: '',
-					created_by: 'dh3wr',
+					created_by: '',
 					changed_on: '',
-					changed_by: 'dh3wr',
+					changed_by: '',
 					aprs_broadcast: false,
 					enabled: false,
 					auth_key: '',
