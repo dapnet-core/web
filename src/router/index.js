@@ -15,6 +15,9 @@ import TransmitterOverview from '@/components/transmitter/Overview';
 import TransmitterOverviewOnlyNames from '@/components/transmitter/OverviewOnlyNames';
 import TransmitterNew from '@/components/transmitter/New';
 import TransmitterMy from '@/components/transmitter/My';
+import RubricOverview from '@/components/rubric/Overview';
+import RubricNew from '@/components/rubric/New';
+import RubricMy from '@/components/rubric/My';
 
 Vue.use(Router);
 
@@ -147,7 +150,7 @@ export default new Router({
 			}
 		},
 		{
-			path: '/trasnmiitersonlynames',
+			path: '/transmittersonlynames',
 			name: 'Transmitter Overview Only Names',
 			component: TransmitterOverviewOnlyNames,
 			meta: {
@@ -179,6 +182,42 @@ export default new Router({
 			component: TransmitterNew,
 			meta: {
 				titleTranslationKey: 'pagetitle.transmitter.edit',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/rubrics',
+			name: 'Rubrics Overview',
+			component: RubricOverview,
+			meta: {
+				titleTranslationKey: 'pagetitle.rubric.overview',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/rubrics/new',
+			name: 'New Rubric',
+			component: RubricNew,
+			meta: {
+				titleTranslationKey: 'pagetitle.rubric.new',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/myrubrics',
+			name: 'My Rubrics',
+			component: RubricMy,
+			meta: {
+				titleTranslationKey: 'pagetitle.rubric.my',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/rubrics/edit/:id',
+			name: 'Edit Rubric',
+			component: RubricNew,
+			meta: {
+				titleTranslationKey: 'pagetitle.rubric.edit',
 				requireAuthentication: true
 			}
 		}

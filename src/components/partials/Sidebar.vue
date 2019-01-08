@@ -179,7 +179,7 @@
 						</v-badge>
 					</v-list-tile-action>
 					<v-list-tile-content>
-						<v-list-tile-title>{{ $t('navigation.alltransmitters.onylnames') }}</v-list-tile-title>
+						<v-list-tile-title>{{ $t('navigation.alltransmitters.onlynames') }}</v-list-tile-title>
 					</v-list-tile-content>
 				</v-list-tile>
 
@@ -199,6 +199,75 @@
 					</v-list-tile-action>
 					<v-list-tile-content>
 						<v-list-tile-title>{{ $t('navigation.transmitters.my') }}</v-list-tile-title>
+					</v-list-tile-content>
+				</v-list-tile>
+			</v-list-group>
+
+			<!-- Rubrics group -->
+			<v-list-group
+				prepend-icon="message"
+				value="true"
+			>
+				<!-- Rubrics Header in Menu -->
+				<v-list-tile slot="activator">
+					<v-list-tile-title>{{ $t('navigation.rubrics.title') }}</v-list-tile-title>
+				</v-list-tile>
+				<!-- if permission read === all, link to table -->
+				<v-list-tile
+					v-if="(this.$store.getters.permission('rubric.read') === 'all')"
+					exact to="/rubrics"
+				>
+					<v-list-tile-action>
+						<v-badge
+							right
+							overlap
+							v-model="isReadyLoadingData.total.rubrics"
+						>
+							<span slot="badge">{{ count_total.rubrics }}</span>
+							<v-icon>message</v-icon>
+						</v-badge>
+					</v-list-tile-action>
+					<v-list-tile-content>
+						<v-list-tile-title>{{ $t('navigation.rubrics.all') }}</v-list-tile-title>
+					</v-list-tile-content>
+				</v-list-tile>
+
+				<!-- if !(permission read === all), link to overview -->
+				<v-list-tile
+					v-if="!(this.$store.getters.permission('rubric.read') === 'all')"
+					exact to="/rubricssoverview"
+				>
+					<v-list-tile-action>
+						<v-badge
+							right
+							overlap
+							v-model="isReadyLoadingData.total.rubrics"
+						>
+							<span slot="badge">{{ count_total.rubrics }}</span>
+							<v-icon>message</v-icon>
+						</v-badge>
+					</v-list-tile-action>
+					<v-list-tile-content>
+						<v-list-tile-title>{{ $t('navigation.allrubrics.onlynames') }}</v-list-tile-title>
+					</v-list-tile-content>
+				</v-list-tile>
+
+				<!-- Show my rubrics-->
+				<v-list-tile
+					exact to="/myrubrics"
+				>
+					<v-list-tile-action>
+						<v-badge
+							right
+							overlap
+							v-model="isReadyLoadingData.my.rubrics"
+						>
+							<span slot="badge">{{ count_my.rubrics }}</span>
+							<v-icon>message</v-icon>
+						</v-badge>
+					</v-list-tile-action>
+					<v-list-tile-content>
+						<v-list-tile-title>{{ $t('navigation.rubrics.my') }}</v-list-tile-title>
 					</v-list-tile-content>
 				</v-list-tile>
 			</v-list-group>
@@ -270,9 +339,25 @@
 			loadAllSidebarIndicatiors() {
 				this.loadMySubscribers();
 				this.loadMyTransmitters();
+				this.loadMyRubrics();
 				this.loadTotalSubscribers();
 				this.loadTotalTransmitters();
 				this.loadTotalUsers();
+				this.loadTotalRubrics();
+			},
+			loadTotalRubrics() {
+				this.isReadyLoadingData.total.rubrics = false;
+				axios.get('rubrics/_count').then(response => {
+					// success --> save new data
+					if (response.data.count) {
+						this.count_total.rubrics = response.data.count;
+					}
+					console.log('Total Rubrics ' + this.count_total.rubrics);
+					this.isReadyLoadingData.total.rubrics = true;
+				}, response => {
+					// error --> show error message
+					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+				});
 			},
 			loadTotalUsers() {
 				this.isReadyLoadingData.total.users = false;
@@ -282,35 +367,7 @@
 						this.count_total.users = response.data.count;
 					}
 					console.log('Total Users: ' + this.count_total.users);
-					this.isReadyLoadingData.total.subusers = true;
-				}, response => {
-					// error --> show error message
-					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
-				});
-			},
-			loadMySubscribers() {
-				this.isReadyLoadingData.my.subscribers = false;
-				axios.get('subscribers/_my_count').then(response => {
-					// success --> save new data
-					if (response.data.count) {
-						this.count_my.subscribers = response.data.count;
-					}
-					console.log('mySubscribers: ' + this.count_my.transmitters);
-					this.isReadyLoadingData.my.subscribers = true;
-				}, response => {
-					// error --> show error message
-					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
-				});
-			},
-			loadMyTransmitters() {
-				this.isReadyLoadingData.my.transmitters = false;
-				axios.get('transmitters/_my_count').then(response => {
-					// success --> save new data
-					if (response.data.count) {
-						this.count_my.transmitters = response.data.count;
-					}
-					console.log('myTransmitters: ' + this.count_my.transmitters);
-					this.isReadyLoadingData.my.transmitters = true;
+					this.isReadyLoadingData.total.users = true;
 				}, response => {
 					// error --> show error message
 					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
@@ -339,6 +396,48 @@
 					}
 					console.log('Total Transmitters: ' + this.count_total.transmitters);
 					this.isReadyLoadingData.total.transmitters = true;
+				}, response => {
+					// error --> show error message
+					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+				});
+			},
+			loadMySubscribers() {
+				this.isReadyLoadingData.my.subscribers = false;
+				axios.get('subscribers/_my_count').then(response => {
+					// success --> save new data
+					if (response.data.count) {
+						this.count_my.subscribers = response.data.count;
+					}
+					console.log('mySubscribers: ' + this.count_my.subscribers);
+					this.isReadyLoadingData.my.subscribers = true;
+				}, response => {
+					// error --> show error message
+					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+				});
+			},
+			loadMyTransmitters() {
+				this.isReadyLoadingData.my.transmitters = false;
+				axios.get('transmitters/_my_count').then(response => {
+					// success --> save new data
+					if (response.data.count) {
+						this.count_my.transmitters = response.data.count;
+					}
+					console.log('myTransmitters: ' + this.count_my.transmitters);
+					this.isReadyLoadingData.my.transmitters = true;
+				}, response => {
+					// error --> show error message
+					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+				});
+			},
+			loadMyRubrics() {
+				this.isReadyLoadingData.my.rubrics = false;
+				axios.get('rubrics/_my_count').then(response => {
+					// success --> save new data
+					if (response.data.count) {
+						this.count_my.rubrics = response.data.count;
+					}
+					console.log('myRubrics: ' + this.count_my.rubrics);
+					this.isReadyLoadingData.my.rubrics = true;
 				}, response => {
 					// error --> show error message
 					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);

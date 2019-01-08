@@ -9,6 +9,7 @@
           "onlynames": " All Subscriber Names"
         },
         "rubrics": {
+            "my": "My Rubrics",
             "title": "Rubrics",
             "all": "All Rubrics",
             "activate": "Activate Rubrics",
@@ -363,6 +364,7 @@
         "underlength": "{fieldname} must be minimum {count} characters.",
         "isrequired": "{fieldname} is required.",
         "onlyalphanumeric": "Only numbers and letters allowed.",
+        "onylalphanumericspacehypen": "Only numbers, letters spaces and - are allowed.",
         "isvalidEmail": "The given email must be valid.",
         "minonerole": "At least one role",
         "minoneowner": "At least one owner",
@@ -370,7 +372,10 @@
         "onlyInteger": "Only integer numbers allowed as {fieldname}",
         "notzeroornegative": "{fieldname} must be greater than 0.",
         "notnegative": "{fieldname} must be not negative.",
-        "notgreateras": "{fieldname} must be greater as {max}."
+        "notgreateras": "{fieldname} must not be greater as {max}.",
+        "maximal": "{fieldname} cannot be greater than {max}.",
+        "notlessorequalthan": "{fieldname} cannot be less or equal than {min}.",
+        "minonetransmitterorgroup": "There must be at least one transmitter or one transmitter group selected."
     },
     "general": {
         "callsign": "Callsign",
@@ -435,29 +440,57 @@
         "thirdpartyservices": "Third-Party Services",
         "pagers": "Pagers"
     },
-    "rubric": {
+    "rubrics": {
+      "number": "Number",
         "overview": {
-            "totalrubrics": "Total Rubrics",
-            "information": {
-                "help": "This is a list of all rubrics on the DAPNET. A rubric number can by assigned to several transmitter groups. Keep in mind that the transmitter groups are disjunct for the same rubric number in order to avoid overlapping number assigments.<br>Use the Activate Rubrics button to enable the reception of rubrics on your Skyper."
-            },
-            "table": {
-                "number": "Number",
-                "name": "Name",
-                "label": "Label",
-                "transmittergroup": "Transmitter Groups"
-            }
-        },
-        "new": {
-            "newrubric": "New Rubric",
+          "totalrubrics": "Total Rubrics",
+          "information": {
+            "help": "This is a list of all rubrics on the DAPNET. A rubric number can by assigned to several transmitter groups. Keep in mind that the transmitter groups are disjunct for the same rubric number in order to avoid overlapping number assigments.<br>Use the Activate Rubrics button to enable the reception of rubrics on your Skyper."
+          },
+          "table": {
+            "number": "Number",
             "name": "Name",
             "label": "Label",
-            "number": "Number",
-            "transmittergroup": "Transmitter Groups",
-            "information": {
-                "help": "Rubrics are a Skyper based invention allowing to send news sorted into chategories (the rubrics). Assign the number with care and contact <code>support [at] hampager.de</code> in case of doubt. Be aware that the number of rubrics is limited netwide to 99."
-            },
-            "editrubric": "Edit Rubric"
+            "transmittergroup": "Transmitter Groups"
+          }
+        },
+        "new": {
+          "id":{
+            "title": "Name",
+            "help": "Enter an unique name for this rubric. It should be descriptive enough to get an idea about the content just from it. This is not the name that will appear on the Skyper."
+          },
+          "label": {
+            "title": "Label",
+            "help": "This how the rubric will be names on the Skyper."
+          },
+          "number" : {
+            "help": "This number is displayed on the Skyper."
+          },
+          "description": {
+            "title": "Description",
+            "help": "This description is only visible on the web interface, not on the paging receiver. Describe the content or purpose of this rubric so others can know what it is about."
+          },
+          "cyclicTransmit": {
+            "title": "Cyclic retransmissions?",
+            "help": "This switch enabled cyclic retransmissions of the complete 10 message slots in this rubric. Useful for general news, DEFINITELY not useful for rubrics that are updated from third-party sources on a regular basis!"
+          },
+          "cyclicTransmitInterval": {
+            "title": "Cyclic retransmit interval",
+            "help": "Enter an interval in minutes, in which the complete content of this rubric shall be retransmitted."
+          },
+          "transmitters": {
+            "help": "Select specific transmitters on which this rubric shall be transmitted. If they are already part of a selected transmitter group, don't select them here!"
+          },
+          "transmitter_groups": {
+            "help": "Select specific transmitter groups on which this rubric shall be transmitted."
+          },
+          "owner": {
+            "help": "An owner of a rubric can edit its parameters."
+          },
+          "information": {
+            "help": "Rubrics are a Skyper based invention allowing to send news sorted into chategories (the rubrics). Assign the number with care and contact <code>support [at] hampager.de</code> in case of doubt. Be aware that the number of rubrics is limited netwide to 99."
+          },
+          "editrubric": "Edit Rubric"
         },
         "activation": {
             "pagernumber": "Pager-Number (your RIC)",
@@ -723,6 +756,7 @@
             "edit": "Edit Subscriber"
         },
         "rubric": {
+            "my": "My Rubrics",
             "overview": "Rubric Overview",
             "new": "New Rubric",
             "edit": "Edit Rubric",

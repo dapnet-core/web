@@ -5,8 +5,8 @@
 				<v-card class="elevation-12">
 					<!--General toolbar-->
 					<v-card-title>
-						<span class="headline">{{ this.isEditMode ? this.$t('transmitters.new.edittransmitter') :
-											this.$t('transmitters.new.newtransmitter') }}</span>
+						<span class="headline">{{ this.isEditMode ? this.$t('pagetitle.transmitter.edit') :
+											this.$t('pagetitle.transmitter.new') }}</span>
 					</v-card-title>
 					<v-form v-model="isFormValid" ref="form">
 						<v-card-text>
@@ -374,8 +374,8 @@
 								</v-layout>
 							</v-container>
 						</v-card-text>
+						<!-- Timestamps -->
 						<v-card-text>
-							<!-- Timestamps -->
 							<v-card color="red lighten-2" v-if="isEditMode">
 								<v-card-text>
 									<v-layout row wrap class="dark--text">
