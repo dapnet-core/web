@@ -292,29 +292,25 @@
 										{{ this.$t('transmitters.new.timeslots.title') }}
 									</v-card-title>
 									<v-card-text>
-										<v-layout wrap>
-											<v-flex xs1 v-for="(index,i) in 12" :key="i">
-												<v-checkbox
-													v-model="form.timeslots[i]"
-													:label="i.toString(16).toUpperCase()"
+										<!--Button Group-->
+										<v-layout row wrap justify-space-around>
+											<v-flex xs12 sm9 class="py-2">
+												<v-btn-toggle
+													v-model="timeslots_numeric"
+													multiple
+													active-class="red"
+													mandatory
+													@change="updateTimeslotsToBoolean"
 												>
-												</v-checkbox>
+													<v-btn v-for="(index,i) in 16" :key="i">
+														{{ i.toString(16).toUpperCase() }}</v-btn>
+
+												</v-btn-toggle>
 											</v-flex>
-										</v-layout>
-										<v-layout wrap>
-											<v-flex xs1 v-for="(index,i) in 4" :key="i">
-												<v-checkbox
-													v-model="form.timeslots[i+12]"
-													on-icon="wifi_tethering"
-													off-icon="portable_wifi_off"
-													:label="(i+12).toString(16).toUpperCase()"
-												>
-												</v-checkbox>
-											</v-flex>
-											<v-spacer></v-spacer>
-											<v-flex xs3>
+											<v-flex xs12 sm3>
 												<v-btn
 													v-on:click="EnableAllTimeslots"
+													align-end
 												>
 													Select all
 												</v-btn>
@@ -322,54 +318,6 @@
 										</v-layout>
 									</v-card-text>
 								</v-card>
-
-								<v-layout wrap>
-									<table style="width: 100%">
-										<tbody style="text-align: center">
-											<tr>
-												<td>0</td>
-												<td>1</td>
-												<td>2</td>
-												<td>3</td>
-												<td>4</td>
-												<td>5</td>
-												<td>6</td>
-												<td>7</td>
-												<td>8</td>
-												<td>9</td>
-												<td>A</td>
-												<td>B</td>
-												<td>C</td>
-												<td>D</td>
-												<td>E</td>
-												<td>F</td>
-											</tr>
-											<tr>
-												<td><v-checkbox
-														v-model="form.timeslots[0]"
-														on-icon="wifi_tethering"
-														off-icon="portable_wifi_off"
-														label="0"
-													></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[1]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[2]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[3]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[4]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[5]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[6]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[7]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[8]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[9]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[10]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[11]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[12]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[13]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[14]"></v-checkbox></td>
-												<td><v-checkbox v-model="form.timeslots[15]"></v-checkbox></td>
-											</tr>
-										</tbody>
-									</table>
-								</v-layout>
 								<!-- Transmitter Groups -->
 								<v-layout>
 									<v-flex>
@@ -530,6 +478,7 @@
 				changed_by: '',
 				isEditMode: (!!(this.$route.params.id)),
 				transmitterGroupSearch: null,
+				timeslots_numeric: [],
 				map: {
 					zoom: this.$store.getters.map.zoom,
 					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
@@ -590,7 +539,6 @@
 					}
 				];
 			},
-
 			validationRules() {
 				return {
 					'_id': [
@@ -655,6 +603,21 @@
 			}
 		},
 		methods: {
+			updateTimeslotsToBoolean() {
+				var timeslotsHelp = [];
+				for (var i = 0; i < 16; i++) {
+					if (this.timeslots_numeric.includes(i)) {
+						timeslotsHelp.push(true);
+					} else {
+						timeslotsHelp.push(false);
+					}
+				}
+				this.form.timeslots = timeslotsHelp;
+			},
+			EnableAllTimeslots() {
+				this.timeslots_numeric = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+				this.updateTimeslotsToBoolean();
+			},
 			updateLocationFromUserInput() {
 				this.form.coordinates[0] = this.form.latlong.absolute.latitude * this.form.latlong.northsouth;
 				this.form.coordinates[1] = this.form.latlong.absolute.longitude * this.form.latlong.westeast;
@@ -719,6 +682,11 @@
 							this.form._rev = response.data._rev;
 							this.form.usage = response.data.usage;
 							this.form.timeslots = response.data.timeslots;
+							for (var i = 0; i < this.form.timeslots.length; i++) {
+								if (this.form.timeslots[i]) {
+									this.timeslots_numeric.push(i);
+								}
+							}
 							this.form.power = response.data.power;
 							this.form.owners = response.data.owners;
 							this.form.groups = response.data.groups;
@@ -743,7 +711,6 @@
 								Array.isArray(response.data.coordinates) &&
 								response.data.coordinates.length === 2) {
 									this.form.coordinates = response.data.coordinates;
-									console.log(this.form.coordinates);
 									this.form.latlong.northsouth = (this.form.coordinates[0] > 0 ? 1 : -1);
 									this.form.latlong.westeast = (this.form.coordinates[1] > 0 ? 1 : -1);
 									this.form.latlong.absolute.latitude = Math.abs(this.form.coordinates[0]).toFixed(6);
@@ -815,6 +782,10 @@
 					if (!this.isEditMode) {
 						delete this.form._rev;
 					}
+					this.form.power = parseInt(this.form.power);
+					this.form.antenna.gain = parseInt(this.form.antenna.gain);
+					this.form.antenna.direction = parseInt(this.form.antenna.direction);
+					this.form.antenna.agl = parseInt(this.form.antenna.agl);
 					console.log('Data2Send von transmitter:');
 					console.log(this.form);
 					this.$helpers.sendData(this, 'transmitters', this.form, '');

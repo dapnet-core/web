@@ -717,6 +717,7 @@
             "new": "New Call"
         },
         "subscriber": {
+            "my": "My Subscribers",
             "overview": "Subscriber Overview",
             "new": "New Subscriber",
             "edit": "Edit Subscriber"
@@ -732,6 +733,7 @@
             }
         },
         "transmitter": {
+            "my": "My Transmitters",
             "overview": "Transmitter Overview",
             "new": "New Transmitter",
             "edit": "Edit Transmitter",
