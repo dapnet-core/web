@@ -271,7 +271,7 @@
 					general: true,
 					users: true,
 					subscribers: true,
-					subscriber_groups: true,
+					subscriber_groups: true
 				},
 				isFormValid: true,
 				form: {
@@ -374,7 +374,6 @@
 		},
 		methods: {
 			loadData() {
-
 				// Load avaiable user roles
 				this.isLoadingData.users = true;
 				this.$axios.get('users/_usernames')
@@ -382,7 +381,7 @@
 						this.formData.users = response.data;
 						this.isLoadingData.users = false;
 					}).catch(e => {
-					console.log('Error getting user names in subscriber/new.vue');
+						console.log('Error getting user names in subscriber/new.vue');
 				});
 
 				// Load available subscriber names

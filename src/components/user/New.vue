@@ -600,9 +600,9 @@
 			createBlob(dataURL) {
 				var BASE64_MARKER = ';base64,';
 				if (dataURL.indexOf(BASE64_MARKER) === -1) {
-					var parts = dataURL.split(',');
-					var contentType = parts[0].split(':')[1];
-					var raw = decodeURIComponent(parts[1]);
+					let parts = dataURL.split(',');
+					let contentType = parts[0].split(':')[1];
+					let raw = decodeURIComponent(parts[1]);
 					return new Blob([raw], { type: contentType });
 				}
 				var parts = dataURL.split(BASE64_MARKER);

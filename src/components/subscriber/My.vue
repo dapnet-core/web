@@ -15,9 +15,7 @@
 							<v-divider
 								v-if="index != 0"
 							></v-divider>
-							<v-list-tile
-								@click=""
-							>
+							<v-list-tile>
 								<v-list-tile-content>
 									<v-list-tile-title>{{ mysubscriber._id }}</v-list-tile-title>
 									<v-list-tile-sub-title>

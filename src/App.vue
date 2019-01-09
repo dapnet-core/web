@@ -101,7 +101,7 @@
 			</v-content>
 		</main>
 		<v-footer color="indigo" app>
-			<span class="white--text">&copy; 2018</span>
+			<span class="white--text">&copy; 2019</span>
 		</v-footer>
 	</v-app>
 </template>
@@ -113,7 +113,7 @@
 
 	export default {
 		name: 'app',
-		components: {Sidebar},
+		components: { Sidebar },
 		created() {
 			this.selectedLanguage = this.$root.$i18n.locale;
 		},
@@ -162,16 +162,15 @@
 						icon: 'se'
 					}
 				],
-				selectedLanguage: 'en',
+				selectedLanguage: 'en'
 			};
 		},
 		props: {
 			source: String
 		},
-		computed:{
+		computed: {
 			AvatarImageComputed() {
 				return this.$store.getters.avatarImage;
-
 			}
 		},
 		methods: {
