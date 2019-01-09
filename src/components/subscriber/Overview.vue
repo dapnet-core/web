@@ -1,9 +1,5 @@
 <template>
 	<v-container fluid>
-
-		<!--				<info-error :message="errorMessage"></info-error>
-
-		-->
 		<v-layout>
 			<v-flex xs12>
 				<v-card>
@@ -31,7 +27,7 @@
 								>
 										<v-icon>add</v-icon>
 								</v-btn>
-								<span>{{ $t('subscribers.overview.newsubscriber') }}</span>
+								<span>{{ $t('subscribers.overview.addsubscriber') }}</span>
 							</v-tooltip>
 						</v-fab-transition>
 					</v-card-title>
@@ -350,7 +346,7 @@
 				});
 			},
 			mailToOwner(element) {
-				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20User%3A%20' + element._id;
+				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20Subscriber%3A%20' + element._id;
 			},
 			editElement(element) {
 				this.$router.push({ name: 'Edit Subscriber', params: { id: element._id } });

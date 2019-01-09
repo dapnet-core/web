@@ -83,7 +83,7 @@
 			loadData() {
 				// load data of given id
 				this.isLoadingData.general = true;
-				this.$axios.get('subscribers/_my')
+				this.$axios.get('transmitters/_my')
 					.then(response => {
 						console.log(response.data);
 						this.mytransmitters = response.data;

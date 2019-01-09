@@ -193,9 +193,7 @@ const GlobalMethodsPlugin = {
 		// Moved to axios
 		Vue.prototype.$helpers.sendData = function(context, url, body, gotoUrl) {
 			axios.put(url, body).then(function(response) {
-				if (gotoUrl === '') {
-					context.$router.go(-1);
-				} else {
+				if (gotoUrl !== '') {
 					context.$router.push(gotoUrl);
 				}
 			}).catch(function(error) {

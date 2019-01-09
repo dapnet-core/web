@@ -387,7 +387,7 @@
 				});
 			},
 			mailToOwner(element) {
-				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20User%3A%20' + element._id;
+				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20Transmitter%3A%20' + element._id;
 			},
 			editElement(element) {
 				this.$router.push({ name: 'Edit Transmitter', params: { id: element._id } });
