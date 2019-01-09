@@ -21,7 +21,7 @@
 											:counter="20"
 											v-bind:rules="validationRules._id"
 											v-model="form._id"
-											v-bind:label="$t('rubrics.new.id.title')"
+											v-bind:label="$t('rubrics.id')"
 											v-bind:hint="$t('rubrics.new.id.help')"
 											persistent-hint
 											type="text"
@@ -39,7 +39,7 @@
 											:counter="10"
 											v-bind:rules="validationRules.label"
 											v-model="form.label"
-											v-bind:label="$t('rubrics.new.label.title')"
+											v-bind:label="$t('rubrics.label')"
 											v-bind:hint="$t('rubrics.new.label.help')"
 											persistent-hint
 											type="text"
@@ -71,7 +71,7 @@
 											required
 											:counter="30"
 											v-model="form.description"
-											v-bind:label="$t('rubrics.new.description.title')"
+											v-bind:label="$t('rubrics.description')"
 											v-bind:hint="$t('rubrics.new.description.help')"
 											v-bind:rules="validationRules.description"
 											persistent-hint
@@ -86,7 +86,7 @@
 									<v-flex xs12 sm6 md6>
 										<v-switch
 											v-model="form.cyclic_transmit"
-											v-bind:label="$t('rubrics.new.cyclicTransmit.title')"
+											v-bind:label="$t('rubrics.cyclicTransmit')"
 											v-bind:hint="$t('rubrics.new.cyclicTransmit.help')"
 											persistent-hint
 											prepend-icon="autorenew"
@@ -272,7 +272,7 @@
 							fieldname: this.$t('general.callsign'),
 							count: '3'
 						}),
-						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
+						v => (v && /^[a-z0-9-]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumerichyphen')
 					],
 					'label': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('rubrics.new.label.title') }),
@@ -284,7 +284,7 @@
 							fieldname: this.$t('rubrics.new.label.title'),
 							count: '2'
 						}),
-						v => (v && /^[a-z0-9- ]+$/i.test(v)) || this.$t('formvalidation.onylalphanumericspacehypen')
+						v => (v && /^[a-z0-9- ]+$/i.test(v)) || this.$t('formvalidation.onylalphanumericspacehyphen')
 					],
 					'description': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('rubrics.new.description.title') }),

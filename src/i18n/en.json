@@ -364,7 +364,8 @@
         "underlength": "{fieldname} must be minimum {count} characters.",
         "isrequired": "{fieldname} is required.",
         "onlyalphanumeric": "Only numbers and letters allowed.",
-        "onylalphanumericspacehypen": "Only numbers, letters spaces and - are allowed.",
+        "onylalphanumericspacehyphen": "Only numbers, letters, spaces and - are allowed.",
+        "onylalphanumerichyphen": "Only numbers, letters and - are allowed.",
         "isvalidEmail": "The given email must be valid.",
         "minonerole": "At least one role",
         "minoneowner": "At least one owner",
@@ -442,7 +443,14 @@
     },
     "rubrics": {
       "number": "Number",
+      "id": "ID",
+      "label": "Label",
+      "description": "Description",
+      "cyclicTransmit": "Cyclic retransmissions?",
+      "cyclicTX": "Cyclic TX?",
         "overview": {
+          "allrubrics": "All Rubrics",
+          "addrubric": "Add Rubric",
           "totalrubrics": "Total Rubrics",
           "information": {
             "help": "This is a list of all rubrics on the DAPNET. A rubric number can by assigned to several transmitter groups. Keep in mind that the transmitter groups are disjunct for the same rubric number in order to avoid overlapping number assigments.<br>Use the Activate Rubrics button to enable the reception of rubrics on your Skyper."
@@ -456,22 +464,18 @@
         },
         "new": {
           "id":{
-            "title": "Name",
             "help": "Enter an unique name for this rubric. It should be descriptive enough to get an idea about the content just from it. This is not the name that will appear on the Skyper."
           },
           "label": {
-            "title": "Label",
             "help": "This how the rubric will be names on the Skyper."
           },
           "number" : {
             "help": "This number is displayed on the Skyper."
           },
           "description": {
-            "title": "Description",
             "help": "This description is only visible on the web interface, not on the paging receiver. Describe the content or purpose of this rubric so others can know what it is about."
           },
           "cyclicTransmit": {
-            "title": "Cyclic retransmissions?",
             "help": "This switch enabled cyclic retransmissions of the complete 10 message slots in this rubric. Useful for general news, DEFINITELY not useful for rubrics that are updated from third-party sources on a regular basis!"
           },
           "cyclicTransmitInterval": {
@@ -507,7 +511,7 @@
         }
        },
       "overview": {
-        "newsubscriber": "New Subscriber",
+        "addsubscriber": "Add Subscriber",
         "allsubscribers": "All Subscribers",
         "totalsubscribers": "Total Subscribers",
         "information": {
