@@ -18,6 +18,10 @@ import swal from 'sweetalert2';
 import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 
+// import partials for rendering
+// import ActionButtons from '@/components/partials/ActionButtons';
+import AppFooter from '@/components/partials/Footer';
+
 Vue.use(globalMethods);
 
 Vue.use(VueAxios, axios);
@@ -57,6 +61,11 @@ Vue.use(Vuetify, {
 	}
 });
 
+// add partials for rendering
+// Vue.component('action-buttons', ActionButtons);
+
+Vue.component('app-footer', AppFooter);
+
 // Change Document title according to router target
 router.afterEach((to, from) => {
 	// use current view as title-source
@@ -70,6 +79,12 @@ if (store.getters.auth) {
 }
 axios.defaults.headers.common['Content-Type'] = 'application/json, text/plain, */*';
 // delete axios['Content-Type'];
+
+// output version and links onto console
+const pkg = require('../package.json');
+console.log('%c DAPNET Web v' + pkg.version + ' ', 'background: #112a2d; color: #bada55; font-size: large;');
+// console.log('Latest commit:    https://github.com/DecentralizedAmateurPagingNetwork/Web/commit/' + process.env.GITCOMMITHASH);
+// console.log('More information: https://github.com/DecentralizedAmateurPagingNetwork/Web');
 
 new Vue({
 	render: h => h(App),

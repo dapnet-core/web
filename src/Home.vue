@@ -44,7 +44,6 @@
 				</v-carousel-item>
 			</v-carousel>
 		</div>
-
     </v-container>
 </template>
 

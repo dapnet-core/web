@@ -20,7 +20,7 @@
 							<router-link to="/privacy">{{ $t('footer.contact.privacy') }}</router-link>
 						</li>
 					</ul>
-					<p><b>{{ $t('footer.versions.title') }}:</b> Core: {{ version.core }} / Web: {{ version.web }} / <router-link to="/version">{{ $t('footer.versions.check') }}</router-link></p>
+					<p><b>{{ $t('footer.versions.title') }}:</b> Web: {{ version.web }} / <router-link to="/version">{{ $t('footer.versions.check') }}</router-link></p>
 				</div>
 			</div>
 			<cookie-law theme="dark-lime" :button-text="$t('footer.cookieconsent.button')">
@@ -38,11 +38,6 @@
 			CookieLaw
 		},
 		created() {
-			// get core version
-			this.$http.get('core/version').then(response => {
-				this.version.core = response.body.core;
-			});
-
 			// get web version
 			let pkg = require('../../../package.json');
 			this.version.web = pkg.version;
@@ -50,7 +45,6 @@
 		data() {
 			return {
 				version: {
-					core: 'Unknown',
 					web: 'Unknown'
 				}
 			};
