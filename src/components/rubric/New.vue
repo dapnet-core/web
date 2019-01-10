@@ -263,16 +263,19 @@
 			validationRules() {
 				return {
 					'_id': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.callsign') }),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.id') }),
 						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
 							fieldname: this.$t('general.callsign'),
 							count: '20'
 						}),
 						v => (v && v.length >= 3) || this.$t('formvalidation.underlength', {
-							fieldname: this.$t('general.callsign'),
+							fieldname: this.$t('general.id'),
 							count: '3'
 						}),
-						v => (v && /^[a-z0-9-]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumerichyphen')
+						v => (v && /^[a-z0-9-]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumerichyphen'),
+						v => (v && this.formData.users.includes(v)) || this.$t('formvalidation.allreadypresent', {
+							fieldname: this.$t('general.id')
+						})
 					],
 					'label': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('rubrics.new.label.title') }),
@@ -398,8 +401,6 @@
 							}
 						}).catch(e => {
 							console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');
-							this.$dialogs.passwordError(this, e);
-							// this.$router.push('/users');
 					});
 				} else {
 					this.isEditMode = false;

@@ -123,7 +123,11 @@
            "title": "Emerg. Power"
          },
          "power": "Output Power",
-         "overview": {
+         "toggleauthkeyvisibility": "Toggle auth key visibility",
+         "generaterandomauthkey": "Generate random auth key",
+         "copyauthkeytoclipboard": "Copy auth key to clipboard",
+
+      "overview": {
             "newtransmitter": "New Transmitter",
             "table": {
                 "title": "All Transmitters",
@@ -300,7 +304,8 @@
             "delete": "Delete",
             "email": "Send email",
             "rubrics": "Send rubrics",
-            "monitoring": "Monitoring"
+            "monitoring": "Monitoring",
+            "showeditrubriccontent": "Show and edit rubric content"
         }
     },
     "rest": {
@@ -360,23 +365,24 @@
         }
     },
     "formvalidation": {
-        "overlength": "{fieldname} must be less or equal than {count} characters.",
-        "underlength": "{fieldname} must be minimum {count} characters.",
-        "isrequired": "{fieldname} is required.",
-        "onlyalphanumeric": "Only numbers and letters allowed.",
-        "onylalphanumericspacehyphen": "Only numbers, letters, spaces and - are allowed.",
-        "onylalphanumerichyphen": "Only numbers, letters and - are allowed.",
-        "isvalidEmail": "The given email must be valid.",
-        "minonerole": "At least one role",
-        "minoneowner": "At least one owner",
-        "OutOfRange": "{fieldname} must be between {min} and {max}",
-        "onlyInteger": "Only integer numbers allowed as {fieldname}",
-        "notzeroornegative": "{fieldname} must be greater than 0.",
-        "notnegative": "{fieldname} must be not negative.",
-        "notgreateras": "{fieldname} must not be greater as {max}.",
-        "maximal": "{fieldname} cannot be greater than {max}.",
-        "notlessorequalthan": "{fieldname} cannot be less or equal than {min}.",
-        "minonetransmitterorgroup": "There must be at least one transmitter or one transmitter group selected."
+      "overlength": "{fieldname} must be less or equal than {count} characters.",
+      "underlength": "{fieldname} must be minimum {count} characters.",
+      "isrequired": "{fieldname} is required.",
+      "onlyalphanumeric": "Only numbers and letters allowed.",
+      "onylalphanumericspacehyphen": "Only numbers, letters, spaces and - are allowed.",
+      "onylalphanumerichyphen": "Only numbers, letters and - are allowed.",
+      "isvalidEmail": "The given email must be valid.",
+      "minonerole": "At least one role",
+      "minoneowner": "At least one owner",
+      "OutOfRange": "{fieldname} must be between {min} and {max}",
+      "onlyInteger": "Only integer numbers allowed as {fieldname}",
+      "notzeroornegative": "{fieldname} must be greater than 0.",
+      "notnegative": "{fieldname} must be not negative.",
+      "notgreateras": "{fieldname} must not be greater as {max}.",
+      "maximal": "{fieldname} cannot be greater than {max}.",
+      "notlessorequalthan": "{fieldname} cannot be less or equal than {min}.",
+      "minonetransmitterorgroup": "There must be at least one transmitter or one transmitter group selected.",
+      "allreadypresent": "{fieldname} is already present in database. Select another one."
     },
     "general": {
         "callsign": "Callsign",
@@ -723,6 +729,9 @@
           "add": "Add"
       },
       "showthirdpartyroles": "Show third-party roles",
+      "togglepasswordvisibility": "Toggle password visibility",
+      "generaterandompassword": "Generate random password",
+      "copypasswordtoclipboard": "Copy password to clipboard",
       "overview": {
             "allusers": "All Users",
             "sendemailallusers": "Send a mail to all users",

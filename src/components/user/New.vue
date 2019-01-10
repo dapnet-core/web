@@ -156,7 +156,7 @@
 														<v-icon v-if="passwordVisible">visibility_off</v-icon>
 														<v-icon v-if="!passwordVisible">visibility</v-icon>
 													</v-btn>
-													<span>Toggle password visibility</span>
+													<span>{{ this.$t('users.togglepasswordvisibility') }}</span>
 												</v-tooltip>
 												<v-tooltip bottom>
 													<v-btn class="action-buttons"
@@ -168,7 +168,7 @@
 													>
 														<v-icon>assignment</v-icon>
 													</v-btn>
-													<span>Copy password to clipboard</span>
+													<span>{{ this.$t('users.copypasswordtoclipboard') }}</span>
 												</v-tooltip>
 												<v-tooltip bottom>
 													<v-btn class="action-buttons"
@@ -180,7 +180,7 @@
 													>
 														<v-icon>refresh</v-icon>
 													</v-btn>
-													<span>Generate random password</span>
+													<span>{{ this.$t('users.generaterandompassword') }}</span>
 												</v-tooltip>
 											</v-flex>
 										</v-layout>
@@ -469,7 +469,8 @@
 					subscriber_groups: true,
 					transmitters: true,
 					transmitter_groups: true,
-					roles: true
+					roles: true,
+					users: true
 				},
 				isFormValid: true,
 				form: {
@@ -499,7 +500,8 @@
 					transmitters: [],
 					transmitter_groups: [],
 					expiration_duration: '',
-					priority: ''
+					priority: '',
+					users: ''
 				},
 				passwordVisible: false,
 				created_on: '',
@@ -554,7 +556,10 @@
 							fieldname: this.$t('general.username'),
 							count: '3'
 						}),
-						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
+						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric'),
+						v => (v && this.formData.users.includes(v)) || this.$t('formvalidation.allreadypresent', {
+							fieldname: this.$t('general.username')
+						})
 					],
 					'password': [
 						v => (!!v || this.isEditMode) || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.password') }),
@@ -658,9 +663,19 @@
 						console.log('Error getting user\'s roles in user/new.vue');
 				});
 
-				// TO: Load availableThirdPartyRoles from API:
+				// TODO: Load availableThirdPartyRoles from API:
 				// Workaround: Set static
 				this.availableThirdPartyRoles = ['thirdparty.brandmeister'];
+
+				// Load avaiable users
+				this.isLoadingData.users = true;
+				this.$axios.get('users/_usernames')
+					.then(response => {
+						this.formData.users = response.data;
+						this.isLoadingData.users = false;
+					}).catch(e => {
+						console.log('Error getting user names in transmitter/new.vue');
+				});
 
 				// Load available subscriber names
 				this.isLoadingData.subscribers = true;

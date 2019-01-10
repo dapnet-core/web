@@ -1,11 +1,11 @@
 {
   "name": "dapnet-web",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "The default DAPNET Web-frontend.",
   "author": "Marvin Menzerath, Ralf Wilke",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --host 44.225.164.51",
+    "serve": "vue-cli-service serve --host 192.168.56.101",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },

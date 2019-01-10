@@ -15,7 +15,7 @@
 						>
 						</v-text-field>
 						<!-- Add Rubric Button -->
-						<v-fab-transition v-if="this.$store.getters.permission('transmitter.create')">
+						<v-fab-transition v-if="this.$store.getters.permission('rubric.create')">
 							<v-tooltip bottom>
 								<v-btn
 									color="pink"
@@ -111,10 +111,26 @@
 
 							<!-- Action Buttons -->
 							<td class="text-xs-center" v-if="displayActionsColumn">
+								<!-- Show and Edit Content -->
+								<v-tooltip bottom>
+									<v-btn class="action-buttons"
+										v-if="getPermissionsWrapper('news.read') === 'all'"
+										flat
+										icon
+										small
+										fab
+										color="blue"
+										v-on:click="showNewsDialog(props.item)"
+										slot="activator"
+									>
+										<v-icon>storage</v-icon>
+									</v-btn>
+									<span>{{ $t('table.actionbuttons.showeditrubriccontent') }}</span>
+								</v-tooltip>
 								<!-- Edit -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('transmitter.update') === 'all'"
+											v-if="getPermissionsWrapper('rubric.update') === 'all'"
 											flat
 											icon
 											small
@@ -130,7 +146,7 @@
 								<!-- Delete -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('transmitter.delete') === 'all'"
+											v-if="getPermissionsWrapper('rubric.delete') === 'all'"
 											flat
 											icon
 											small
@@ -146,7 +162,7 @@
 								<!-- Send Email -->
 								<v-tooltip bottom class="action-buttons">
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('transmitter.update') === 'all'"
+											v-if="getPermissionsWrapper('rubric.update') === 'all'"
 											flat
 											icon
 											small
@@ -168,6 +184,42 @@
 				</v-card>
 			</v-flex>
 		</v-layout>
+		<v-dialog
+			v-model="newsDialogVisible"
+			max-width="430px"
+		>
+			<v-card>
+				<v-card-title>
+					{{ this.rubriccontent._id }} {{ this.rubriccontent.label }} {{ this.rubriccontent.number }}
+				</v-card-title>
+				<v-card-text>
+					<v-form v-model="isMessageFormValid" ref="messageForm">
+						<v-text-field
+							v-for="(message, index) in this.rubriccontent.messages"
+							:key="index"
+							v-model="this.rubriccontent.messages[i]"
+							v-bind:v-prefix="index+1"
+						>
+						</v-text-field>
+					</v-form>
+				</v-card-text>
+				<v-card-actions>
+					<v-btn
+						@click="messagesSaveChanges"
+						v-bind:disabled="!rubriccontent.formvalid"
+					>
+						Save changes
+					</v-btn>
+					<v-btn
+						color="primary"
+						flat
+						@click="newsDialogVisible=false"
+					>
+						Close
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
 	</v-container>
 </template>
 
@@ -194,6 +246,8 @@
 				rubricrows: [],
 				errorMessage: false,
 				isLoadingData: true,
+				newsDialogVisible: false,
+				isMessageFormValid: false,
 				table: {
 					columns: [
 						{
@@ -207,6 +261,15 @@
 					descending: true,
 					rowsPerPage: 10,
 					page: 1
+				},
+				rubriccontent: {
+					_id: '',
+					_rev: '',
+					number: 0,
+					description: '',
+					label: '',
+					messages: [],
+					formvalid: false
 				}
 			};
 		},
@@ -275,6 +338,21 @@
 			}
 		},
 		methods: {
+			showNewsDialog(element) {
+				// Load specific news data
+				this.$axios.get('rubrics/' + element._id)
+					.then(response => {
+						this.rubriccontent._id = response.data._id;
+						this.rubriccontent._rev = response.data._rev;
+						this.rubriccontent.number = response.data.number;
+						this.rubriccontent.description = response.data.description;
+						this.rubriccontent.label = response.data.label;
+						this.rubriccontent.messages = response.data.messages;
+					}).catch(e => {
+						console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');
+					});
+				this.newsDialogVisible = true;
+			},
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('rubric.update') === 'all') ||
 				(this.$store.getters.permission('rubric.delete') === 'all'));
@@ -330,6 +408,9 @@
 						this.$dialogs.ajaxError(this, response);
 					});
 				});
+			},
+			messagesSaveChanges() {
+
 			}
 		}
 	};

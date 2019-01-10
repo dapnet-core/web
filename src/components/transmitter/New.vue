@@ -42,12 +42,51 @@
 											v-model="form.auth_key"
 											v-bind:label="$t('transmitters.new.authkey.title')"
 											v-bind:hint="$t('transmitters.new.authkey.help')"
+											v-bind:type="authkeyVisible ? 'text' : 'password'"
 											persistent-hint
-											type="text"
 											:loading="isLoadingData.general"
 										>
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
 										</v-text-field>
+									</v-flex>
+									<v-flex xs12 sm12 md2>
+										<v-tooltip bottom>
+											<v-btn class="action-buttons"
+												flat
+												icon
+												small
+												v-on:click="authkeyVisible = !authkeyVisible"
+												slot="activator"
+											>
+												<v-icon v-if="authkeyVisible">visibility_off</v-icon>
+												<v-icon v-if="!authkeyVisible">visibility</v-icon>
+											</v-btn>
+											<span>{{ this.$t('transmitters.toggleauthkeyvisibility') }}</span>
+										</v-tooltip>
+										<v-tooltip bottom>
+											<v-btn class="action-buttons"
+												flat
+												icon
+												small
+												:v-clipboard:copy="form.auth_key"
+												slot="activator"
+											>
+												<v-icon>assignment</v-icon>
+											</v-btn>
+											<span><span>{{ this.$t('transmitters.copyauthkeytoclipboard') }}</span></span>
+										</v-tooltip>
+										<v-tooltip bottom>
+											<v-btn class="action-buttons"
+												flat
+												icon
+												small
+												v-on:click="form.auth_key = $helpers.generatePassword(); authkeyVisible = true;"
+												slot="activator"
+											>
+												<v-icon>refresh</v-icon>
+											</v-btn>
+											<span>{{ this.$t('transmitters.generaterandomauthkey') }}</span>
+										</v-tooltip>
 									</v-flex>
 								</v-layout>
 								<!--Location-->
@@ -433,6 +472,7 @@
 					transmitter_groups: true
 				},
 				isFormValid: true,
+				authkeyVisible: false,
 				form: {
 					_id: '',
 					_rev: '',
@@ -553,7 +593,10 @@
 							fieldname: this.$t('general.callsign'),
 							count: '3'
 						}),
-						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
+						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric'),
+						v => (v && this.formData.users.includes(v)) || this.$t('formvalidation.allreadypresent', {
+							fieldname: this.$t('general.callsign')
+						})
 					],
 					'authkey': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('transmitters.new.authkey.title') }),
@@ -643,7 +686,7 @@
 				this.form.coordinates[1] = this.form.latlong.absolute.longitude * this.form.latlong.westeast;
 			},
 			loadData() {
-				// Load avaiable user roles
+				// Load avaiable users
 				this.isLoadingData.users = true;
 				this.$axios.get('users/_usernames')
 					.then(response => {
@@ -804,4 +847,9 @@
 	};
 </script>
 <style scoped>
+	.action-buttons {
+		padding: 1px;
+		margin: 0px;
+		display: inline-block;
+	}
 </style>
