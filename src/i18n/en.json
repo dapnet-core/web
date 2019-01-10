@@ -448,25 +448,25 @@
         "pagers": "Pagers"
     },
     "rubrics": {
-      "number": "Number",
+      "number": "'#Messages",
       "id": "ID",
       "label": "Label",
       "description": "Description",
       "cyclicTransmit": "Cyclic retransmissions?",
       "cyclicTX": "Cyclic TX?",
+      "numberofMessages": "#Messages",
         "overview": {
           "allrubrics": "All Rubrics",
           "addrubric": "Add Rubric",
           "totalrubrics": "Total Rubrics",
+          "editrubriccontentof": "Edit Rubric Content of",
+          "movecontentup": "Move content up",
+          "movecontentdown": "Move content down",
+          "deletecontent": "Delete this content and move the remaining content slots upwards",
           "information": {
             "help": "This is a list of all rubrics on the DAPNET. A rubric number can by assigned to several transmitter groups. Keep in mind that the transmitter groups are disjunct for the same rubric number in order to avoid overlapping number assigments.<br>Use the Activate Rubrics button to enable the reception of rubrics on your Skyper."
           },
-          "table": {
-            "number": "Number",
-            "name": "Name",
-            "label": "Label",
-            "transmittergroup": "Transmitter Groups"
-          }
+          "addcontent": "Add content to this rubric"
         },
         "new": {
           "id":{
@@ -617,7 +617,7 @@
         "overview": {
             "allrubriccontent": "All Rubric Content",
             "newrubriccontent": "New Rubric Content",
-            "totalrubriccontent": "Total Rubic Content",
+            "totalrubriccontent": "Total Rubric Content",
             "information": {
                 "help": "The content displayed here are NOT general news about DAPNET, but the recently sent content to rubrics. Every time a user updates the 10 available rubric messages slots, this change will be displayed here."
             },

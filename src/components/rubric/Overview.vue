@@ -70,6 +70,11 @@
 								<v-icon v-else color ="red">toggle_off</v-icon>
 							</td>
 
+							<!-- Number of containing messages -->
+							<td class="text-xs-center">
+								{{ getNumberofRubricContent(props.item) }}
+							</td>
+
 							<!-- owner column -->
 							<td class="text-xs-center">
 								<span v-for="(owner, index) in props.item.owners" v-bind:key="`owner-${index}`">
@@ -119,8 +124,8 @@
 										icon
 										small
 										fab
-										color="blue"
-										v-on:click="showNewsDialog(props.item)"
+										color="orange"
+										v-on:click="showEditContentDialog(props.item)"
 										slot="activator"
 									>
 										<v-icon>storage</v-icon>
@@ -159,21 +164,21 @@
 									</v-btn>
 									<span>{{ $t('table.actionbuttons.delete') }}</span>
 								</v-tooltip>
-								<!-- Send Email -->
+								<!-- Add Message  -->
 								<v-tooltip bottom class="action-buttons">
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('rubric.update') === 'all'"
+											v-if="getPermissionsWrapper('news.update') === 'all'"
 											flat
 											icon
 											small
 											fab
-											color="grey"
-											v-on:click="mailToOwner(props.item)"
+											color="purple"
+											v-on:click="showAddContentDialog(props.item)"
 											slot="activator"
 									>
-										<v-icon>contact_mail</v-icon>
+										<v-icon>add</v-icon>
 									</v-btn>
-									<span>{{ $t('table.actionbuttons.email') }}</span>
+									<span>{{ $t('rubrics.overview.addcontent') }}</span>
 								</v-tooltip>
 							</td>
 						</template>
@@ -184,21 +189,126 @@
 				</v-card>
 			</v-flex>
 		</v-layout>
+		<!--Edit Content Dialog-->
 		<v-dialog
-			v-model="newsDialogVisible"
-			max-width="430px"
+			max-width="600px"
+			v-model="EditContentDialogVisible"
 		>
 			<v-card>
 				<v-card-title>
-					{{ this.rubriccontent._id }} {{ this.rubriccontent.label }} {{ this.rubriccontent.number }}
+					<span class="headline">
+						{{ $t('rubrics.overview.editrubriccontentof') }}
+						<v-chip label>
+							<v-avatar class="teal">
+								{{ this.rubriccontent.number }}
+							</v-avatar>
+							{{ this.rubriccontent.label }}
+						</v-chip>
+					</span>
+				</v-card-title>
+				<v-card-text>
+					<v-form v-model="isMessageFormValid" ref="messageForm">
+						<v-layout
+							v-for="index in 10"
+							:key="index"
+						>
+							<v-flex xs9>
+								<v-textarea
+									v-model="rubriccontent.content[index-1]"
+									:prefix="index.toString()"
+									:counter="80"
+									rows="2"
+								>
+								</v-textarea>
+							</v-flex>
+							<v-flex v-if="getPermissionsWrapper('news.update') === 'all'">
+								<v-tooltip bottom>
+									<v-btn
+										v-if="index != 1"
+										class="action-buttons"
+										flat
+										icon
+										small
+										fab
+										color="primary"
+										v-on:click="moveContentUp(index)"
+										slot="activator"
+									>
+										<v-icon>arrow_upward</v-icon>
+									</v-btn>
+									<span>{{ $t('rubrics.overview.movecontentup') }}</span>
+								</v-tooltip>
+								<v-tooltip bottom>
+									<v-btn
+										v-if="index != 10"
+										class="action-buttons"
+										flat
+										icon
+										small
+										fab
+										color="primary"
+										v-on:click="moveContentDown(index)"
+										slot="activator"
+									>
+										<v-icon>arrow_downward</v-icon>
+									</v-btn>
+									<span>{{ $t('rubrics.overview.movecontentdown') }}</span>
+								</v-tooltip>
+								<v-tooltip bottom>
+									<v-btn
+										class="action-buttons"
+										flat
+										icon
+										small
+										fab
+										color="red"
+										v-on:click="deleteContent(index)"
+										slot="activator"
+									>
+										<v-icon>delete_forever</v-icon>
+									</v-btn>
+									<span>{{ $t('rubrics.overview.deletecontent') }}</span>
+								</v-tooltip>
+							</v-flex>
+						</v-layout>
+					</v-form>
+				</v-card-text>
+				<v-card-actions>
+					<v-btn
+						@click="messagesSaveChanges"
+						v-bind:disabled="!rubriccontent.formvalid"
+					>
+						Save changes
+					</v-btn>
+					<v-btn
+						color="primary"
+						flat
+						@click="EditContentDialogVisible=false"
+					>
+						Close
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
+		<!--Add Content Dialog-->
+		<!--max-width="430px"-->
+		<v-dialog
+			v-model="AddContentDialogVisible"
+		>
+			<v-card>
+				<v-card-title>
+					<span class="headline">
+						ID: {{ this.rubriccontent._id }} - Label: {{ this.rubriccontent.label }} - Number: {{ this.rubriccontent.number }}
+					</span>
 				</v-card-title>
 				<v-card-text>
 					<v-form v-model="isMessageFormValid" ref="messageForm">
 						<v-text-field
-							v-for="(message, index) in this.rubriccontent.messages"
+							v-for="index in 10"
 							:key="index"
-							v-model="this.rubriccontent.messages[i]"
-							v-bind:v-prefix="index+1"
+							v-bind:v-model="rubriccontent.content[index-1]"
+							:prefix="index.toString()"
+							:counter="80"
 						>
 						</v-text-field>
 					</v-form>
@@ -213,7 +323,7 @@
 					<v-btn
 						color="primary"
 						flat
-						@click="newsDialogVisible=false"
+						@click="EditContentDialogVisible=false"
 					>
 						Close
 					</v-btn>
@@ -246,7 +356,8 @@
 				rubricrows: [],
 				errorMessage: false,
 				isLoadingData: true,
-				newsDialogVisible: false,
+				EditContentDialogVisible: false,
+				AddContentDialogVisible: false,
 				isMessageFormValid: false,
 				table: {
 					columns: [
@@ -268,19 +379,30 @@
 					number: 0,
 					description: '',
 					label: '',
-					messages: [],
+					content: [],
+					formvalid: false
+				},
+				addcontent: {
+					_id: '',
+					_rev: '',
+					number: 0,
+					description: '',
+					label: '',
 					formvalid: false
 				}
 			};
 		},
 		computed: {
+			isReadyLoadingData() {
+				return !this.isLoadingData;
+			},
 			statTotal() {
 				return this.table.rows.length;
 			},
 			getHeaders() {
-				let answer = [
+				let headings = [
 					{
-						text: this.$i18n.t('general.name'),
+						text: this.$i18n.t('rubrics.id'),
 						align: 'left',
 						sortable: true,
 						value: '_id'
@@ -309,6 +431,12 @@
 						value: 'cyclic_transmit'
 					},
 					{
+						text: this.$i18n.t('rubrics.numberofMessages'),
+						sortable: false,
+						align: 'center',
+						value: 'getNumberofRubricContent(props.item)'
+					},
+					{
 						text: this.$i18n.t('general.owner'),
 						align: 'center',
 						value: 'owners'
@@ -332,14 +460,52 @@
 						align: 'center',
 						sortable: false
 					};
-					answer.push(actions);
+					headings.push(actions);
 				}
-				return answer;
+				return headings;
 			}
 		},
 		methods: {
-			showNewsDialog(element) {
-				// Load specific news data
+			moveContentUp(index) {
+				// index starts at 1, ends at 10
+				let help = this.rubriccontent.content[index - 2];
+				this.rubriccontent.content[index - 2] = this.rubriccontent.content[index - 1];
+				this.rubriccontent.content[index - 1] = help;
+				// Workaround to update v-text-area
+				// TODO: Find better way
+				this.rubriccontent.content.push('');
+				this.rubriccontent.content.splice(-1, 1);
+			},
+			moveContentDown(index) {
+				// index starts at 1, ends at 10
+				let help = this.rubriccontent.content[index];
+				this.rubriccontent.content[index] = this.rubriccontent.content[index - 1];
+				this.rubriccontent.content[index - 1] = help;
+				// Workaround to update v-text-area
+				// TODO: Find better way
+				this.rubriccontent.content.push('');
+				this.rubriccontent.content.splice(-1, 1);
+			},
+			deleteContent(index) {
+				// index starts at 1, ends at 10
+				this.rubriccontent.content.splice(index - 1, 1);
+				// Restore number of elements to 10
+				this.rubriccontent.content.push('');
+			},
+			getNumberofRubricContent(rubric) {
+				if (!(rubric.content)) {
+					return 0;
+				}
+				let n = 0;
+				for (let i = 0; i < rubric.content.length; i++) {
+					if (rubric.content[i] !== '') {
+						n++;
+					}
+				}
+				return n;
+			},
+			showEditContentDialog(element) {
+				// Load specific rubric's content data
 				this.$axios.get('rubrics/' + element._id)
 					.then(response => {
 						this.rubriccontent._id = response.data._id;
@@ -347,15 +513,37 @@
 						this.rubriccontent.number = response.data.number;
 						this.rubriccontent.description = response.data.description;
 						this.rubriccontent.label = response.data.label;
-						this.rubriccontent.messages = response.data.messages;
+						for (var i = 0; i < 10; i++) {
+							if (response.data.content && response.data.content[i]) {
+								this.rubriccontent.content[i] = response.data.content[i];
+							} else {
+								this.rubriccontent.content[i] = '';
+							}
+						}
+						this.EditContentDialogVisible = true;
 					}).catch(e => {
 						console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');
-					});
-				this.newsDialogVisible = true;
+				});
+			},
+			showAddContentDialog(element) {
+				// Load specific rubric's content data
+				this.$axios.get('rubrics/' + element._id)
+					.then(response => {
+						this.addcontent._id = response.data._id;
+						this.addcontent._rev = response.data._rev;
+						this.addcontent.number = response.data.number;
+						this.addcontent.description = response.data.description;
+						this.addcontent.label = response.data.label;
+						this.AddContentDialogVisible = true;
+					}).catch(e => {
+						console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');
+				});
 			},
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('rubric.update') === 'all') ||
-				(this.$store.getters.permission('rubric.delete') === 'all'));
+					(this.$store.getters.permission('rubric.delete') === 'all') ||
+					(this.$store.getters.permission('rubric.read') === 'all') ||
+				(this.$store.getters.permission('news.update') === 'all'));
 			},
 			getPermissionsWrapper(mypermission) {
 				return (this.$store.getters.permission(mypermission));
