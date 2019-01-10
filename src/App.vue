@@ -50,8 +50,9 @@
 				<v-btn
 					v-if="!this.$store.getters.isUserLoggedIn"
 					flat
+					to="/login"
 				>
-					<router-link to="/login">{{ $t('navigation.login') }}</router-link>
+					{{ $t('navigation.login') }}
 				</v-btn>
 
 				<v-menu

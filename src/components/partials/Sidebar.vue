@@ -17,15 +17,45 @@
 				</v-list-tile-content>
 			</v-list-tile>
 
-			<!-- Calls -->
-			<v-list-tile exact to="/calls">
-				<v-list-tile-action>
-					<v-icon>message</v-icon>
-				</v-list-tile-action>
-				<v-list-tile-content>
-					<v-list-tile-title>{{ $t('navigation.calls') }}</v-list-tile-title>
-				</v-list-tile-content>
-			</v-list-tile>
+			<!-- Calls group -->
+			<v-list-group
+				prepend-icon="message"
+				value="true"
+			>
+				<!-- Calls Header in Menu -->
+				<v-list-tile slot="activator">
+					<v-list-tile-title>{{ $t('navigation.calls.title') }}</v-list-tile-title>
+				</v-list-tile>
+				<!-- if permission read === all, link to table -->
+				<v-list-tile
+					exact to="/calls/new"
+				>
+					<v-list-tile-action>
+						<v-badge
+							right
+							overlap
+							v-model="isReadyLoadingData.total.subscribers"
+						>
+							<span slot="badge">000</span>
+							<v-icon>message</v-icon>
+						</v-badge>
+					</v-list-tile-action>
+					<v-list-tile-content>
+						<v-list-tile-title>{{ $t('navigation.calls.new') }}</v-list-tile-title>
+					</v-list-tile-content>
+				</v-list-tile>
+				<v-list-tile
+					exact to="/calls"
+				>
+					<v-list-tile-action>
+						<v-icon>message</v-icon>
+					</v-list-tile-action>
+					<v-list-tile-content>
+						<v-list-tile-title>{{ $t('navigation.calls.all') }}</v-list-tile-title>
+					</v-list-tile-content>
+				</v-list-tile>
+
+			</v-list-group>
 
 			<!-- Users -->
 			<v-list-tile

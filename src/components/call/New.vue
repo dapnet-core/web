@@ -22,7 +22,7 @@
 											<v-textarea
 												prepend-icon="message"
 												name="message"
-												v-model="form.message"
+												v-model="form.data"
 												v-bind:label="$t('calls.new.message.title')"
 												outline
 												rows="2"
@@ -45,7 +45,7 @@
 												multiple
 												hide-selected
 												prepend-icon="person"
-												v-model="form.subscribers"
+												v-model="form.recipients.subscribers"
 												:items="formData.subscribers"
 												v-bind:label="$t('general.subscribers')"
 											>
@@ -62,7 +62,7 @@
 												multiple
 												hide-selected
 												prepend-icon="people"
-												v-model="form.subscriber_groups"
+												v-model="form.recipients.subscriber_groups"
 												:items="formData.subscriber_groups"
 												v-bind:label="$t('general.subscriber_groups')"
 											>
@@ -80,7 +80,7 @@
 												multiple
 												hide-selected
 												prepend-icon="wifi"
-												v-model="form.transmitters"
+												v-model="form.distribution.transmitters"
 												:items="formData.transmitters"
 												v-bind:label="$t('general.transmitters')"
 											>
@@ -97,7 +97,7 @@
 												multiple
 												hide-selected
 												prepend-icon="wifi_tethering"
-												v-model="form.transmitter_groups"
+												v-model="form.distribution.transmitter_groups"
 												:items="formData.transmitter_groups"
 												v-bind:label="$t('general.transmitter_groups')"
 											>
@@ -106,7 +106,7 @@
 									</v-layout>
 									<v-layout>
 										<!-- Display default priority-->
-										<v-flex xs5>
+										<!--<v-flex xs5>
 											<v-select
 												prepend-icon="low_priority"
 												v-model="form.priority"
@@ -114,6 +114,19 @@
 												v-bind:label="$t('general.priority')"
 											>
 											</v-select>
+										</v-flex>-->
+										<v-flex xs5>
+											<v-slider
+												v-model="form.priority"
+												:tick-labels="priority_labels"
+												min="1"
+												max="5"
+												step="1"
+												ticks="always"
+												v-bind:label="$t('general.priority')"
+												prepend-icon="low_priority"
+												>
+											</v-slider>
 										</v-flex>
 										<v-flex xs2></v-flex>
 										<!-- Display default duration -->
@@ -173,6 +186,7 @@
 </template>
 
 <script>
+	import axios from 'axios';
 	export default {
 		created() {
 			this.loadSelectionChoices();
@@ -181,13 +195,17 @@
 		data() {
 			return {
 				form: {
-					message: this.$store.getters.user._id.toUpperCase() + ': ',
-					subscribers: [],
-					subscriber_groups: [],
-					transmitters: [],
-					transmitter_groups: [],
-					expiration_duration: '',
-					priority: ''
+					data: this.$store.getters.user._id.toUpperCase() + ': ',
+					recipients: {
+						subscribers: [],
+						subscriber_groups: []
+					},
+					distribution: {
+						transmitters: [],
+						transmitter_groups: []
+					},
+					expires_on: '2020-01-10T18:45:44.739Z',
+					priority: 3
 				},
 				formData: {
 					subscribers: [],
@@ -235,7 +253,7 @@
 					this.$t('general.priorities.high'),
 					this.$t('general.priorities.highest')
 				];
-			}
+			},
 		},
 		methods: {
 			loadUserDefaultSettings() {
@@ -245,25 +263,26 @@
 					.then(response => {
 						if (response.data.defaults) {
 							if (response.data.defaults.transmitters) {
-								this.form.transmitters = response.data.defaults.transmitters;
+								this.form.distribution.transmitters = response.data.defaults.transmitters;
 							} else {
-								this.form.transmitters = [];
+								this.form.distribution.transmitters = [];
 							}
 							if (response.data.defaults.transmitter_groups) {
-								this.form.transmitter_groups = response.data.defaults.transmitter_groups;
+								this.form.distribution.transmitter_groups = response.data.defaults.transmitter_groups;
 							} else {
-								this.form.transmitter_groups = [];
+								this.form.distribution.transmitter_groups = [];
 							}
 							if (response.data.defaults.subscribers) {
-								this.form.subscribers = response.data.defaults.subscribers;
+								this.form.recipients.subscribers = response.data.defaults.subscribers;
 							} else {
-								this.form.subscribers = [];
+								this.form.recipients.subscribers = [];
 							}
 							if (response.data.defaults.subscriber_groups) {
-								this.form.subscriber_groups = response.data.defaults.subscriber_groups;
+								this.form.recipients.subscriber_groups = response.data.defaults.subscriber_groups;
 							} else {
-								this.form.subscriber_groups = [];
+								this.form.recipients.subscriber_groups = [];
 							}
+							/*
 							if (response.data.defaults.expiration_duration) {
 								this.form.expiration_duration = response.data.defaults.expiration_duration;
 								if (this.form.expiration_duration > ((6 * 3600 * 24) + (23 * 3600) + (45 * 60))) {
@@ -275,6 +294,7 @@
 							} else {
 								this.form.expiration_duration = '';
 							}
+							*/
 							if (response.data.defaults.priority) {
 								this.form.priority = this.$helpers.priorityNumber2String(this, response.data.defaults.priority);
 							} else {
@@ -333,12 +353,14 @@
 				this.form2send = Object.assign({}, this.form);
 
 				this.form2send.priority = this.$helpers.priorityString2Number(this, this.form.priority);
-				this.form2send.expiration_duration = this.expiration_selection.days * (24 * 3600) +
-					this.expiration_selection.hours * 3600 +
-					this.expiration_selection.minutes * 60;
+				// this.form2send.expiration_duration = this.expiration_selection.days * (24 * 3600) +
+				//	this.expiration_selection.hours * 3600 +
+				//	this.expiration_selection.minutes * 60;
 				console.log(this.form2send);
-				// this.$helpers.sendData(this, 'users', this.form2send, '/users');
-				// TODO: Update auth if a user change their own password
+				axios.post('/calls', this.form2send)
+					.then(function(response) {
+				});
+				this.$router.go(-1);
 			}
 		}
 	};

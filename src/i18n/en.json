@@ -1,7 +1,12 @@
 {
     "navigation": {
         "home" : "Home",
-        "calls": "Calls",
+        "calls": {
+          "title": "Calls",
+          "all": "All Calls",
+          "my": "My Calls",
+          "new": "Send call"
+        },
         "subscribers": {
           "title": "Subscribers",
           "all": "All Subscribers",
@@ -575,11 +580,12 @@
         "overview": {
             "allcalls": "All Calls",
             "newcall": "New Call",
-            "emergencies": "Emergencies",
             "totalcalls": "Total Calls",
             "information": {
                 "help": "Calls are a personal paging transmission to individual receivers."
             },
+            "from": "From",
+            "origin": "Origin",
             "table": {
                 "timestamp": "Timestamp",
                 "transmitters": "Transmitters",

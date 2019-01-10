@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '@/Home';
-import Calls from '@/components/Calls';
+import CallsOverview from '@/components/call/Overview';
+import CallsNew from '@/components/call/New';
 import Login from '@/components/authentication/Login';
 import Logout from '@/components/authentication/Logout';
 import UserOverview from '@/components/user/Overview';
@@ -34,10 +35,19 @@ export default new Router({
 		},
 		{
 			path: '/calls',
-			name: 'Calls',
-			component: Calls,
+			name: 'Calls Overview',
+			component: CallsOverview,
 			meta: {
 				titleTranslationKey: 'pagetitle.calls.overview',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/calls/new',
+			name: 'Send call',
+			component: CallsNew,
+			meta: {
+				titleTranslationKey: 'pagetitle.calls.new',
 				requireAuthentication: true
 			}
 		},
