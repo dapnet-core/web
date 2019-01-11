@@ -21,6 +21,7 @@
 			<v-list-group
 				prepend-icon="message"
 				value="true"
+				v-if="this.$store.getters.isUserLoggedIn"
 			>
 				<!-- Calls Header in Menu -->
 				<v-list-tile slot="activator">
@@ -31,24 +32,25 @@
 					exact to="/calls/new"
 				>
 					<v-list-tile-action>
-						<v-badge
-							right
-							overlap
-							v-model="isReadyLoadingData.total.subscribers"
-						>
-							<span slot="badge">000</span>
-							<v-icon>message</v-icon>
-						</v-badge>
+						<v-icon>message</v-icon>
 					</v-list-tile-action>
 					<v-list-tile-content>
 						<v-list-tile-title>{{ $t('navigation.calls.new') }}</v-list-tile-title>
 					</v-list-tile-content>
 				</v-list-tile>
+
 				<v-list-tile
 					exact to="/calls"
 				>
 					<v-list-tile-action>
-						<v-icon>message</v-icon>
+						<v-badge
+							right
+							overlap
+							v-model="isReadyLoadingData.total.calls"
+						>
+							<span slot="badge">{{ count_total.calls }}</span>
+							<v-icon>message</v-icon>
+						</v-badge>
 					</v-list-tile-action>
 					<v-list-tile-content>
 						<v-list-tile-title>{{ $t('navigation.calls.all') }}</v-list-tile-title>
@@ -59,7 +61,7 @@
 
 			<!-- Users -->
 			<v-list-tile
-				v-if="this.$store.getters.permission('user.read') === 'all'"
+				v-if="this.$store.getters.isUserLoggedIn && this.$store.getters.permission('user.read') === 'all'"
 				exact to="/users"
 			>
 				<v-list-tile-action>
@@ -78,7 +80,7 @@
 			</v-list-tile>
 
 			<v-list-tile
-				v-if="!(this.$store.getters.permission('user.read') === 'all')"
+				v-if="this.$store.getters.isUserLoggedIn && (!(this.$store.getters.permission('user.read') === 'all'))"
 				exact to="/usersonlynames"
 			>
 				<v-list-tile-action>
@@ -100,6 +102,7 @@
 			<v-list-group
 				prepend-icon="cast"
 				value="true"
+				v-if="this.$store.getters.isUserLoggedIn"
 			>
 				<!-- subscribers Header in Menu -->
 				<v-list-tile slot="activator">
@@ -168,6 +171,7 @@
 			<v-list-group
 				prepend-icon="wifi"
 				value="true"
+				v-if="this.$store.getters.isUserLoggedIn"
 			>
 				<!-- Transmitters Header in Menu -->
 				<v-list-tile slot="activator">
@@ -237,6 +241,7 @@
 			<v-list-group
 				prepend-icon="message"
 				value="true"
+				v-if="this.$store.getters.isUserLoggedIn"
 			>
 				<!-- Rubrics Header in Menu -->
 				<v-list-tile slot="activator">
@@ -339,7 +344,8 @@
 						rubrics: false,
 						transmitters: false,
 						nodes: false,
-						users: false
+						users: false,
+						calls: false
 					}
 				},
 				count_my: {
@@ -353,7 +359,8 @@
 					rubrics: 0,
 					transmitters: 0,
 					nodes: 0,
-					users: 0
+					users: 0,
+					calls: 0
 				}
 			};
 		},
@@ -374,6 +381,21 @@
 				this.loadTotalTransmitters();
 				this.loadTotalUsers();
 				this.loadTotalRubrics();
+				this.loadTotalCalls();
+			},
+			loadTotalCalls() {
+				this.isReadyLoadingData.total.calls = false;
+				axios.get('/calls').then(response => {
+					// success --> save new data
+					if (response.data) {
+						this.count_total.calls = response.data.length;
+					}
+					console.log('Total Calls ' + this.count_total.calls);
+					this.isReadyLoadingData.total.calls = true;
+				}, response => {
+					// error --> show error message
+					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+				});
 			},
 			loadTotalRubrics() {
 				this.isReadyLoadingData.total.rubrics = false;
