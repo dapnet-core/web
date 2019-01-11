@@ -22,7 +22,7 @@
 									fab
 									dark
 									small
-									to="/cals/new"
+									to="/calls/new"
 									slot="activator"
 								>
 										<v-icon>add</v-icon>
@@ -181,13 +181,13 @@
 					{
 						text: this.$i18n.t('general.subscribers'),
 						sortable: true,
-						align: 'left',
+						align: 'center',
 						value: 'recipients.subscribers'
 					},
 					{
 						text: this.$i18n.t('general.transmitters'),
 						sortable: true,
-						align: 'left',
+						align: 'center',
 						value: 'distribution.transmitters'
 					},
 					{

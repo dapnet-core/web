@@ -253,7 +253,7 @@
 					this.$t('general.priorities.high'),
 					this.$t('general.priorities.highest')
 				];
-			},
+			}
 		},
 		methods: {
 			loadUserDefaultSettings() {
