@@ -594,7 +594,7 @@
 							count: '3'
 						}),
 						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric'),
-						v => (v && this.formData.users.includes(v)) || this.$t('formvalidation.allreadypresent', {
+						v => (v && this.isEditMode) || (v && !this.formData.transmitters.includes(v)) || this.$t('formvalidation.allreadypresent', {
 							fieldname: this.$t('general.callsign')
 						})
 					],

@@ -25,6 +25,7 @@
 											type="text"
 											v-bind:readonly="userformReadonly ? true : false"
 											:loading="isLoadingData.general"
+											browser-autocomplete="false"
 										>
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
 										</v-text-field>
@@ -42,6 +43,7 @@
 											v-bind:label="$t('general.email')"
 											type="text"
 											:loading="isLoadingData.general"
+											browser-autocomplete="false"
 										>
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
 										</v-text-field>
@@ -132,15 +134,16 @@
 										<v-layout align-center>
 											<v-flex xs9>
 												<v-text-field
-												id="password"
-												prepend-icon="lock"
-												name="password"
-												:required="!isEditMode"
-												:counter="30"
-												v-bind:rules="validationRules.password"
-												v-model="form.password"
-												v-bind:label="passwordLabel"
-												v-bind:type="passwordVisible ? 'text' : 'password'"
+													id="password"
+													prepend-icon="lock"
+													name="password"
+													:required="!isEditMode"
+													:counter="30"
+													v-bind:rules="validationRules.password"
+													v-model="form.password"
+													v-bind:label="passwordLabel"
+													v-bind:type="passwordVisible ? 'text' : 'password'"
+													browser-autocomplete="false"
 												>
 												</v-text-field>
 											</v-flex>
@@ -557,7 +560,7 @@
 							count: '3'
 						}),
 						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric'),
-						v => (v && this.formData.users.includes(v)) || this.$t('formvalidation.allreadypresent', {
+						v => (v && this.isEditMode) || (v && !this.formData.users.includes(v)) || this.$t('formvalidation.allreadypresent', {
 							fieldname: this.$t('general.username')
 						})
 					],

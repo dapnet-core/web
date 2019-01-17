@@ -332,7 +332,10 @@
 							fieldname: this.$t('general.subscriber'),
 							count: '3'
 						}),
-						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
+						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric'),
+						v => (v && this.isEditMode) || (v && !this.formData.subscribers.includes(v)) || this.$t('formvalidation.allreadypresent', {
+							fieldname: this.$t('general.subscribers')
+						})
 					],
 					'description': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('subscribers.new.description.title') }),

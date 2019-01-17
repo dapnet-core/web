@@ -6,18 +6,18 @@
 		>
 			<v-layout row wrap>
 				<v-flex xs12>
-					<v-card color="grey" class="white--text">
+					<v-card>
 						<v-card-title primary-title>
 							<div>
 								<div class="headline">{{ $t('calls.overview.newcall') }}</div>
-								<div>Send a new call now</div>
+								<div>{{ $t('calls.overview.information.help') }}</div>
 							</div>
 						</v-card-title>
 						<v-form v-model="isFormValid" ref="form">
 							<v-card-text>
 								<!-- Message -->
 								<v-card color ="white">
-									<v-layout>
+									<v-layout wrap>
 										<v-flex>
 											<v-textarea
 												prepend-icon="message"
@@ -34,9 +34,9 @@
 										</v-flex>
 									</v-layout>
 									<!-- Subscriber selection -->
-									<v-layout>
+									<v-layout wrap>
 										<!-- Display default subscriber selection-->
-										<v-flex xs5>
+										<v-flex xs12 md12 lg6>
 											<v-autocomplete
 												:loading="isLoadingData.subscribers"
 												chips
@@ -53,7 +53,7 @@
 										</v-flex>
 										<v-spacer></v-spacer>
 										<!-- Display default subscriber groups selection-->
-										<v-flex xs5>
+										<v-flex xs12 md12 lg6>
 											<v-autocomplete
 												:loading="isLoadingData.subscriber_groups"
 												chips
@@ -68,10 +68,8 @@
 											>
 											</v-autocomplete>
 										</v-flex>
-									</v-layout>
-									<v-layout>
 										<!-- Display default transmitter names selection-->
-										<v-flex xs5>
+										<v-flex xs12 md12 lg6>
 											<v-autocomplete
 												:loading="isLoadingData.transmitters"
 												chips
@@ -86,9 +84,10 @@
 											>
 											</v-autocomplete>
 										</v-flex>
-										<v-flex xs2></v-flex>
+										<v-spacer></v-spacer>
 										<!-- Display default transmitter groups selection-->
-										<v-flex xs5>
+										<v-flex xs12 md12 lg6>
+											<!--
 											<v-autocomplete
 												:loading="isLoadingData.transmitter_groups"
 												chips
@@ -102,20 +101,32 @@
 												v-bind:label="$t('general.transmitter_groups')"
 											>
 											</v-autocomplete>
+											-->
+											<v-treeview
+												:items="TreeItems"
+												v-model="formData.transmitter_groupsModel"
+												selectable
+												open-on-click
+												@input="TreeSelectionChanged"
+											>
+
+											</v-treeview>
 										</v-flex>
-									</v-layout>
-									<v-layout>
 										<!-- Display default priority-->
-										<!--<v-flex xs5>
+										<v-flex xs12 md12 lg6>
 											<v-select
 												prepend-icon="low_priority"
 												v-model="form.priority"
-												v-bind:items="priority_labels"
+												:items="prioritySelect"
+												item-text="label"
+												item-value="value"
 												v-bind:label="$t('general.priority')"
+												v-bind:background-color="priorityColor"
+												@input="updatePriorityColor"
 											>
 											</v-select>
-										</v-flex>-->
-										<v-flex xs5>
+										</v-flex>
+										<!--<v-flex xs12 md12 lg6>
 											<v-slider
 												v-model="form.priority"
 												:tick-labels="priority_labels"
@@ -125,35 +136,57 @@
 												ticks="always"
 												v-bind:label="$t('general.priority')"
 												prepend-icon="low_priority"
+												:color="priorityNumber2Color(form.priority)"
 												>
 											</v-slider>
-										</v-flex>
-										<v-flex xs2></v-flex>
-										<!-- Display default duration -->
-										<v-flex xs1>
-											<v-select
-												prepend-icon="timer"
-												v-model="expiration_selection.days"
-												v-bind:items="expiration_posibilities.days"
-												v-bind:label="$t('general.days')"
+										</v-flex>-->
+									</v-layout>
+									<v-layout wrap row>
+										<v-flex xs12 md12 lg6>
+											<v-menu
+												:close-on-content-click="false"
+												v-model="formData.dateTimePicker.showDateMenu"
+												:nudge-right="40"
+												lazy
+												transition="scale-transition"
+												offset-y
+												full-width
+												max-width="290px"
+												min-width="290px"
 											>
-											</v-select>
+												<v-text-field
+													slot="activator"
+													v-model="computedDateFormatted"
+													label="Date (read only text field)"
+													hint="DD/MM/YYYY format"
+													persistent-hint
+													prepend-icon="event"
+													readonly
+												></v-text-field>
+												<v-date-picker
+													v-model="dateNonFormated"
+													no-title
+													@input="formData.dateTimePicker.showDateMenu = false"
+													:locale="$root.$i18n.locale"
+													:show-current="getCurrentDate"
+													:first-day-of-week="getFirstDayOfTheWeek"
+													:min="getCurrentDate"
+													:max="getMaxDate"
+
+												>
+												</v-date-picker>
+											</v-menu>
 										</v-flex>
-										<v-spacer></v-spacer>
-										<v-flex xs1>
+										<v-flex xs12 md12 lg6>
 											<v-select
-												v-model="expiration_selection.hours"
-												v-bind:items="expiration_posibilities.hours"
-												v-bind:label="$t('general.hours')"
-											>
-											</v-select>
-										</v-flex>
-										<v-spacer></v-spacer>
-										<v-flex xs1>
-											<v-select
-												v-model="expiration_selection.minutes"
-												v-bind:items="expiration_posibilities.minutes"
-												v-bind:label="$t('general.minutes')"
+												:items="hoursSelect"
+												item-text="label"
+												item-value="value"
+												required
+												v-model="hour"
+												v-bind:label="$t('subscribers.new.pager.type.title')"
+												v-bind:hint="$t('subscribers.new.pager.type.help')"
+												persistent-hint
 											>
 											</v-select>
 										</v-flex>
@@ -187,10 +220,22 @@
 
 <script>
 	import axios from 'axios';
+	import moment from 'moment';
+
+	// TODO: Date format according to i18n selection
 	export default {
+		mounted() {
+			console.log(this.$vuetify.breakpoint);
+		},
 		created() {
+			moment.locale(this.$root.$i18n.locale);
 			this.loadSelectionChoices();
 			this.loadUserDefaultSettings();
+		},
+		watch: {
+			dateNonFormated(val) {
+				this.dateFormated = moment(this.dateNonFormated).format('L');
+			}
 		},
 		data() {
 			return {
@@ -211,7 +256,11 @@
 					subscribers: [],
 					subscriber_groups: [],
 					transmitters: [],
-					transmitter_groups: []
+					transmitter_groups: [],
+					transmitter_groupsModel: [],
+					dateTimePicker: {
+						showDateMenu: false
+					}
 				},
 				isLoadingData: {
 					subscribers: true,
@@ -221,19 +270,78 @@
 					userDefaults: true
 				},
 				isFormValid: true,
-				expiration_posibilities: {
-					minutes: [0, 10, 20, 30, 40, 50],
-					hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
-					days: [0, 1, 2, 3, 4, 5, 6]
+				defaults: {
+					expiration_duration: 0
 				},
-				expiration_selection: {
-					minutes: 0,
-					hours: 0,
-					days: 0
-				}
+				priorityColor: 'grey',
+				dateNonFormated: '2019-01-01',
+				dateFormated: '',
+				hour: 0
 			};
 		},
 		computed: {
+			TreeItems() {
+				let result = [];
+				for (let txGroupIndex = 0; txGroupIndex < this.formData.transmitter_groups.length; txGroupIndex++) {
+					let individualGroupNames = this.formData.transmitter_groups[txGroupIndex].split('.');
+					result = this.processTreeNode(result, individualGroupNames[0], individualGroupNames[0], this.formData.transmitter_groups[txGroupIndex], 0);
+				}
+				return result;
+			},
+			hoursSelect() {
+				let returnvalue = [];
+				for (let hour = 0; hour < 24; hour++) {
+					let selectedDateTime = moment(this.dateNonFormated);
+					selectedDateTime.add(hour, 'hours');
+					// console.log('selectedDateTime: ' + selectedDateTime.format('DD.MM.YYYY HH:mm:ss'));
+					// console.log('now: ' + moment().format('DD.MM.YYYY HH:mm:ss'));
+					if (selectedDateTime.isAfter(moment().add(1, 'hours'))) {
+						// console.log('vorher');
+						if (this.$t('general.24hr') === 'true') {
+							returnvalue.push(
+								{
+									value: hour,
+									label: hour.toString() + ':00'
+								}
+							);
+						} else {
+							returnvalue.push(
+								{
+									value: hour,
+									label: (hour % 12).toString() + (hour < 12 ? ':00 am' : ':00 pm')
+								}
+							);
+						}
+					} else {
+						// console.log('nachher');
+					}
+				}
+				// console.log(returnvalue);
+				return returnvalue;
+			},
+			getFirstDayOfTheWeek() {
+				if (this.$t('general.firstdayofweek') === 'Sunday') {
+					return 0;
+				} else {
+					return 1;
+				}
+			},
+			getTimeFormat() {
+				if (this.$t('general.24hr') === '24hr') {
+					return '24hr';
+				} else {
+					return 'ampm';
+				}
+			},
+			getCurrentDate() {
+				return moment().format('YYYY-MM-DD');
+			},
+			getMaxDate() {
+				return moment().add(10, 'days').format('YYYY-MM-DD');
+			},
+			computedDateFormatted() {
+				return this.dateFormated;
+			},
 			validationRules() {
 				return {
 					'message': [
@@ -245,17 +353,123 @@
 					]
 				};
 			},
-			priority_labels() {
+			prioritySelect() {
 				return [
-					this.$t('general.priorities.lowest'),
-					this.$t('general.priorities.low'),
-					this.$t('general.priorities.medium'),
-					this.$t('general.priorities.high'),
-					this.$t('general.priorities.highest')
+					{
+						value: 1,
+						label: this.$t('general.priorities.lowest')
+					},
+					{
+						value: 2,
+						label: this.$t('general.priorities.low')
+					},
+					{
+						value: 3,
+						label: this.$t('general.priorities.medium')
+					},
+					{
+						value: 4,
+						label: this.$t('general.priorities.high')
+					},
+					{
+						value: 5,
+						label: this.$t('general.priorities.highest')
+					}
 				];
 			}
 		},
 		methods: {
+			processTreeNode(currentList, currentID, currentName, completeChain, level) {
+				// Parent Node: Array of nodes at this level
+				// Name       : Just the ID of the node to be processed
+				// ID         : The complete name-chain to be processed, dot-separated
+
+				// Test, if Node with ID is already present
+				if (this.getIndexOfListEntryWithID(currentList, currentID) === -1) {
+					// If not present, add it
+					currentList.push(
+						{
+							id: currentID,
+							name: currentName
+						}
+					);
+					// Determine, if there are more children
+					if (currentID !== completeChain) {
+						// Further childs exist
+						// Get the index of the just added node
+						let justAddedEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
+						// Add children list
+						currentList[justAddedEntryIndex]['children'] = [];
+					}
+				}
+				if (currentID !== completeChain) {
+					// Further childs exist
+					let individualChainEntries = completeChain.split('.');
+
+					let thisEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
+					let childName = individualChainEntries[level + 1];
+					// Build childID
+					let childID = '';
+					for (let i = 0; i <= level + 1; i++) {
+						if (i === 0) {
+							childID = individualChainEntries[i];
+						} else {
+							childID = childID + '.' + individualChainEntries[i];
+						}
+					}
+					let children = this.processTreeNode(currentList[thisEntryIndex]['children'], childID, childName, completeChain, level + 1);
+					currentList[thisEntryIndex]['children'] = children;
+				}
+				return currentList;
+			},
+			getIndexOfListEntryWithID(Tree, ID) {
+				for (let i = 0; i < Tree.length; i++) {
+					if (Tree[i]['id'] === ID) {
+						return i;
+					}
+				}
+				return -1;
+			},
+			TreeSelectionChanged() {
+				// Clean up selection and reduce redundant entries of leafs, it the parent node is selected
+				this.form.distribution.transmitter_groups = JSON.parse(JSON.stringify(this.formData.transmitter_groupsModel));
+
+				let groupIndex = 0;
+				// Run until all is cleaned up
+				while (groupIndex < this.form.distribution.transmitter_groups.length) {
+					let currentGroup = this.form.distribution.transmitter_groups[groupIndex];
+					// Find any other node, that contains this
+					let searchIndex = 0;
+					while (searchIndex < this.form.distribution.transmitter_groups.length) {
+						let searchGroup = this.form.distribution.transmitter_groups[searchIndex];
+						console.log('Current Group: ' + currentGroup + ', searchGroup:' + searchGroup);
+						if (searchGroup.includes(currentGroup) && (searchGroup.length > currentGroup.length)) {
+							this.form.distribution.transmitter_groups.splice(searchIndex, 1);
+							groupIndex = -1;
+						}
+						searchIndex++;
+					}
+					groupIndex++;
+				}
+			},
+			updatePriorityColor() {
+				this.priorityColor = this.priorityNumber2Color(this.form.priority);
+			},
+			priorityNumber2Color(priority) {
+				if (priority === 1) {
+					return 'green';
+				} else if (priority === 2) {
+					return 'green';
+				} else if (priority === 3) {
+					return 'green';
+				} else if (priority === 4) {
+					return 'green';
+				} else if (priority === 5) {
+					return 'orange';
+				} else {
+					return 'grey';
+				}
+			},
 			loadUserDefaultSettings() {
 				// Load users details to obtain default settings
 				this.isLoadingData.userDefaults = true;
@@ -267,11 +481,13 @@
 							} else {
 								this.form.distribution.transmitters = [];
 							}
+							/*
 							if (response.data.defaults.transmitter_groups) {
 								this.form.distribution.transmitter_groups = response.data.defaults.transmitter_groups;
 							} else {
 								this.form.distribution.transmitter_groups = [];
 							}
+							 */
 							if (response.data.defaults.subscribers) {
 								this.form.recipients.subscribers = response.data.defaults.subscribers;
 							} else {
@@ -282,24 +498,20 @@
 							} else {
 								this.form.recipients.subscriber_groups = [];
 							}
-							/*
 							if (response.data.defaults.expiration_duration) {
-								this.form.expiration_duration = response.data.defaults.expiration_duration;
-								if (this.form.expiration_duration > ((6 * 3600 * 24) + (23 * 3600) + (45 * 60))) {
-									this.form.expiration_duration = (6 * 3600 * 24) + (23 * 3600) + (50 * 60);
-								}
-								this.expiration_selection.days = Math.floor(this.form.expiration_duration / (3600 * 24));
-								this.expiration_selection.hours = Math.floor(this.form.expiration_duration % (3600 * 24) / 3600);
-								this.expiration_selection.minutes = Math.floor(this.form.expiration_duration % 3600 / 60 / 10) * 10;
-							} else {
-								this.form.expiration_duration = '';
+								this.defaults.expiration_duration = response.data.defaults.expiration_duration;
+								this.dateNonFormated = moment().add(this.defaults.expiration_duration, 'seconds')
+									.format('YYYY-MM-DD');
+								this.hour = parseInt(moment().add(this.defaults.expiration_duration, 'seconds')
+									.add(1, 'hours').format('HH'));
+								console.log('default expiration: ' + this.defaults.expiration_duration);
 							}
-							*/
 							if (response.data.defaults.priority) {
-								this.form.priority = this.$helpers.priorityNumber2String(this, response.data.defaults.priority);
+								this.form.priority = response.data.defaults.priority;
 							} else {
-								this.form.priority = '';
+								this.form.priority = 3;
 							}
+							this.updatePriorityColor();
 						}
 						this.isLoadingData.userDefaults = false;
 					}).catch(e => {
@@ -350,12 +562,10 @@
 			submitForm(event) {
 				event.preventDefault();
 				console.log(this.form);
-				this.form2send = Object.assign({}, this.form);
+				this.form2send = JSON.parse(JSON.stringify(this.form));
 
 				this.form2send.priority = this.$helpers.priorityString2Number(this, this.form.priority);
-				// this.form2send.expiration_duration = this.expiration_selection.days * (24 * 3600) +
-				//	this.expiration_selection.hours * 3600 +
-				//	this.expiration_selection.minutes * 60;
+				this.form2send.expires_on = moment(this.dateNonFormated).add(this.hour, 'hours').toISOString();
 				console.log(this.form2send);
 				axios.post('/calls', this.form2send)
 					.then(function(response) {

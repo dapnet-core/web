@@ -13,7 +13,7 @@
 							<v-container grid-list-md>
 								<v-layout wrap>
 									<!--ID-->
-									<v-flex xs12 sm6 md4>
+									<v-flex xs12 sm6 md6>
 										<v-text-field
 											name="_id"
 											prepend-icon="label"
@@ -32,7 +32,7 @@
 										</v-text-field>
 									</v-flex>
 									<!-- Label-->
-									<v-flex xs12 sm6 md4>
+									<v-flex xs12 sm6 md6>
 										<v-text-field
 											prepend-icon="list_alt"
 											required
@@ -49,10 +49,10 @@
 										</v-text-field>
 									</v-flex>
 								</v-layout>
-								<!--Number and Description-->
+								<!--Number, SubRIC and Description-->
 								<v-layout wrap>
 									<!-- Number -->
-									<v-flex xs12 sm4 md4>
+									<v-flex xs12 sm12 md3>
 										<v-text-field
 											required
 											v-bind:rules="validationRules.number"
@@ -65,8 +65,22 @@
 										>
 										</v-text-field>
 									</v-flex>
+									<!-- SubRIC -->
+									<v-flex xs12 sm12 md3>
+										<v-select
+											:items="formData.functions"
+											item-text="label"
+											item-value="value"
+											required
+											v-model="form.function"
+											v-bind:label="$t('rubrics.function.title')"
+											v-bind:hint="$t('rubrics.function.help')"
+											persistent-hint
+										>
+										</v-select>
+									</v-flex>
 									<!-- Description -->
-									<v-flex xs12 sm8 md8>
+									<v-flex xs12 sm12 md6>
 										<v-text-field
 											required
 											:counter="30"
@@ -80,10 +94,20 @@
 										</v-text-field>
 									</v-flex>
 								</v-layout>
+								<v-layout v-if="form.function !==3">
+									<v-flex xs12>
+										<v-alert
+											:value="true"
+											type="warning"
+										>
+											{{ $t('rubrics.notskyper') }}
+										</v-alert>
+									</v-flex>
+								</v-layout>
 								<!-- Cyclic transmit -->
 								<v-layout wrap>
 									<!--Cyclic transmit switch-->
-									<v-flex xs12 sm6 md6>
+									<v-flex xs12 sm12 md6>
 										<v-switch
 											v-model="form.cyclic_transmit"
 											v-bind:label="$t('rubrics.cyclicTransmit')"
@@ -94,7 +118,7 @@
 										</v-switch>
 									</v-flex>
 									<!--Cyclic transmit interval-->
-									<v-flex xs12 sm6 md6 v-if="form.cyclic_transmit">
+									<v-flex xs12 sm12 md6 v-if="form.cyclic_transmit">
 										<v-text-field
 											required
 											v-model="form.cyclic_transmit_interval"
@@ -109,9 +133,74 @@
 										</v-text-field>
 									</v-flex>
 								</v-layout>
+								<!-- Default priority -->
+								<v-layout wrap>
+									<v-flex xs12 sm12 md6>
+										<v-select
+											prepend-icon="low_priority"
+											v-model="form.default_priority"
+											:items="prioritySelect"
+											item-text="label"
+											item-value="value"
+											v-bind:label="$t('general.priority')"
+											v-bind:background-color="priorityColor"
+											@input="updatePriorityColor"
+										>
+										</v-select>
+									</v-flex>
+									<v-flex xs12 sm12 md6 v-if="form.default_priority === 4">
+										<v-alert
+											:value="true"
+											type="warning"
+										>
+											{{ $t('rubrics.highprioritywarning') }}
+										</v-alert>
+									</v-flex>
+									<v-flex xs12 sm12 md6 v-if="form.default_priority === 5">
+										<v-alert
+											:value="true"
+											type="error"
+											color="red"
+										>
+											{{ $t('rubrics.highestprioritywarning') }}
+										</v-alert>
+									</v-flex>
+								</v-layout>
+								<!-- Default expiration -->
+								<v-layout wrap>
+									<v-flex xs12 sm12 md6>
+										<v-select
+											prepend-icon="timer"
+											v-model="form.default_expiration"
+											:items="prioritySelect"
+											item-text="label"
+											item-value="value"
+											v-bind:label="$t('general.expiration')"
+										>
+										</v-select>
+									</v-flex>
+									<v-flex xs12 sm12 md6 v-if="form.default_priority === 4">
+										<v-alert
+											:value="true"
+											type="warning"
+										>
+											{{ $t('rubrics.highprioritywarning') }}
+										</v-alert>
+									</v-flex>
+									<v-flex xs12 sm12 md6 v-if="form.default_priority === 5">
+										<v-alert
+											:value="true"
+											type="error"
+											color="red"
+										>
+											{{ $t('rubrics.highestprioritywarning') }}
+										</v-alert>
+									</v-flex>
+								</v-layout>
+
 								<!-- Transmitters -->
-								<v-layout>
-									<v-flex>
+								<v-layout wrap>
+									<v-flex xs12 sm12 md6>
 										<v-combobox
 											v-model="form.transmitters"
 											:items="formData.transmitters"
@@ -130,10 +219,8 @@
 											<v-progress-linear color="blue" indeterminate></v-progress-linear>
 										</v-combobox>
 									</v-flex>
-								</v-layout>
-								<!-- Transmitter Groups -->
-								<v-layout>
-									<v-flex>
+									<!-- Transmitter Groups -->
+									<v-flex xs12 sm12 md6>
 										<v-combobox
 											v-model="form.transmitter_groups"
 											:items="formData.transmitter_groups"
@@ -232,7 +319,8 @@
 					general: true,
 					users: true,
 					transmitters: true,
-					transmitter_groups: true
+					transmitter_groups: true,
+					rubrics: true
 				},
 				isFormValid: true,
 				form: {
@@ -245,61 +333,103 @@
 					transmitters: [],
 					cyclic_transmit: false,
 					cyclic_transmit_interval: 60 * 6,
-					owners: []
+					owners: [],
+					function: 3,
+					default_expiration: 297600,
+					default_priority: 2,
 				},
 				formData: {
 					users: [],
 					transmitters: [],
-					transmitter_groups: []
+					transmitter_groups: [],
+					rubrics: [],
+					functions: [
+						{ value: 0, label: '0/A' },
+						{ value: 1, label: '1/B' },
+						{ value: 2, label: '2/C' },
+						{ value: 3, label: '3/D - Skyper' }
+					],
 				},
 				created_on: '',
 				created_by: '',
 				changed_on: '',
 				changed_by: '',
-				isEditMode: (!!(this.$route.params.id))
+				isEditMode: (!!(this.$route.params.id)),
+				priorityColor: ''
 			};
 		},
 		computed: {
+			prioritySelect() {
+				return [
+					{
+						value: 1,
+						label: this.$t('general.priorities.lowest')
+					},
+					{
+						value: 2,
+						label: this.$t('general.priorities.low')
+					},
+					{
+						value: 3,
+						label: this.$t('general.priorities.medium')
+					},
+					{
+						value: 4,
+						label: this.$t('general.priorities.high')
+					},
+					{
+						value: 5,
+						label: this.$t('general.priorities.highest')
+					},
+				];
+			},
 			validationRules() {
 				return {
 					'_id': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.id') }),
+						v => !!v || this.$t('formvalidation.isrequired', {
+							fieldname: this.$t('rubrics.id')
+						}),
 						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
-							fieldname: this.$t('general.callsign'),
+							fieldname: this.$t('rubrics.id'),
 							count: '20'
 						}),
 						v => (v && v.length >= 3) || this.$t('formvalidation.underlength', {
-							fieldname: this.$t('general.id'),
+							fieldname: this.$t('rubrics.id'),
 							count: '3'
 						}),
 						v => (v && /^[a-z0-9-]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumerichyphen'),
-						v => (v && this.formData.users.includes(v)) || this.$t('formvalidation.allreadypresent', {
-							fieldname: this.$t('general.id')
+						v => (v && this.isEditMode) || (v && !this.formData.rubrics.includes(v)) || this.$t('formvalidation.allreadypresent', {
+							fieldname: this.$t('rubrics.id')
 						})
 					],
 					'label': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('rubrics.new.label.title') }),
+						v => !!v || this.$t('formvalidation.isrequired', {
+							fieldname: this.$t('rubrics.label')
+						}),
 						v => (v && v.length <= 10) || this.$t('formvalidation.overlength', {
-							fieldname: this.$t('rubrics.new.label.title'),
+							fieldname: this.$t('rubrics.label'),
 							count: '10'
 						}),
 						v => (!!v && v.length >= 2) || this.$t('formvalidation.underlength', {
-							fieldname: this.$t('rubrics.new.label.title'),
+							fieldname: this.$t('rubrics.label'),
 							count: '2'
 						}),
-						v => (v && /^[a-z0-9- ]+$/i.test(v)) || this.$t('formvalidation.onylalphanumericspacehyphen')
+						v => (v && /^[a-z0-9- ]+$/i.test(v)) || this.$t('formvalidation.onylalphanumericspacehyphen'),
+						v => (v && this.isEditMode) || (v && !this.formData.rubrics.includes(v)) || this.$t('formvalidation.allreadypresent', {
+							fieldname: this.$t('rubric.label')
+						})
 					],
 					'description': [
 						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('rubrics.new.description.title') }),
 						v => (v && v.length <= 30) || this.$t('formvalidation.overlength', {
-							fieldname: this.$t('rubrics.new.description.title'),
+							fieldname: this.$t('rubrics.description'),
 							count: '30'
 						})
 					],
 					'number': [
-						v => (v && v >= 0) || this.$t('formvalidation.notnegative', { fieldname: this.$t('rubrics.number') }),
-						v => (v && v <= 95) || this.$t('formvalidation.maximal', {
+						v => (v && v >= 1 && v <= 95) || this.$t('formvalidation.OutOfRange', {
 							fieldname: this.$t('rubrics.number'),
+							min: 1,
 							max: 95
 						})
 					],
@@ -326,6 +456,25 @@
 			}
 		},
 		methods: {
+			updatePriorityColor() {
+				this.priorityColor = this.priorityNumber2Color(this.form.default_priority);
+				console.log(this.priorityColor);
+			},
+			priorityNumber2Color(priority) {
+				if (priority === 1) {
+					return 'green';
+				} else if (priority === 2) {
+					return 'green';
+				} else if (priority === 3) {
+					return 'yellow';
+				} else if (priority === 4) {
+					return 'orange';
+				} else if (priority === 5) {
+					return 'red';
+				} else {
+					return 'grey';
+				}
+			},
 			validateForm() {
 				this.$refs.form.validate();
 			},
@@ -360,6 +509,16 @@
 						console.log('Error getting transmitter groups in transmitter/new.vue');
 				});
 
+				// Load available rubrics
+				this.isLoadingData.rubrics = true;
+				this.$axios.get('rubrics/_names')
+					.then(response => {
+						this.formData.rubrics = response.data;
+						this.isLoadingData.rubrics = false;
+					}).catch(e => {
+					console.log('Error getting rubric names in transmitter/new.vue');
+				});
+
 				// load data of given id
 				this.isLoadingData.general = true;
 				if (this.$route.params.id) {
@@ -377,6 +536,9 @@
 							this.form.transmitter_groups = response.data.transmitter_groups;
 							this.form.cyclic_transmit = response.data.cyclic_transmit;
 							this.form.cyclic_transmit_interval = response.data.cyclic_transmit_interval;
+							this.form.function = response.data.function;
+							this.form.default_expiration = response.data.default_expiration;
+							this.form.default_priority = response.data.default_priority;
 
 							// Format timestamp into readable version
 							if (response.data.created_on) {

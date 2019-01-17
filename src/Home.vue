@@ -4,9 +4,11 @@
 			<v-carousel
 				hide-delimiters
 				height="400"
+				prev-icon="keyboard_arrow_left"
+				next-icon="keyboard_arrow_right"
 			>
 				<v-carousel-item v-for="(index,i) in 10" :key="i">
-					<v-layout>
+					<v-layout fill-height>
 						<v-flex xs7>
 							<v-card
 								color="grey"
@@ -18,7 +20,7 @@
 
 									</div>
 								</v-card-title>
-								<v-card-text class="grow">
+								<v-card-text>
 									{{ $t('home.carousel.' + index + '.text') }}
 								</v-card-text>
 								<v-card-actions v-if="getLink(index) && getLink(index) !== 'NONE'">
@@ -32,13 +34,23 @@
 						</v-flex>
 						<v-flex xs5 v-if="getLink(index) && getLink(index) !== 'NONE'">
 							<a :href="getLink(index)" target="_blank">
-									<v-img :aspect-ratio="400/400" :src="'./img/carousel/img' + index + '.png'">
+								<v-responsive :aspect-ratio="400/400">
+									<v-img
+										height="400"
+										:src="'./img/carousel/img' + index + '.png'"
+									>
 									</v-img>
+								</v-responsive>
 							</a>
 						</v-flex>
 						<v-flex xs5 v-else>
-							<v-img :aspect-ratio="400/400" :src="'./img/carousel/img' + index + '.png'">
-							</v-img>
+							<v-responsive :aspect-ratio="400/400">
+								<v-img
+									height="400"
+									:src="'./img/carousel/img' + index + '.png'"
+								>
+								</v-img>
+							</v-responsive>
 						</v-flex>
 					</v-layout>
 				</v-carousel-item>

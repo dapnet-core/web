@@ -419,7 +419,9 @@
     "default_settings": "Vorauswahl-Einstellungen",
     "message": "Nachricht",
     "thirdpartyservices": "Drittanbieterdienste",
-    "pagers": "Funkmeldeempfänger"
+    "pagers": "Funkmeldeempfänger",
+    "24hr": "true",
+    "firstdayofweek": "Monday"
   },
   "rubric": {
     "overview": {

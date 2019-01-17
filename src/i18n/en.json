@@ -1,6 +1,8 @@
 {
     "navigation": {
         "home" : "Home",
+        "myentities": "My Entities",
+        "allentities": "All Entities",
         "calls": {
           "title": "Calls",
           "all": "All Calls",
@@ -14,9 +16,10 @@
           "onlynames": " All Subscriber Names"
         },
         "rubrics": {
-            "my": "My Rubrics",
             "title": "Rubrics",
             "all": "All Rubrics",
+            "my": "My Rubrics",
+            "onlynames": "Ruric Names",
             "activate": "Activate Rubrics",
             "content": "Rubric Content"
         },
@@ -28,9 +31,19 @@
             "map": "Map",
             "groups": "Transmitter Groups"
         },
-        "nodes": "Nodes",
-        "users": "Users",
-        "usersonlynames": "Usernames",
+        "nodes": {
+          "title": "Nodes",
+          "all": "All Nodes",
+          "my": "My Nodes",
+          "onlynames": " All Node Names",
+          "map": "Map"
+        },
+        "users":
+        {
+          "title": "Users",
+          "all": "All Users",
+          "onlynames": "Usernames"
+        },
         "help": {
             "title": "Help",
             "wiki": "Documentation",
@@ -450,16 +463,25 @@
         "default_settings": "Default Settings",
         "message": "Message",
         "thirdpartyservices": "Third-Party Services",
-        "pagers": "Pagers"
+        "pagers": "Pagers",
+        "24hr": "false",
+        "firstdayofweek": "Sunday"
     },
     "rubrics": {
-      "number": "'#Messages",
+      "number": "Number",
       "id": "ID",
       "label": "Label",
       "description": "Description",
       "cyclicTransmit": "Cyclic retransmissions?",
       "cyclicTX": "Cyclic TX?",
       "numberofMessages": "#Messages",
+      "function": {
+        "title": "Function (SubRIC)",
+        "help": "Non-Skyper-Function Bits are not avaiable on Skypers."
+      },
+      "notskyper": "This rubric will not be reveiced by Skpers, as the function SubRIC is not 3. That's ok, but be aware for this fact.",
+      "highprioritywarning": "You selected a high priority for this rubric. In order to assure personal calls are delivered fast, please rethink if this is really necessary. A priority of maximum medium should be enough in most use cases. Please DO NOT abuse the priority for egoistic reasons.",
+      "highestprioritywarning": "You selected the highest priority for this rubric. THIS IS NOT GOOD!",
         "overview": {
           "allrubrics": "All Rubrics",
           "addrubric": "Add Rubric",
@@ -597,26 +619,9 @@
         "new": {
             "newcall": "New Call",
             "message": {
-                "title": "Message",
-                "charactersremaining": "{remaining} / 80 characters remaining. Enter your paging text. Your user name is added automatically."
+              "title": "Message"
             },
-            "subscribers": {
-                "help": "Select one or multiple subscribers you want to send the message to."
-            },
-            "subscriber_groups": {
-                "title": "Subscriber Groups"
-            },
-            "transmitter_groups": {
-                "title": "Transmitter Groups",
-                "help": "Select a logical transmitter group that should broadcast your message. Default is all transmitters, but if you know the approximate location of the receiver you might limit the transmitters used for your paging to a certain area. This reduces the load on the transmitters."
-            },
-            "emergency": {
-                "title": "Emergency?",
-                "help": "In case you want your message to be delivered as soon as possible, check this box. No harmful things will happen, the DAPNET will just process your message with maximum priority. Please make a fair use of this feature."
-            },
-            "information": {
-                "help": "Here your recent paging calls are displayed."
-            }
+            "usedefautlexpiration": "Use the default expiration time: "
         }
     },
     "news": {

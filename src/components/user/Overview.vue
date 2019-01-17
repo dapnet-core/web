@@ -1,9 +1,5 @@
 <template>
 	<v-container fluid>
-
-		<!--				<info-error :message="errorMessage"></info-error>
-
-		-->
 		<v-layout>
 			<v-flex xs12>
 				<v-card>
