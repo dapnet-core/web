@@ -442,7 +442,6 @@
 					let searchIndex = 0;
 					while (searchIndex < this.form.distribution.transmitter_groups.length) {
 						let searchGroup = this.form.distribution.transmitter_groups[searchIndex];
-						console.log('Current Group: ' + currentGroup + ', searchGroup:' + searchGroup);
 						if (searchGroup.includes(currentGroup) && (searchGroup.length > currentGroup.length)) {
 							this.form.distribution.transmitter_groups.splice(searchIndex, 1);
 							groupIndex = -1;
@@ -481,13 +480,11 @@
 							} else {
 								this.form.distribution.transmitters = [];
 							}
-							/*
 							if (response.data.defaults.transmitter_groups) {
-								this.form.distribution.transmitter_groups = response.data.defaults.transmitter_groups;
+								this.formData.transmitter_groupsModel = response.data.defaults.transmitter_groups;
 							} else {
-								this.form.distribution.transmitter_groups = [];
+								this.formData.transmitter_groupsModel = [];
 							}
-							 */
 							if (response.data.defaults.subscribers) {
 								this.form.recipients.subscribers = response.data.defaults.subscribers;
 							} else {
