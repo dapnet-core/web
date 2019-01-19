@@ -347,8 +347,6 @@ const GlobalMethodsPlugin = {
 				}
 				groupIndex++;
 			}
-			console.log('GetCleanedUp');
-			console.log(dirtySelection);
 			return result;
 		};
 	}

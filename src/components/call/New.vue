@@ -523,7 +523,6 @@
 				console.log(this.form);
 				this.form2send = JSON.parse(JSON.stringify(this.form));
 
-				this.form2send.priority = this.$helpers.priorityString2Number(this, this.form.priority);
 				this.form2send.expires_on = moment(this.dateNonFormated).add(this.hour, 'hours').toISOString();
 				console.log(this.form2send);
 				axios.post('/calls', this.form2send)
