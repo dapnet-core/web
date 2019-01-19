@@ -621,7 +621,14 @@
             "message": {
               "title": "Message"
             },
-            "usedefautlexpiration": "Use the default expiration time: "
+            "expirationdate": {
+              "title": "Expiration date",
+              "help": "Enter the expiration date of this call."
+            },
+            "expirationtime": {
+              "title": "Expiration time",
+              "help": "Enter the expiration time of this call."
+          }
         }
     },
     "news": {

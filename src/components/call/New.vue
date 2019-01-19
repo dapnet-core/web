@@ -102,15 +102,35 @@
 											>
 											</v-autocomplete>
 											-->
-											<v-treeview
-												:items="TreeItems"
-												v-model="formData.transmitter_groupsModel"
-												selectable
-												open-on-click
-												@input="TreeSelectionChanged"
-											>
+											<v-expansion-panel>
+												<v-expansion-panel-content
+													expand-icon="$vuetify.icons.dropdown"
+												>
+													<div slot="header">
+														<v-autocomplete
+															:loading="isLoadingData.transmitter_groups"
+															chips
+															small-chips
+															readonly
+															multiple
+															prepend-icon="wifi_tethering"
+															v-model="form.distribution.transmitter_groups"
+															:items="form.distribution.transmitter_groups"
+															v-bind:label="$t('general.transmitter_groups')"
+															append-icon=""
+														>
+														</v-autocomplete>
+													</div>
+													<v-treeview
+														:items="TreeItems"
+														v-model="transmitter_groupsModel"
+														selectable
+														open-on-click
+													>
+													</v-treeview>
 
-											</v-treeview>
+												</v-expansion-panel-content>
+											</v-expansion-panel>
 										</v-flex>
 										<!-- Display default priority-->
 										<v-flex xs12 md12 lg6>
@@ -141,6 +161,7 @@
 											</v-slider>
 										</v-flex>-->
 									</v-layout>
+									<!--Expiration date-->
 									<v-layout wrap row>
 										<v-flex xs12 md12 lg6>
 											<v-menu
@@ -156,9 +177,9 @@
 											>
 												<v-text-field
 													slot="activator"
-													v-model="computedDateFormatted"
-													label="Date (read only text field)"
-													hint="DD/MM/YYYY format"
+													v-model="dateFormated"
+													:label="$t('calls.new.expirationdate.title')"
+													:hint="$t('calls.new.expirationdate.help')"
 													persistent-hint
 													prepend-icon="event"
 													readonly
@@ -177,6 +198,7 @@
 												</v-date-picker>
 											</v-menu>
 										</v-flex>
+										<!--Expiration time-->
 										<v-flex xs12 md12 lg6>
 											<v-select
 												:items="hoursSelect"
@@ -184,8 +206,8 @@
 												item-value="value"
 												required
 												v-model="hour"
-												v-bind:label="$t('subscribers.new.pager.type.title')"
-												v-bind:hint="$t('subscribers.new.pager.type.help')"
+												:label="$t('calls.new.expirationtime.title')"
+												:hint="$t('calls.new.expirationtime.help')"
 												persistent-hint
 											>
 											</v-select>
@@ -226,15 +248,24 @@
 	export default {
 		mounted() {
 			console.log(this.$vuetify.breakpoint);
+			this.$root.$on('LanguageChanged', () => {
+				this.dateFormated = moment(this.dateNonFormated).format('L');
+				console.log('lang changed');
+			});
 		},
 		created() {
 			moment.locale(this.$root.$i18n.locale);
-			this.loadSelectionChoices();
 			this.loadUserDefaultSettings();
+			this.loadSelectionChoices();
+			this.transmitter_groupsModel = this.orig_TXGroups;
 		},
 		watch: {
-			dateNonFormated(val) {
-				this.dateFormated = moment(this.dateNonFormated).format('L');
+			dateNonFormated: function (val) {
+				this.dateFormated = moment(val).format('L');
+			},
+			transmitter_groupsModel: function(val) {
+				this.form.distribution.transmitter_groups =
+					this.$helpers.getCleanedUpTreeSelection(val);
 			}
 		},
 		data() {
@@ -257,7 +288,6 @@
 					subscriber_groups: [],
 					transmitters: [],
 					transmitter_groups: [],
-					transmitter_groupsModel: [],
 					dateTimePicker: {
 						showDateMenu: false
 					}
@@ -276,7 +306,9 @@
 				priorityColor: 'grey',
 				dateNonFormated: '2019-01-01',
 				dateFormated: '',
-				hour: 0
+				hour: 0,
+				transmitter_groupsModel: [],
+				orig_TXGroups: []
 			};
 		},
 		computed: {
@@ -284,8 +316,10 @@
 				let result = [];
 				for (let txGroupIndex = 0; txGroupIndex < this.formData.transmitter_groups.length; txGroupIndex++) {
 					let individualGroupNames = this.formData.transmitter_groups[txGroupIndex].split('.');
-					result = this.processTreeNode(result, individualGroupNames[0], individualGroupNames[0], this.formData.transmitter_groups[txGroupIndex], 0);
+					result = this.$helpers.processTransmitterGroupsTreeNode(result, individualGroupNames[0], individualGroupNames[0], this.formData.transmitter_groups[txGroupIndex], 0);
 				}
+				// VERY IMPORTANT: Restore the deault TXGroups after Tree is build
+				this.transmitter_groupsModel = this.orig_TXGroups;
 				return result;
 			},
 			hoursSelect() {
@@ -339,9 +373,6 @@
 			getMaxDate() {
 				return moment().add(10, 'days').format('YYYY-MM-DD');
 			},
-			computedDateFormatted() {
-				return this.dateFormated;
-			},
 			validationRules() {
 				return {
 					'message': [
@@ -379,78 +410,6 @@
 			}
 		},
 		methods: {
-			processTreeNode(currentList, currentID, currentName, completeChain, level) {
-				// Parent Node: Array of nodes at this level
-				// Name       : Just the ID of the node to be processed
-				// ID         : The complete name-chain to be processed, dot-separated
-
-				// Test, if Node with ID is already present
-				if (this.getIndexOfListEntryWithID(currentList, currentID) === -1) {
-					// If not present, add it
-					currentList.push(
-						{
-							id: currentID,
-							name: currentName
-						}
-					);
-					// Determine, if there are more children
-					if (currentID !== completeChain) {
-						// Further childs exist
-						// Get the index of the just added node
-						let justAddedEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
-						// Add children list
-						currentList[justAddedEntryIndex]['children'] = [];
-					}
-				}
-				if (currentID !== completeChain) {
-					// Further childs exist
-					let individualChainEntries = completeChain.split('.');
-
-					let thisEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
-					let childName = individualChainEntries[level + 1];
-					// Build childID
-					let childID = '';
-					for (let i = 0; i <= level + 1; i++) {
-						if (i === 0) {
-							childID = individualChainEntries[i];
-						} else {
-							childID = childID + '.' + individualChainEntries[i];
-						}
-					}
-					let children = this.processTreeNode(currentList[thisEntryIndex]['children'], childID, childName, completeChain, level + 1);
-					currentList[thisEntryIndex]['children'] = children;
-				}
-				return currentList;
-			},
-			getIndexOfListEntryWithID(Tree, ID) {
-				for (let i = 0; i < Tree.length; i++) {
-					if (Tree[i]['id'] === ID) {
-						return i;
-					}
-				}
-				return -1;
-			},
-			TreeSelectionChanged() {
-				// Clean up selection and reduce redundant entries of leafs, it the parent node is selected
-				this.form.distribution.transmitter_groups = JSON.parse(JSON.stringify(this.formData.transmitter_groupsModel));
-
-				let groupIndex = 0;
-				// Run until all is cleaned up
-				while (groupIndex < this.form.distribution.transmitter_groups.length) {
-					let currentGroup = this.form.distribution.transmitter_groups[groupIndex];
-					// Find any other node, that contains this
-					let searchIndex = 0;
-					while (searchIndex < this.form.distribution.transmitter_groups.length) {
-						let searchGroup = this.form.distribution.transmitter_groups[searchIndex];
-						if (searchGroup.includes(currentGroup) && (searchGroup.length > currentGroup.length)) {
-							this.form.distribution.transmitter_groups.splice(searchIndex, 1);
-							groupIndex = -1;
-						}
-						searchIndex++;
-					}
-					groupIndex++;
-				}
-			},
 			updatePriorityColor() {
 				this.priorityColor = this.priorityNumber2Color(this.form.priority);
 			},
@@ -481,10 +440,13 @@
 								this.form.distribution.transmitters = [];
 							}
 							if (response.data.defaults.transmitter_groups) {
-								this.formData.transmitter_groupsModel = response.data.defaults.transmitter_groups;
+								this.transmitter_groupsModel = response.data.defaults.transmitter_groups;
 							} else {
-								this.formData.transmitter_groupsModel = [];
+								this.transmitter_groupsModel= [];
 							}
+							// Save default TX Groups for later
+							this.orig_TXGroups = JSON.parse(JSON.stringify(this.transmitter_groupsModel));
+
 							if (response.data.defaults.subscribers) {
 								this.form.recipients.subscribers = response.data.defaults.subscribers;
 							} else {

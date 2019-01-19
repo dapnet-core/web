@@ -271,6 +271,86 @@ const GlobalMethodsPlugin = {
 
 			return ret;
 		};
+
+		Vue.prototype.$helpers.processTransmitterGroupsTreeNode = function(currentList, currentID, currentName, completeChain, level) {
+			// Parent Node: Array of nodes at this level
+			// Name       : Just the ID of the node to be processed
+			// ID         : The complete name-chain to be processed, dot-separated
+
+			// Test, if Node with ID is already present
+			if (this.getIndexOfListEntryWithID(currentList, currentID) === -1) {
+				// If not present, add it
+				currentList.push(
+					{
+						id: currentID,
+						name: currentName
+					}
+				);
+				// Determine, if there are more children
+				if (currentID !== completeChain) {
+					// Further childs exist
+					// Get the index of the just added node
+					let justAddedEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
+					// Add children list
+					currentList[justAddedEntryIndex]['children'] = [];
+				}
+			}
+			if (currentID !== completeChain) {
+				// Further childs exist
+				let individualChainEntries = completeChain.split('.');
+
+				let thisEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
+				let childName = individualChainEntries[level + 1];
+				// Build childID
+				let childID = '';
+				for (let i = 0; i <= level + 1; i++) {
+					if (i === 0) {
+						childID = individualChainEntries[i];
+					} else {
+						childID = childID + '.' + individualChainEntries[i];
+					}
+				}
+				let children = this.processTransmitterGroupsTreeNode(currentList[thisEntryIndex]['children'], childID, childName, completeChain, level + 1);
+				currentList[thisEntryIndex]['children'] = children;
+			}
+			return currentList;
+		};
+
+		Vue.prototype.$helpers.getIndexOfListEntryWithID = function(Tree, ID) {
+			for (let i = 0; i < Tree.length; i++) {
+				if (Tree[i]['id'] === ID) {
+					return i;
+				}
+			}
+			return -1;
+		};
+
+		Vue.prototype.$helpers.getCleanedUpTreeSelection = function(dirtySelection) {
+			// Clean up selection and reduce redundant entries of leafs, it the parent node is selected
+			let result = JSON.parse(JSON.stringify(dirtySelection));
+
+			let groupIndex = 0;
+			// Run until all is cleaned up
+			while (groupIndex < result.length) {
+				let currentGroup = result[groupIndex];
+				// Find any other node, that contains this
+				let searchIndex = 0;
+				while (searchIndex < result.length) {
+					let searchGroup = result[searchIndex];
+					if (searchGroup.includes(currentGroup) &&
+						(searchGroup.split('.').length > currentGroup.split('.').length)) {
+						// If there are less dots in the searchGroupt than in the currentGroup, remove it
+						result.splice(searchIndex, 1);
+						groupIndex = -1;
+					}
+					searchIndex++;
+				}
+				groupIndex++;
+			}
+			console.log('GetCleanedUp');
+			console.log(dirtySelection);
+			return result;
+		};
 	}
 };
 
