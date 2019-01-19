@@ -336,7 +336,7 @@
 					owners: [],
 					function: 3,
 					default_expiration: 297600,
-					default_priority: 2,
+					default_priority: 2
 				},
 				formData: {
 					users: [],
@@ -348,7 +348,7 @@
 						{ value: 1, label: '1/B' },
 						{ value: 2, label: '2/C' },
 						{ value: 3, label: '3/D - Skyper' }
-					],
+					]
 				},
 				created_on: '',
 				created_by: '',
@@ -380,7 +380,7 @@
 					{
 						value: 5,
 						label: this.$t('general.priorities.highest')
-					},
+					}
 				];
 			},
 			validationRules() {
@@ -516,7 +516,7 @@
 						this.formData.rubrics = response.data;
 						this.isLoadingData.rubrics = false;
 					}).catch(e => {
-					console.log('Error getting rubric names in transmitter/new.vue');
+						console.log('Error getting rubric names in transmitter/new.vue');
 				});
 
 				// load data of given id
