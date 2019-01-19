@@ -742,9 +742,11 @@
       "metainfo": "Meta-Information",
       "addroles": {
           "title": "Add new third-party role to available selections",
-          "placeholder": "Example: \"dmrplus\", \"lorawan\"",
-          "help": "Add a the name of a new third-party role. The part \"thridparty.\" will be added autoamtically, so don't type it here. If the role designator is already present, you won't be able to add it.",
-          "add": "Add"
+          "help": "Add a the name of a new third-party role. The part \"thridparty.\" must be at the beginning. If the role designator is already present, you won't be able to add it.",
+          "add": "Add",
+          "newthirdpartyrole": "New third-party role, Example: \"dmrplus\", \"lorawan\"",
+          "notstartingright": "The role's name does not start with \"thirdparty.\"",
+          "notvalid": "The role's name just contains the prefix \"thirdparty.\". Add a name after the dot."
       },
       "showthirdpartyroles": "Show third-party roles",
       "togglepasswordvisibility": "Toggle password visibility",
