@@ -10,278 +10,324 @@
 					</v-card-title>
 					<v-form v-model="isFormValid" ref="form">
 						<v-card-text>
-							<v-container grid-list-md>
-								<v-layout wrap>
-									<!--ID-->
-									<v-flex xs12 sm6 md6>
-										<v-text-field
-											name="_id"
-											prepend-icon="label"
-											required
-											:counter="20"
-											v-bind:rules="validationRules._id"
-											v-model="form._id"
-											v-bind:label="$t('rubrics.id')"
-											v-bind:hint="$t('rubrics.new.id.help')"
-											persistent-hint
-											type="text"
-											v-bind:readonly="isEditMode ? true : false"
-											:loading="isLoadingData.general"
-										>
-											<v-progress-linear color="blue" indeterminate></v-progress-linear>
-										</v-text-field>
-									</v-flex>
-									<!-- Label-->
-									<v-flex xs12 sm6 md6>
-										<v-text-field
-											prepend-icon="list_alt"
-											required
-											:counter="10"
-											v-bind:rules="validationRules.label"
-											v-model="form.label"
-											v-bind:label="$t('rubrics.label')"
-											v-bind:hint="$t('rubrics.new.label.help')"
-											persistent-hint
-											type="text"
-											:loading="isLoadingData.general"
-										>
-											<v-progress-linear color="blue" indeterminate></v-progress-linear>
-										</v-text-field>
-									</v-flex>
-								</v-layout>
-								<!--Number, SubRIC and Description-->
-								<v-layout wrap>
-									<!-- Number -->
-									<v-flex xs12 sm12 md3>
-										<v-text-field
-											required
-											v-bind:rules="validationRules.number"
-											v-model="form.number"
-											v-bind:label="$t('rubrics.number')"
-											v-bind:hint="$t('rubrics.new.number.help')"
-											persistent-hint
-											prepend-icon="looks_one"
-											type="number"
-										>
-										</v-text-field>
-									</v-flex>
-									<!-- SubRIC -->
-									<v-flex xs12 sm12 md3>
-										<v-select
-											:items="formData.functions"
-											item-text="label"
-											item-value="value"
-											required
-											v-model="form.function"
-											v-bind:label="$t('rubrics.function.title')"
-											v-bind:hint="$t('rubrics.function.help')"
-											persistent-hint
-										>
-										</v-select>
-									</v-flex>
-									<!-- Description -->
-									<v-flex xs12 sm12 md6>
-										<v-text-field
-											required
-											:counter="30"
-											v-model="form.description"
-											v-bind:label="$t('rubrics.description')"
-											v-bind:hint="$t('rubrics.new.description.help')"
-											v-bind:rules="validationRules.description"
-											persistent-hint
-											prepend-icon="description"
-										>
-										</v-text-field>
-									</v-flex>
-								</v-layout>
-								<v-layout v-if="form.function !==3">
-									<v-flex xs12>
-										<v-alert
-											:value="true"
-											type="warning"
-										>
-											{{ $t('rubrics.notskyper') }}
-										</v-alert>
-									</v-flex>
-								</v-layout>
-								<!-- Cyclic transmit -->
-								<v-layout wrap>
-									<!--Cyclic transmit switch-->
-									<v-flex xs12 sm12 md6>
-										<v-switch
-											v-model="form.cyclic_transmit"
-											v-bind:label="$t('rubrics.cyclicTransmit')"
-											v-bind:hint="$t('rubrics.new.cyclicTransmit.help')"
-											persistent-hint
-											prepend-icon="autorenew"
-										>
-										</v-switch>
-									</v-flex>
-									<!--Cyclic transmit interval-->
-									<v-flex xs12 sm12 md6 v-if="form.cyclic_transmit">
-										<v-text-field
-											required
-											v-model="form.cyclic_transmit_interval"
-											v-bind:label="$t('rubrics.new.cyclicTransmitInterval.title')"
-											v-bind:hint="$t('rubrics.new.cyclicTransmitInterval.help')"
-											v-bind:rules="validationRules.cyclicTransmitInterval"
-											persistent-hint
-											prepend-icon="update"
-											type="number"
-											v-bind:suffix="$t('general.minutes')"
-										>
-										</v-text-field>
-									</v-flex>
-								</v-layout>
-								<!-- Default priority -->
-								<v-layout wrap>
-									<v-flex xs12 sm12 md6>
-										<v-select
-											prepend-icon="low_priority"
-											v-model="form.default_priority"
-											:items="prioritySelect"
-											item-text="label"
-											item-value="value"
-											v-bind:label="$t('general.priority')"
-											v-bind:background-color="priorityColor"
-											@input="updatePriorityColor"
-										>
-										</v-select>
-									</v-flex>
-									<v-flex xs12 sm12 md6 v-if="form.default_priority === 4">
-										<v-alert
-											:value="true"
-											type="warning"
-										>
-											{{ $t('rubrics.highprioritywarning') }}
-										</v-alert>
-									</v-flex>
-									<v-flex xs12 sm12 md6 v-if="form.default_priority === 5">
-										<v-alert
-											:value="true"
-											type="error"
-											color="red"
-										>
-											{{ $t('rubrics.highestprioritywarning') }}
-										</v-alert>
-									</v-flex>
-								</v-layout>
-								<!-- Default expiration -->
-								<v-layout wrap>
-									<v-flex xs12 sm12 md6>
-										<v-select
-											prepend-icon="timer"
-											v-model="form.default_expiration"
-											:items="prioritySelect"
-											item-text="label"
-											item-value="value"
-											v-bind:label="$t('general.expiration')"
-										>
-										</v-select>
-									</v-flex>
-									<v-flex xs12 sm12 md6 v-if="form.default_priority === 4">
-										<v-alert
-											:value="true"
-											type="warning"
-										>
-											{{ $t('rubrics.highprioritywarning') }}
-										</v-alert>
-									</v-flex>
-									<v-flex xs12 sm12 md6 v-if="form.default_priority === 5">
-										<v-alert
-											:value="true"
-											type="error"
-											color="red"
-										>
-											{{ $t('rubrics.highestprioritywarning') }}
-										</v-alert>
-									</v-flex>
-								</v-layout>
+							<v-layout wrap>
+								<!--ID-->
+								<v-flex xs12 sm12 md12 lg6>
+									<v-text-field
+										name="_id"
+										prepend-icon="label"
+										required
+										:counter="20"
+										v-bind:rules="validationRules._id"
+										v-model="form._id"
+										v-bind:label="$t('rubrics.id')"
+										v-bind:hint="$t('rubrics.new.id.help')"
+										persistent-hint
+										type="text"
+										v-bind:readonly="isEditMode ? true : false"
+										:loading="isLoadingData.general"
+									>
+										<v-progress-linear color="blue" indeterminate></v-progress-linear>
+									</v-text-field>
+								</v-flex>
+								<!-- Label-->
+								<v-flex xs12 sm12 md12 lg6>
+									<v-text-field
+										prepend-icon="list_alt"
+										required
+										:counter="10"
+										v-bind:rules="validationRules.label"
+										v-model="form.label"
+										v-bind:label="$t('rubrics.label')"
+										v-bind:hint="$t('rubrics.new.label.help')"
+										persistent-hint
+										type="text"
+										:loading="isLoadingData.general"
+									>
+										<v-progress-linear color="blue" indeterminate></v-progress-linear>
+									</v-text-field>
+								</v-flex>
+							</v-layout>
+							<!--Number, SubRIC and Description-->
+							<v-layout wrap>
+								<!-- Number -->
+								<v-flex xs12 sm12 md12 lg3>
+									<v-text-field
+										required
+										v-bind:rules="validationRules.number"
+										v-model="form.number"
+										v-bind:label="$t('rubrics.number')"
+										v-bind:hint="$t('rubrics.new.number.help')"
+										persistent-hint
+										prepend-icon="looks_one"
+										type="number"
+									>
+									</v-text-field>
+								</v-flex>
+								<!-- SubRIC -->
+								<v-flex xs12 sm12 md12 lg3>
+									<v-select
+										:items="formData.functions"
+										item-text="label"
+										item-value="value"
+										required
+										v-model="form.function"
+										v-bind:label="$t('rubrics.function.title')"
+										v-bind:hint="$t('rubrics.function.help')"
+										persistent-hint
+									>
+									</v-select>
+								</v-flex>
+								<!-- Description -->
+								<v-flex xs12 sm12 md12 lg6>
+									<v-text-field
+										required
+										:counter="30"
+										v-model="form.description"
+										v-bind:label="$t('rubrics.description')"
+										v-bind:hint="$t('rubrics.new.description.help')"
+										v-bind:rules="validationRules.description"
+										persistent-hint
+										prepend-icon="description"
+									>
+									</v-text-field>
+								</v-flex>
+							</v-layout>
+							<v-layout v-if="form.function !==3">
+								<v-flex xs12>
+									<v-alert
+										:value="true"
+										type="warning"
+									>
+										{{ $t('rubrics.notskyper') }}
+									</v-alert>
+								</v-flex>
+							</v-layout>
+							<!-- Cyclic transmit -->
+							<v-layout wrap>
+								<!--Cyclic transmit switch-->
+								<v-flex xs12 sm12 md12 lg6>
+									<v-switch
+										v-model="form.cyclic_transmit"
+										v-bind:label="$t('rubrics.cyclicTransmit')"
+										v-bind:hint="$t('rubrics.new.cyclicTransmit.help')"
+										persistent-hint
+										prepend-icon="autorenew"
+									>
+									</v-switch>
+								</v-flex>
+								<!--Cyclic transmit interval-->
+								<v-flex xs12 sm12 md12 lg6
+									v-if="form.cyclic_transmit"
+								>
+									<v-text-field
+										required
+										v-model="form.cyclic_transmit_interval"
+										v-bind:label="$t('rubrics.new.cyclicTransmitInterval.title')"
+										v-bind:hint="$t('rubrics.new.cyclicTransmitInterval.help')"
+										v-bind:rules="validationRules.cyclicTransmitInterval"
+										persistent-hint
+										prepend-icon="update"
+										type="number"
+										v-bind:suffix="$t('general.minutes')"
+									>
+									</v-text-field>
+								</v-flex>
+							</v-layout>
+							<!-- Default priority -->
+							<v-layout wrap>
+								<v-flex xs12 sm12 md12 lg6>
+									<v-select
+										prepend-icon="low_priority"
+										v-model="form.default_priority"
+										:items="prioritySelect"
+										item-text="label"
+										item-value="value"
+										v-bind:label="$t('general.priority')"
+										v-bind:background-color="priorityColor"
+										@input="updatePriorityColor"
+									>
+									</v-select>
+								</v-flex>
+								<v-spacer></v-spacer>
+								<v-flex xs12 m12 md12 lg5 v-if="form.default_priority === 4">
+									<v-alert
+										:value="true"
+										type="warning"
+									>
+										{{ $t('rubrics.highprioritywarning') }}
+									</v-alert>
+								</v-flex>
+								<v-spacer></v-spacer>
+								<v-flex xs12 m12 md12 lg5 v-if="form.default_priority === 5">
+									<v-alert
+										:value="true"
+										type="error"
+										color="red"
+									>
+										{{ $t('rubrics.highestprioritywarning') }}
+									</v-alert>
+								</v-flex>
+							</v-layout>
+							<!-- TODO: fill with real content -->
+							<!-- Default expiration -->
+							<v-layout wrap>
+								<v-flex xs12 sm12 md12 lg6>
+									<v-select
+										prepend-icon="timer"
+										v-model="form.default_expiration"
+										:items="prioritySelect"
+										item-text="label"
+										item-value="value"
+										v-bind:label="$t('general.expiration')"
+									>
+									</v-select>
+								</v-flex>
+							</v-layout>
 
-								<!-- Transmitters -->
-								<v-layout wrap>
-									<v-flex xs12 sm12 md6>
-										<v-combobox
-											v-model="form.transmitters"
-											:items="formData.transmitters"
-											hide-selected
-											prepend-icon="wifi"
-											v-bind:label="$t('general.transmitters')"
-											v-bind:hint="$t('rubrics.new.transmitters.help')"
-											v-bind:rules="validationRules.transmitters"
-											persistent-hint
-											multiple
-											small-chips
-											deletable-chips
-											:loading="isLoadingData.transmitters"
-											@change="validateForm"
+							<!-- Transmitters -->
+							<v-layout wrap>
+								<v-flex xs12 sm12 md12 lg6>
+									<v-combobox
+										v-model="form.transmitters"
+										:items="formData.transmitters"
+										hide-selected
+										prepend-icon="wifi"
+										v-bind:label="$t('general.transmitters')"
+										v-bind:hint="$t('rubrics.new.transmitters.help')"
+										v-bind:rules="validationRules.transmitters"
+										persistent-hint
+										multiple
+										small-chips
+										deletable-chips
+										:loading="isLoadingData.transmitters"
+										@input="validateForm"
+									>
+										<v-progress-linear color="blue" indeterminate></v-progress-linear>
+									</v-combobox>
+								</v-flex>
+								<!-- Transmitter Groups -->
+								<v-flex xs12 sm12 md12 lg6>
+									<!--
+									<v-combobox
+										v-model="form.transmitter_groups"
+										:items="formData.transmitter_groups"
+										hide-selected
+										prepend-icon="wifi_tethering"
+										v-bind:label="$t('general.transmitter_groups')"
+										v-bind:hint="$t('rubrics.new.transmitter_groups.help')"
+										v-bind:rules="validationRules.transmitterGroups"
+										persistent-hint
+										multiple
+										small-chips
+										deletable-chips
+										:loading="isLoadingData.transmitter_groups"
+										@change="validateForm"
+									>
+										<v-progress-linear color="blue" indeterminate></v-progress-linear>
+									</v-combobox>
+									-->
+									<v-expansion-panel>
+										<v-expansion-panel-content
+											expand-icon="$vuetify.icons.dropdown"
 										>
-											<v-progress-linear color="blue" indeterminate></v-progress-linear>
-										</v-combobox>
-									</v-flex>
-									<!-- Transmitter Groups -->
-									<v-flex xs12 sm12 md6>
-										<v-combobox
-											v-model="form.transmitter_groups"
-											:items="formData.transmitter_groups"
-											hide-selected
-											prepend-icon="wifi_tethering"
-											v-bind:label="$t('general.transmitter_groups')"
-											v-bind:hint="$t('rubrics.new.transmitter_groups.help')"
-											v-bind:rules="validationRules.transmitterGroups"
-											persistent-hint
-											multiple
-											small-chips
-											deletable-chips
-											:loading="isLoadingData.transmitter_groups"
-											@change="validateForm"
-										>
-											<v-progress-linear color="blue" indeterminate></v-progress-linear>
-										</v-combobox>
-									</v-flex>
-								</v-layout>
-								<!-- owners selection -->
-								<v-layout>
-									<v-flex>
-										<v-autocomplete
-											v-model="form.owners"
-											:items="formData.users"
-											hide-selected
-											prepend-icon="assignment_ind"
-											v-bind:label="$t('general.owners')"
-											v-bind:hint="$t('rubrics.new.owner.help')"
-											v-bind:rules="validationRules.owners"
-											persistent-hint
-											multiple
-											small-chips
-											deletable-chips
-											:loading="isLoadingData.users"
-										>
-											<v-progress-linear color="blue" indeterminate></v-progress-linear>
-										</v-autocomplete>
-									</v-flex>
-								</v-layout>
-							</v-container>
+											<div slot="header">
+												<v-autocomplete
+													:loading="isLoadingData.transmitter_groups"
+													chips
+													small-chips
+													readonly
+													multiple
+													prepend-icon="wifi_tethering"
+													v-model="form.transmitter_groups"
+													:items="form.transmitter_groups"
+													v-bind:label="$t('general.transmitter_groups')"
+													append-icon=""
+													v-bind:rules="validationRules.transmitterGroups"
+													@change="validateForm"
+												>
+													<v-progress-linear color="blue" indeterminate></v-progress-linear>
+												</v-autocomplete>
+											</div>
+											<v-treeview
+												:items="TreeItems"
+												v-model="transmitter_groupsModel"
+												selectable
+												open-on-click
+												@change="validateForm"
+											>
+											</v-treeview>
+
+										</v-expansion-panel-content>
+									</v-expansion-panel>
+
+								</v-flex>
+							</v-layout>
+							<!-- owners selection -->
+							<v-layout>
+								<v-flex>
+									<v-autocomplete
+										v-model="form.owners"
+										:items="formData.users"
+										hide-selected
+										prepend-icon="assignment_ind"
+										v-bind:label="$t('general.owners')"
+										v-bind:hint="$t('rubrics.new.owner.help')"
+										v-bind:rules="validationRules.owners"
+										persistent-hint
+										multiple
+										small-chips
+										deletable-chips
+										:loading="isLoadingData.users"
+									>
+										<v-progress-linear color="blue" indeterminate></v-progress-linear>
+									</v-autocomplete>
+								</v-flex>
+							</v-layout>
 						</v-card-text>
 						<!-- Timestamps -->
-						<v-card-text>
-							<v-card color="red lighten-2" v-if="isEditMode">
-								<v-card-text>
-									<v-layout row wrap class="dark--text">
-										<v-flex xs3>{{ $t('general.created_on') }}</v-flex>
-										<v-flex xs3>{{ $t('general.byUser') }}</v-flex>
-										<v-flex xs3>{{ $t('general.changed_on') }}</v-flex>
-										<v-flex xs3>{{ $t('general.byUser') }}</v-flex>
-									</v-layout>
-									<v-layout row wrap>
-										<v-flex xs3>{{ this.created_on}}</v-flex>
-										<v-flex xs3>{{ this.created_by}}</v-flex>
-										<v-flex xs3>{{ this.changed_on}}</v-flex>
-										<v-flex xs3>{{ this.changed_by}}</v-flex>
-									</v-layout>
-								</v-card-text>
-							</v-card>
-						</v-card-text>
+						<v-card color="">
+							<v-card-text
+								v-if="$vuetify.breakpoint.lgAndUp"
+							>
+								<v-layout row wrap class="dark--text">
+									<v-flex lg3>{{ $t('general.created_on') }}</v-flex>
+									<v-flex lg>{{ $t('general.byUser') }}</v-flex>
+									<v-flex lg3>{{ $t('general.changed_on') }}</v-flex>
+									<v-flex lg3>{{ $t('general.byUser') }}</v-flex>
+								</v-layout>
+								<v-layout row wrap>
+									<v-flex lg3>{{ this.created_on}}</v-flex>
+									<v-flex lg3>{{ this.created_by}}</v-flex>
+									<v-flex lg3>{{ this.changed_on}}</v-flex>
+									<v-flex lg3>{{ this.changed_by}}</v-flex>
+								</v-layout>
+							</v-card-text>
+							<v-card-text
+								v-if="!$vuetify.breakpoint.lgAndUp"
+							>
+								<v-layout row wrap class="dark--text">
+									<v-flex xs6>{{ $t('general.created_on') }}</v-flex>
+									<v-flex xs6>{{ $t('general.byUser') }}</v-flex>
+								</v-layout>
+								<v-layout row wrap>
+									<v-flex xs6>{{ this.created_on}}</v-flex>
+									<v-flex xs6>{{ this.created_by}}</v-flex>
+								</v-layout>
+							</v-card-text>
+							<v-card-text
+								v-if="!$vuetify.breakpoint.lgAndUp"
+							>
+								<v-layout row wrap class="dark--text">
+									<v-flex xs6>{{ $t('general.changed_on') }}</v-flex>
+									<v-flex xs6>{{ $t('general.byUser') }}</v-flex>
+								</v-layout>
+								<v-layout row wrap>
+									<v-flex xs6>{{ this.changed_on}}</v-flex>
+									<v-flex xs6>{{ this.changed_by}}</v-flex>
+								</v-layout>
+							</v-card-text>
+						</v-card>
 						<!-- Buttons -->
 						<v-card-actions>
 							<v-btn
@@ -310,8 +356,23 @@
 	export default {
 		components: {
 		},
+		mounted() {
+			this.$root.$on('LanguageChanged', () => {
+				moment.locale(this.$root.$i18n.locale);
+				this.updateTimeStampFormat();
+			});
+		},
 		created() {
 			this.loadData();
+		},
+		watch: {
+			transmitter_groupsModel: function(val) {
+				this.form.transmitter_groups =
+					this.$helpers.getCleanedUpTreeSelection(val);
+					console.log(this.form.transmitter_groups);
+				this.validateForm();
+
+			}
 		},
 		data() {
 			return {
@@ -351,14 +412,28 @@
 					]
 				},
 				created_on: '',
+				created_on_iso: '',
 				created_by: '',
 				changed_on: '',
+				changed_on_iso: '',
 				changed_by: '',
 				isEditMode: (!!(this.$route.params.id)),
-				priorityColor: ''
+				priorityColor: '',
+				transmitter_groupsModel: [],
+				orig_TXGroups: []
 			};
 		},
 		computed: {
+			TreeItems() {
+				let result = [];
+				for (let txGroupIndex = 0; txGroupIndex < this.formData.transmitter_groups.length; txGroupIndex++) {
+					let individualGroupNames = this.formData.transmitter_groups[txGroupIndex].split('.');
+					result = this.$helpers.processTransmitterGroupsTreeNode(result, individualGroupNames[0], individualGroupNames[0], this.formData.transmitter_groups[txGroupIndex], 0);
+				}
+				// VERY IMPORTANT: Restore the deault TXGroups after Tree is build
+				this.transmitter_groupsModel = this.orig_TXGroups;
+				return result;
+			},
 			prioritySelect() {
 				return [
 					{
@@ -397,7 +472,7 @@
 							fieldname: this.$t('rubrics.id'),
 							count: '3'
 						}),
-						v => (v && /^[a-z0-9-]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumerichyphen'),
+						v => (v && /^[a-z0-9-]+$/i.test(v)) || this.$t('formvalidation.onylalphanumerichyphen'),
 						v => (v && this.isEditMode) || (v && !this.formData.rubrics.includes(v)) || this.$t('formvalidation.allreadypresent', {
 							fieldname: this.$t('rubrics.id')
 						})
@@ -416,11 +491,11 @@
 						}),
 						v => (v && /^[a-z0-9- ]+$/i.test(v)) || this.$t('formvalidation.onylalphanumericspacehyphen'),
 						v => (v && this.isEditMode) || (v && !this.formData.rubrics.includes(v)) || this.$t('formvalidation.allreadypresent', {
-							fieldname: this.$t('rubric.label')
+							fieldname: this.$t('rubrics.label')
 						})
 					],
 					'description': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('rubrics.new.description.title') }),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('rubrics.new.description') }),
 						v => (v && v.length <= 30) || this.$t('formvalidation.overlength', {
 							fieldname: this.$t('rubrics.description'),
 							count: '30'
@@ -456,9 +531,12 @@
 			}
 		},
 		methods: {
+			updateTimeStampFormat() {
+				this.created_on = moment(this.created_on_iso).format('LLL');
+				this.changed_on = moment(this.changed_on_iso).format('LLL');
+			},
 			updatePriorityColor() {
 				this.priorityColor = this.priorityNumber2Color(this.form.default_priority);
-				console.log(this.priorityColor);
 			},
 			priorityNumber2Color(priority) {
 				if (priority === 1) {
@@ -476,6 +554,11 @@
 				}
 			},
 			validateForm() {
+				console.log('tx');
+				console.log(this.form.transmitters);
+				console.log('txG');
+				console.log(this.form.transmitter_groups);
+
 				this.$refs.form.validate();
 			},
 			loadData() {
@@ -533,18 +616,27 @@
 							this.form.label = response.data.label;
 							this.form.owners = response.data.owners;
 							this.form.transmitters = response.data.transmitters;
-							this.form.transmitter_groups = response.data.transmitter_groups;
+
+							if (response.data.transmitter_groups) {
+								this.transmitter_groupsModel = response.data.transmitter_groups;
+							} else {
+								this.transmitter_groupsModel= [];
+							}
+							// Save default TX Groups for later
+							this.orig_TXGroups = JSON.parse(JSON.stringify(this.transmitter_groupsModel));
+
 							this.form.cyclic_transmit = response.data.cyclic_transmit;
 							this.form.cyclic_transmit_interval = response.data.cyclic_transmit_interval;
 							this.form.function = response.data.function;
 							this.form.default_expiration = response.data.default_expiration;
 							this.form.default_priority = response.data.default_priority;
+							this.updatePriorityColor();
 
 							// Format timestamp into readable version
 							if (response.data.created_on) {
-								this.created_on = moment(response.data.created_on).format('DD.MM.YYYY HH:mm:ss');
+								this.created_on_iso = response.data.created_on;
 							} else {
-								response.data.created_on = '';
+								response.data.created_on_iso = '';
 							}
 							if (response.data.created_by) {
 								this.created_by = response.data.created_by;
@@ -552,15 +644,19 @@
 								this.created_by = '';
 							}
 							if (response.data.changed_on) {
-								this.changed_on = moment(response.data.changed_on).format('DD.MM.YYYY HH:mm:ss');
+								this.changed_on_iso = response.data.changed_on;
 							} else {
-								this.changed_on = '';
+								this.changed_on_iso = '';
 							}
+
 							if (response.data.changed_by) {
 								this.changed_by = response.data.changed_by;
 							} else {
 								this.changed_by = '';
 							}
+
+							this.updateTimeStampFormat();
+
 						}).catch(e => {
 							console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');
 					});
