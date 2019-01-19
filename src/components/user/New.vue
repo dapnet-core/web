@@ -348,6 +348,7 @@
 										<v-flex xs2></v-flex>
 										<!-- Display default transmitter groups selection -->
 										<v-flex xs5>
+											<!--
 											<v-autocomplete
 													chips
 													small-chips
@@ -362,6 +363,36 @@
 											>
 												<v-progress-linear color="blue" indeterminate></v-progress-linear>
 											</v-autocomplete>
+											-->
+											<v-expansion-panel>
+												<v-expansion-panel-content
+													expand-icon="$vuetify.icons.dropdown"
+												>
+													<div slot="header">
+														<v-autocomplete
+															:loading="isLoadingData.transmitter_groups"
+															chips
+															small-chips
+															readonly
+															multiple
+															prepend-icon="wifi_tethering"
+															v-model="form.defaults.transmitter_groups"
+															:items="form.defaults.transmitter_groups"
+															v-bind:label="$t('general.transmitter_groups')"
+															append-icon=""
+														>
+														</v-autocomplete>
+													</div>
+													<v-treeview
+														:items="TreeItems"
+														v-model="transmitter_groupsModel"
+														selectable
+														open-on-click
+													>
+													</v-treeview>
+
+												</v-expansion-panel-content>
+											</v-expansion-panel>
 										</v-flex>
 									</v-layout>
 									<v-layout>
@@ -461,6 +492,12 @@
 		created() {
 			this.loadData();
 		},
+		watch: {
+			transmitter_groupsModel: function(val) {
+				this.form.defaults.transmitter_groups =
+					this.$helpers.getCleanedUpTreeSelection(val);
+			}
+		},
 		data() {
 			return {
 				rotation: 0,
@@ -528,10 +565,22 @@
 					minutes: 0,
 					hours: 0,
 					days: 0
-				}
+				},
+				transmitter_groupsModel: [],
+				orig_TXGroups: []
 			};
 		},
 		computed: {
+			TreeItems() {
+				let result = [];
+				for (let txGroupIndex = 0; txGroupIndex < this.formData.transmitter_groups.length; txGroupIndex++) {
+					let individualGroupNames = this.formData.transmitter_groups[txGroupIndex].split('.');
+					result = this.$helpers.processTransmitterGroupsTreeNode(result, individualGroupNames[0], individualGroupNames[0], this.formData.transmitter_groups[txGroupIndex], 0);
+				}
+				// VERY IMPORTANT: Restore the deault TXGroups after Tree is build
+				this.transmitter_groupsModel = this.orig_TXGroups;
+				return result;
+			},
 			AvatarImageComputed() {
 				// TODO This only correct for the current user, but not in General
 				return this.$store.getters.avatarImage;
@@ -759,11 +808,15 @@
 								} else {
 									this.form.defaults.transmitters = [];
 								}
+
 								if (response.data.defaults.transmitter_groups) {
-									this.form.defaults.transmitter_groups = response.data.defaults.transmitter_groups;
+									this.transmitter_groupsModel = response.data.defaults.transmitter_groups;
 								} else {
-									this.form.defaults.transmitter_groups = [];
+									this.transmitter_groupsModel= [];
 								}
+								// Save default TX Groups for later
+								this.orig_TXGroups = JSON.parse(JSON.stringify(this.transmitter_groupsModel));
+
 								if (response.data.defaults.subscribers) {
 									this.form.defaults.subscribers = response.data.defaults.subscribers;
 								} else {
