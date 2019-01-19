@@ -376,6 +376,7 @@
 															v-bind:label="$t('general.transmitter_groups')"
 															append-icon=""
 														>
+															<v-progress-linear color="blue" indeterminate></v-progress-linear>
 														</v-autocomplete>
 													</div>
 													<v-treeview
