@@ -204,6 +204,13 @@
 							</v-avatar>
 							{{ this.rubriccontent.label }}
 						</v-chip>
+						<v-chip label>
+							<v-avatar :class="this.rubriccontent.function === 3 ? 'green' : 'red'">
+								{{ this.rubriccontent.function }}
+							</v-avatar>
+							{{ $t('rubrics.function.title') }}
+						</v-chip>
+
 					</span>
 				</v-card-title>
 				<v-card-text>
@@ -214,7 +221,7 @@
 						>
 							<v-flex xs9>
 								<v-textarea
-									v-model="rubriccontent.content[index-1]"
+									v-model="rubriccontent.content[index-1]['data']"
 									:prefix="index.toString()"
 									:counter="80"
 									rows="2"
@@ -377,9 +384,61 @@
 					_id: '',
 					_rev: '',
 					number: 0,
+					function: 0,
 					description: '',
 					label: '',
-					content: [],
+					content: [
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						},
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						},
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						},
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						},
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						},
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						},
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						},
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						},
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						},
+						{
+							'data': '',
+							'expires_on': '',
+							'priority': 0
+						}
+					],
 					formvalid: false
 				},
 				addcontent: {
@@ -513,13 +572,19 @@
 						this.rubriccontent.number = response.data.number;
 						this.rubriccontent.description = response.data.description;
 						this.rubriccontent.label = response.data.label;
+						this.rubriccontent.function = response.data.function;
 						for (var i = 0; i < 10; i++) {
 							if (response.data.content && response.data.content[i]) {
 								this.rubriccontent.content[i] = response.data.content[i];
 							} else {
-								this.rubriccontent.content[i] = '';
+								this.rubriccontent.content[i] = {
+									'data': null,
+									"expires_on": null,
+									"priority": null
+								};
 							}
 						}
+						console.log(this.rubriccontent.content[1]['data']);
 						this.EditContentDialogVisible = true;
 					}).catch(e => {
 						console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');

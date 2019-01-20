@@ -173,15 +173,34 @@
 							<!-- Default expiration -->
 							<v-layout wrap>
 								<v-flex xs12 sm12 md12 lg6>
-									<v-select
-										prepend-icon="timer"
-										v-model="form.default_expiration"
-										:items="prioritySelect"
-										item-text="label"
-										item-value="value"
-										v-bind:label="$t('general.expiration')"
-									>
-									</v-select>
+									<!-- Display default expiration time -->
+									<v-layout wrap justify-space-around>
+										<v-flex xs4>
+											<v-select
+												prepend-icon="timer"
+												v-model="expiration_selection.days"
+												v-bind:items="expiration_posibilities.days"
+												v-bind:label="$t('general.days')"
+											>
+											</v-select>
+										</v-flex>
+										<v-flex xs3>
+											<v-select
+												v-model="expiration_selection.hours"
+												v-bind:items="expiration_posibilities.hours"
+												v-bind:label="$t('general.hours')"
+											>
+											</v-select>
+										</v-flex>
+										<v-flex xs3>
+											<v-select
+												v-model="expiration_selection.minutes"
+												v-bind:items="expiration_posibilities.minutes"
+												v-bind:label="$t('general.minutes')"
+											>
+											</v-select>
+										</v-flex>
+									</v-layout>
 								</v-flex>
 							</v-layout>
 
@@ -290,17 +309,17 @@
 							<v-card-text
 								v-if="$vuetify.breakpoint.lgAndUp"
 							>
-								<v-layout row wrap class="dark--text">
+								<v-layout row wrap justify-space-between>
 									<v-flex lg3>{{ $t('general.created_on') }}</v-flex>
-									<v-flex lg>{{ $t('general.byUser') }}</v-flex>
+									<v-flex lg2>{{ $t('general.byUser') }}</v-flex>
 									<v-flex lg3>{{ $t('general.changed_on') }}</v-flex>
-									<v-flex lg3>{{ $t('general.byUser') }}</v-flex>
+									<v-flex lg2>{{ $t('general.byUser') }}</v-flex>
 								</v-layout>
-								<v-layout row wrap>
+								<v-layout row wrap justify-space-between>
 									<v-flex lg3>{{ this.created_on}}</v-flex>
-									<v-flex lg3>{{ this.created_by}}</v-flex>
+									<v-flex lg2>{{ this.created_by}}</v-flex>
 									<v-flex lg3>{{ this.changed_on}}</v-flex>
-									<v-flex lg3>{{ this.changed_by}}</v-flex>
+									<v-flex lg2>{{ this.changed_by}}</v-flex>
 								</v-layout>
 							</v-card-text>
 							<v-card-text
@@ -369,9 +388,7 @@
 			transmitter_groupsModel: function(val) {
 				this.form.transmitter_groups =
 					this.$helpers.getCleanedUpTreeSelection(val);
-					console.log(this.form.transmitter_groups);
 				this.validateForm();
-
 			}
 		},
 		data() {
@@ -418,6 +435,16 @@
 				changed_on_iso: '',
 				changed_by: '',
 				isEditMode: (!!(this.$route.params.id)),
+				expiration_posibilities: {
+					minutes: [0, 10, 20, 30, 40, 50],
+					hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+					days: [0, 1, 2, 3, 4, 5, 6]
+				},
+				expiration_selection: {
+					minutes: 0,
+					hours: 0,
+					days: 0
+				},
 				priorityColor: '',
 				transmitter_groupsModel: [],
 				orig_TXGroups: []
@@ -554,11 +581,6 @@
 				}
 			},
 			validateForm() {
-				console.log('tx');
-				console.log(this.form.transmitters);
-				console.log('txG');
-				console.log(this.form.transmitter_groups);
-
 				this.$refs.form.validate();
 			},
 			loadData() {
@@ -629,6 +651,20 @@
 							this.form.cyclic_transmit_interval = response.data.cyclic_transmit_interval;
 							this.form.function = response.data.function;
 							this.form.default_expiration = response.data.default_expiration;
+
+							if (response.data.default_expiration) {
+								this.form.default_expiration = response.data.default_expiration;
+
+								if (this.form.default_expiration > ((6 * 3600 * 24) + (23 * 3600) + (45 * 60))) {
+									this.form.default_expiration = (6 * 3600 * 24) + (23 * 3600) + (50 * 60);
+								}
+								this.expiration_selection.days = Math.floor(this.form.default_expiration / (3600 * 24));
+								this.expiration_selection.hours = Math.floor(this.form.default_expiration % (3600 * 24) / 3600);
+								this.expiration_selection.minutes = Math.floor(this.form.default_expiration % 3600 / 60 / 10) * 10;
+							} else {
+								this.form.default_expiration = '';
+							}
+
 							this.form.default_priority = response.data.default_priority;
 							this.updatePriorityColor();
 
@@ -675,6 +711,11 @@
 					}
 					this.form.cyclic_transmit_interval = parseInt(this.form.cyclic_transmit_interval);
 					this.form.number = parseInt(this.form.number);
+
+					this.form.default_expiration = this.expiration_selection.days * (24 * 3600) +
+						this.expiration_selection.hours * 3600 +
+						this.expiration_selection.minutes * 60;
+
 					console.log('Data2Send von rubrics:');
 					console.log(this.form);
 					this.$helpers.sendData(this, 'rubrics', this.form, '');
