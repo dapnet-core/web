@@ -261,7 +261,7 @@
 			this.transmitter_groupsModel = this.orig_TXGroups;
 		},
 		watch: {
-			dateNonFormated: function (val) {
+			dateNonFormated: function(val) {
 				this.dateFormated = moment(val).format('L');
 			},
 			transmitter_groupsModel: function(val) {
@@ -443,7 +443,7 @@
 							if (response.data.defaults.transmitter_groups) {
 								this.transmitter_groupsModel = response.data.defaults.transmitter_groups;
 							} else {
-								this.transmitter_groupsModel= [];
+								this.transmitter_groupsModel = [];
 							}
 							// Save default TX Groups for later
 							this.orig_TXGroups = JSON.parse(JSON.stringify(this.transmitter_groupsModel));
