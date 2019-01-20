@@ -191,7 +191,7 @@
 		</v-layout>
 		<!--Edit Content Dialog-->
 		<v-dialog
-			max-width="600px"
+			max-width="800px"
 			v-model="EditContentDialogVisible"
 		>
 			<v-card>
@@ -216,10 +216,12 @@
 				<v-card-text>
 					<v-form v-model="isMessageFormValid" ref="messageForm">
 						<v-layout
+							align-center
 							v-for="index in 10"
 							:key="index"
 						>
-							<v-flex xs9>
+							<!--Data-->
+							<v-flex xs6>
 								<v-textarea
 									v-model="rubriccontent.content[index-1]['data']"
 									:prefix="index.toString()"
@@ -228,6 +230,11 @@
 								>
 								</v-textarea>
 							</v-flex>
+							<!--Expiration Time-->
+							<v-flex xs2>
+								asdj
+							</v-flex>
+							<!--Action Buttons-->
 							<v-flex v-if="getPermissionsWrapper('news.update') === 'all'">
 								<v-tooltip bottom>
 									<v-btn
