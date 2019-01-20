@@ -347,8 +347,6 @@
 								}
 							);
 						}
-					} else {
-						// console.log('nachher');
 					}
 				}
 				// console.log(returnvalue);
@@ -359,13 +357,6 @@
 					return 0;
 				} else {
 					return 1;
-				}
-			},
-			getTimeFormat() {
-				if (this.$t('general.24hr') === '24hr') {
-					return '24hr';
-				} else {
-					return 'ampm';
 				}
 			},
 			getCurrentDate() {
