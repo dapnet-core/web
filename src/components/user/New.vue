@@ -612,8 +612,8 @@
 					let individualGroupNames = this.formData.transmitter_groups[txGroupIndex].split('.');
 					result = this.$helpers.processTransmitterGroupsTreeNode(result, individualGroupNames[0], individualGroupNames[0], this.formData.transmitter_groups[txGroupIndex], 0);
 				}
-				// VERY IMPORTANT: Restore the deault TXGroups after Tree is build
-				this.transmitter_groupsModel = this.orig_TXGroups;
+				// VERY IMPORTANT: Restore the default TXGroups after Tree is build
+				this.reloadDefaultTXGroupSelection();
 				return result;
 			},
 			AvatarImageComputed() {
@@ -643,13 +643,13 @@
 						v => (v && !this.availableThirdPartyRoles.includes(v)) || this.$t('formvalidation.allreadypresent', {
 							fieldname: this.$t('users.addroles.newthirdpartyrole')
 						})
-					],
+					]
 				};
 			},
 			validationRules() {
 				return {
 					'username': [
-						v => !!v || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.username')}),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.username') }),
 						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
 							fieldname: this.$t('general.username'),
 							count: '20'
@@ -664,7 +664,7 @@
 						})
 					],
 					'password': [
-						v => (!!v || this.isEditMode) || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.password')}),
+						v => (!!v || this.isEditMode) || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.password') }),
 						v => ((!!v || this.isEditMode) && v.length <= 30) || this.$t('formvalidation.overlength', {
 							fieldname: this.$t('general.password'),
 							count: '30'
@@ -676,11 +676,11 @@
 						})
 					],
 					'email': [
-						v => !!v || this.$t('formvalidation.isrequired', {fieldname: this.$t('general.email')}),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('general.email') }),
 						v => /.+@.+\..+/.test(v) || this.$t('formvalidation.isvalidEmail')
 					],
 					'roles': [
-						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', {fieldname: this.$t('formvalidation.minonerole')})
+						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('formvalidation.minonerole') })
 					]
 				};
 			},
@@ -719,6 +719,9 @@
 			}
 		},
 		methods: {
+			reloadDefaultTXGroupSelection() {
+				this.transmitter_groupsModel = this.orig_TXGroups;
+			},
 			updateTimeStampFormat() {
 				this.created_on = moment(this.created_on_iso).format('LLL');
 				this.changed_on = moment(this.changed_on_iso).format('LLL');

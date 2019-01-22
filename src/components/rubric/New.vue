@@ -459,7 +459,7 @@
 					result = this.$helpers.processTransmitterGroupsTreeNode(result, individualGroupNames[0], individualGroupNames[0], this.formData.transmitter_groups[txGroupIndex], 0);
 				}
 				// VERY IMPORTANT: Restore the deault TXGroups after Tree is build
-				this.transmitter_groupsModel = this.orig_TXGroups;
+				this.reloadDefaultTXGroupSelection();
 				return result;
 			},
 			prioritySelect() {
@@ -559,6 +559,9 @@
 			}
 		},
 		methods: {
+			reloadDefaultTXGroupSelection() {
+				this.transmitter_groupsModel = this.orig_TXGroups;
+			},
 			updateTimeStampFormat() {
 				this.created_on = moment(this.created_on_iso).format('LLL');
 				this.changed_on = moment(this.changed_on_iso).format('LLL');
@@ -643,7 +646,7 @@
 							if (response.data.transmitter_groups) {
 								this.transmitter_groupsModel = response.data.transmitter_groups;
 							} else {
-								this.transmitter_groupsModel= [];
+								this.transmitter_groupsModel = [];
 							}
 							// Save default TX Groups for later
 							this.orig_TXGroups = JSON.parse(JSON.stringify(this.transmitter_groupsModel));
@@ -693,7 +696,6 @@
 							}
 
 							this.updateTimeStampFormat();
-
 						}).catch(e => {
 							console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');
 					});

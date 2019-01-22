@@ -321,7 +321,7 @@
 				}
 				// VERY IMPORTANT: Restore the default TXGroups after Tree is build
 				// TODO: To be checked for side effects
-				this.transmitter_groupsModel = this.orig_TXGroups;
+				this.reloadDefaultTXGroupSelection();
 				return result;
 			},
 			hoursSelect() {
@@ -403,6 +403,9 @@
 			}
 		},
 		methods: {
+			reloadDefaultTXGroupSelection() {
+				this.transmitter_groupsModel = this.orig_TXGroups;
+			},
 			updatePriorityColor() {
 				this.priorityColor = this.priorityNumber2Color(this.form.priority);
 			},

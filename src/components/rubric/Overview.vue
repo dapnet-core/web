@@ -220,8 +220,6 @@
 							</v-avatar>
 							{{ $t('rubrics.notskypershort') }}
 						</v-chip>
-
-
 					</span>
 				</v-card-title>
 				<v-card-text>
@@ -673,15 +671,10 @@
 					console.log(this.rubriccontent.content[i + 1].data);
 					console.log(this.rubriccontent.content[i].data);
 					if (this.rubriccontent.content[i + 1].data !== null &&
-						(this.rubriccontent.content[i].data === null ||
-						this.rubriccontent.content[i].data === '')) {
-						// Next message is present and filled and this is either null or empty
-						// delete it
-						//this.emptyMessagesInBetween = true;
+					(this.rubriccontent.content[i].data === null || this.rubriccontent.content[i].data === '')) {
 						return true;
 					}
 				}
-				//this.emptyMessagesInBetween = false;
 				return false;
 			},
 			hoursSelect(index) {
@@ -901,14 +894,11 @@
 					for (let i = 0; i < this.rubriccontent.content.length; i++) {
 						console.log(i);
 						console.log(this.rubriccontent.content[i]);
-						if (this.rubriccontent.content[i].data !== null &&
-							this.rubriccontent.content[i].data !== '') {
+						if (this.rubriccontent.content[i].data !== null && this.rubriccontent.content[i].data !== '') {
 							let contentToAdd = {};
-
 							contentToAdd.data = this.rubriccontent.content[i]['data'];
 							// Combine Date and Time
-							if (this.dateNonFormated[i] &&
-								this.dateNonFormated[i] !== '') {
+							if (this.dateNonFormated[i] && this.dateNonFormated[i] !== '') {
 								let expiration = moment(this.dateNonFormated[i]);
 								if (this.hour[i]) {
 									expiration.add(this.hour[i], 'hours');
@@ -920,7 +910,7 @@
 							if (this.rubriccontent.content[i].priority &&
 								this.rubriccontent.content[i].priority >= 1 &&
 								this.rubriccontent.content[i].priority <= 5) {
-								contentToAdd.priority = this.rubriccontent.content[i].priority;
+									contentToAdd.priority = this.rubriccontent.content[i].priority;
 							} else {
 								contentToAdd.priority = 1;
 							}
@@ -934,8 +924,9 @@
 					// Trigger Reload of sidebar Icons
 					this.$root.$emit('ReloadSidebarIcons');
 					this.EditContentDialogVisible = false;
+					// Reload Table
+					this.loadData();
 				}
-
 			}
 		}
 	};
