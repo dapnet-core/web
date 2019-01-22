@@ -181,9 +181,6 @@
 			};
 		},
 		computed: {
-			statTotal() {
-				return this.table.rows.length;
-			},
 			getHeaders() {
 				let answer = [
 					{
@@ -306,7 +303,7 @@
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('users/' + element._id, {
+					this.axios.delete('users/' + element._id + '?revision=' + element._rev, {
 						// before(request) {
 						//	request.headers.delete('Content-Type');
 						// }

@@ -52,9 +52,6 @@
 			};
 		},
 		computed: {
-			statTotal() {
-				return this.data.length;
-			},
 			rowCount: function() {
 				return Math.floor(((this.data.length - 1) / this.numberOfColumns)) + 1;
 			}

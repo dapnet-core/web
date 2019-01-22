@@ -19,6 +19,8 @@ import TransmitterMy from '@/components/transmitter/My';
 import RubricOverview from '@/components/rubric/Overview';
 import RubricNew from '@/components/rubric/New';
 import RubricMy from '@/components/rubric/My';
+import NodeOverview from '@/components/node/Overview';
+import NodeNew from '@/components/node/New';
 
 Vue.use(Router);
 
@@ -228,6 +230,33 @@ export default new Router({
 			component: RubricNew,
 			meta: {
 				titleTranslationKey: 'pagetitle.rubric.edit',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/nodes',
+			name: 'Nodes Overview',
+			component: NodeOverview,
+			meta: {
+				titleTranslationKey: 'pagetitle.node.overview',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/nodes/new',
+			name: 'New Nodes',
+			component: NodeNew,
+			meta: {
+				titleTranslationKey: 'pagetitle.node.new',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/nodes/edit/:id',
+			name: 'Edit Node',
+			component: NodeNew,
+			meta: {
+				titleTranslationKey: 'pagetitle.node.edit',
 				requireAuthentication: true
 			}
 		}

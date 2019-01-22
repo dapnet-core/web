@@ -392,11 +392,13 @@
 				this.loadMySubscribers();
 				this.loadMyTransmitters();
 				this.loadMyRubrics();
+				this.loadMyNodes();
 				this.loadTotalSubscribers();
 				this.loadTotalTransmitters();
 				this.loadTotalUsers();
 				this.loadTotalRubrics();
 				this.loadTotalCalls();
+				this.loadTotalNodes();
 			},
 			loadTotalCalls() {
 				this.isReadyLoadingData.total.calls = false;
@@ -407,6 +409,20 @@
 					}
 					console.log('Total Calls ' + this.count_total.calls);
 					this.isReadyLoadingData.total.calls = true;
+				}, response => {
+					// error --> show error message
+					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+				});
+			},
+			loadTotalNodes() {
+				this.isReadyLoadingData.total.nodes = false;
+				axios.get('nodes/_count').then(response => {
+					// success --> save new data
+					if (response.data.count) {
+						this.count_total.nodes = response.data.count;
+					}
+					console.log('Total Nodes ' + this.count_total.nodes);
+					this.isReadyLoadingData.total.nodes = true;
 				}, response => {
 					// error --> show error message
 					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
@@ -477,6 +493,20 @@
 					}
 					console.log('mySubscribers: ' + this.count_my.subscribers);
 					this.isReadyLoadingData.my.subscribers = true;
+				}, response => {
+					// error --> show error message
+					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+				});
+			},
+			loadMyNodes() {
+				this.isReadyLoadingData.my.nodes = false;
+				axios.get('nodes/_my_count').then(response => {
+					// success --> save new data
+					if (response.data.count) {
+						this.count_my.nodes = response.data.count;
+					}
+					console.log('myNodes: ' + this.count_my.nodes);
+					this.isReadyLoadingData.my.nodes = true;
 				}, response => {
 					// error --> show error message
 					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);

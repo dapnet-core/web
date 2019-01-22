@@ -141,11 +141,7 @@
            "title": "Emerg. Power"
          },
          "power": "Output Power",
-         "toggleauthkeyvisibility": "Toggle auth key visibility",
-         "generaterandomauthkey": "Generate random auth key",
-         "copyauthkeytoclipboard": "Copy auth key to clipboard",
-
-      "overview": {
+         "overview": {
             "newtransmitter": "New Transmitter",
             "table": {
                 "title": "All Transmitters",
@@ -466,7 +462,11 @@
         "thirdpartyservices": "Third-Party Services",
         "pagers": "Pagers",
         "24hr": "false",
-        "firstdayofweek": "Sunday"
+        "firstdayofweek": "Sunday",
+        "toggleauthkeyvisibility": "Toggle auth key visibility",
+        "generaterandomauthkey": "Generate random auth key",
+        "copyauthkeytoclipboard": "Copy auth key to clipboard",
+        "authkey": "Authentication Key"
     },
     "rubrics": {
       "number": "Number",
@@ -693,7 +693,25 @@
             }
         },
         "new": {
-            "newnode": "New Node",
+          "authkey": {
+            "help": "Enter an authentication key for this node."
+          },
+          "id": {
+            "help": "This a is unique name for this node."
+          },
+          "description": {
+            "help": "Optional provide a description for this node."
+          },
+          "hamcloud": {
+            "title": "Hamcloud-Node?",
+            "help": "A Hamcloud node is a special node whose database is always right in case of conflicts."
+          },
+
+          "owner": {
+            "help": "An owner of a Node can edit it's configuration."
+          },
+
+          "newnode": "New Node",
             "editnode": "Edit Node",
             "name": {
                 "title": "Name"

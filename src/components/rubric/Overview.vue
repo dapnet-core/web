@@ -595,9 +595,6 @@
 					]
 				};
 			},
-			statTotal() {
-				return this.table.rows.length;
-			},
 			getHeaders() {
 				let headings = [
 					{
@@ -863,7 +860,7 @@
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('rubrics/' + element._id, {
+					this.axios.delete('rubrics/' + element._id + '?revision=' + element._rev, {
 						// before(request) {
 						//	request.headers.delete('Content-Type');
 						// }

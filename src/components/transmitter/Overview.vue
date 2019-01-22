@@ -225,14 +225,6 @@
 				transmitterrows: [],
 				errorMessage: false,
 				isLoadingData: true,
-				table: {
-					columns: [
-						{
-							id: 'actions',
-							title: 'general.actions'
-						}
-					]
-				},
 				pagination: {
 					sortBy: 'doc._id',
 					descending: true,
@@ -242,9 +234,6 @@
 			};
 		},
 		computed: {
-			statTotal() {
-				return this.table.rows.length;
-			},
 			getHeaders() {
 				let answer = [
 					{
@@ -394,7 +383,7 @@
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('transmitter/' + element._id, {
+					this.axios.delete('transmitter/' + element._id + '?revision=' + element._rev, {
 						// before(request) {
 						//	request.headers.delete('Content-Type');
 						// }

@@ -61,7 +61,7 @@
 												<v-icon v-if="authkeyVisible">visibility_off</v-icon>
 												<v-icon v-if="!authkeyVisible">visibility</v-icon>
 											</v-btn>
-											<span>{{ this.$t('transmitters.toggleauthkeyvisibility') }}</span>
+											<span>{{ this.$t('general.toggleauthkeyvisibility') }}</span>
 										</v-tooltip>
 										<v-tooltip bottom>
 											<v-btn class="action-buttons"
@@ -73,7 +73,7 @@
 											>
 												<v-icon>assignment</v-icon>
 											</v-btn>
-											<span><span>{{ this.$t('transmitters.copyauthkeytoclipboard') }}</span></span>
+											<span><span>{{ this.$t('general.copyauthkeytoclipboard') }}</span></span>
 										</v-tooltip>
 										<v-tooltip bottom>
 											<v-btn class="action-buttons"
@@ -85,7 +85,7 @@
 											>
 												<v-icon>refresh</v-icon>
 											</v-btn>
-											<span>{{ this.$t('transmitters.generaterandomauthkey') }}</span>
+											<span>{{ this.$t('general.generaterandomauthkey') }}</span>
 										</v-tooltip>
 									</v-flex>
 								</v-layout>
@@ -495,10 +495,6 @@
 							longitude: 0
 						}
 					},
-					created_on: '',
-					created_by: '',
-					changed_on: '',
-					changed_by: '',
 					aprs_broadcast: false,
 					enabled: false,
 					auth_key: '',
@@ -609,13 +605,6 @@
 							count: '4'
 						}),
 						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric')
-					],
-					'pagerName': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('subscribers.new.pager.name.title') }),
-						v => (v && v.length <= 20) || this.$t('formvalidation.overlength', {
-							fieldname: this.$t('subscribers.new.pager.name.title'),
-							count: '20'
-						})
 					],
 					'owners': [
 						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('formvalidation.minoneowner') })
@@ -824,16 +813,31 @@
 				console.log(this.form);
 
 				if (this.$refs.form.validate()) {
-					if (!this.isEditMode) {
-						delete this.form._rev;
+					let data2Send = {};
+					data2Send.power = parseInt(this.form.power);
+					data2Send.antenna = this.form.antenna;
+					data2Send.antenna.gain = parseInt(this.form.antenna.gain);
+					data2Send.antenna.direction = parseInt(this.form.antenna.direction);
+					data2Send.antenna.agl = parseInt(this.form.antenna.agl);
+					data2Send._id = this.form._id;
+					if (this.isEditMode) {
+						// if this is Node Mode
+						data2Send._rev = this.form._rev;
 					}
-					this.form.power = parseInt(this.form.power);
-					this.form.antenna.gain = parseInt(this.form.antenna.gain);
-					this.form.antenna.direction = parseInt(this.form.antenna.direction);
-					this.form.antenna.agl = parseInt(this.form.antenna.agl);
+					data2Send.usage = this.form.usage;
+					data2Send.timeslots = this.form.timeslots;
+					data2Send.owners = this.form.owners;
+					data2Send.groups = this.form.groups;
+					data2Send.emergency_power = this.form.emergency_power;
+					data2Send.emergency_power.duration = parseInt(this.form.emergency_power.duration);
+					data2Send.coordinates = this.form.coordinates;
+					data2Send.aprs_broadcast = this.form.aprs_broadcast;
+					data2Send.enabled = this.form.enabled;
+					data2Send.auth_key = this.form.auth_key;
+
 					console.log('Data2Send von transmitter:');
-					console.log(this.form);
-					this.$helpers.sendData(this, 'transmitters', this.form, '');
+					console.log(data2Send);
+					this.$helpers.sendData(this, 'transmitters', data2Send, '');
 
 					// Trigger Reload of sidebar Icons
 					this.$root.$emit('ReloadSidebarIcons');

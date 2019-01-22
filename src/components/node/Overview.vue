@@ -4,7 +4,7 @@
 			<v-flex xs12>
 				<v-card>
 					<v-card-title>
-						<div class="headline">{{ $t('subscribers.overview.allsubscribers') }}</div>
+						<div class="headline">{{ $t('navigation.nodes.all') }}</div>
 						<v-spacer></v-spacer>
 						<v-text-field
 							v-model="search"
@@ -14,26 +14,26 @@
 							hide-details
 						>
 						</v-text-field>
-						<!-- Add Subscriber Button -->
-						<v-fab-transition v-if="this.$store.getters.permission('subscriber.create')">
+						<!-- Add Node Button -->
+						<v-fab-transition v-if="this.$store.getters.permission('node.create')">
 							<v-tooltip bottom>
 								<v-btn
 									color="pink"
 									fab
 									dark
 									small
-									to="/subscribers/new"
+									to="/nodes/new"
 									slot="activator"
 								>
 										<v-icon>add</v-icon>
 								</v-btn>
-								<span>{{ $t('subscribers.overview.addsubscriber') }}</span>
+								<span>{{ $t('nodes.overview.newnode') }}</span>
 							</v-tooltip>
 						</v-fab-transition>
 					</v-card-title>
 					<v-data-table
 						:headers="getHeaders"
-						:items="subscriberrows"
+						:items="noderows"
 						:pagination.sync="pagination"
 						:total-items="total_rows"
 						:loading="isLoadingData"
@@ -45,38 +45,15 @@
 						<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
 						<template slot="items" slot-scope="props">
 							<!-- ID column -->
-							<td>{{ props.item._id }}</td>
+							<td class="text-xs-right">
+								{{ props.item._id }}
+							</td>
 
 							<!-- Description column -->
-							<td class="text-xs-left">{{ props.item.description }}</td>
+							<td class="text-xs-right">
+								{{ props.item.description }}
+							</td>
 
-							<!-- Pager column -->
-							<td class="text-xs-left">
-								<span v-for="(pager, index) in props.item.pagers" v-bind:key="`pager-${index}`">
-									<v-chip
-										v-bind:color="`${pager.color}`"
-										text-color="white"
-										small
-									>
-										<v-avatar>
-											<img v-bind:src="`${pager.avatar}`" v-bind:alt="`${pager.type}`">
-										</v-avatar>
-										{{ pager.ric }}
-									</v-chip>
-								</span>
-							</td>
-							<!-- Third-Party-Services column -->
-							<td class="text-xs-left">
-								<span v-for="(service, index) in props.item.third_party_services" v-bind:key="`service-${index}`">
-									<v-chip
-										v-bind:color="`${service.color}`"
-										text-color="white"
-										small
-									>
-										{{ service.text }}
-									</v-chip>
-								</span>
-							</td>
 							<!-- owner column -->
 							<td class="text-xs-center">
 								<span v-for="(owner, index) in props.item.owners" v-bind:key="`owner-${index}`">
@@ -89,24 +66,13 @@
 									</v-chip>
 								</span>
 							</td>
-							<!-- Subscriber Groups column -->
-							<td class="text-xs-left">
-								<span v-for="(group, index) in props.item.groups" v-bind:key="`group-${index}`">
-									<v-chip
-										color="grey"
-										text-color="white"
-										small
-									>
-										{{ group }}
-									</v-chip>
-								</span>
-							</td>
+
 							<!-- Action Buttons -->
 							<td class="text-xs-center" v-if="displayActionsColumn">
 								<!-- Edit -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('subscriber.update') === 'all'"
+											v-if="getPermissionsWrapper('node.update') === 'all'"
 											flat
 											icon
 											small
@@ -122,7 +88,7 @@
 								<!-- Delete -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('subscriber.delete') === 'all'"
+											v-if="getPermissionsWrapper('node.delete') === 'all'"
 											flat
 											icon
 											small
@@ -138,7 +104,7 @@
 								<!-- Send Email -->
 								<v-tooltip bottom class="action-buttons">
 									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('subscriber.update') === 'all'"
+											v-if="getPermissionsWrapper('node.update') === 'all'"
 											flat
 											icon
 											small
@@ -164,8 +130,11 @@
 </template>
 
 <script>
+	import moment from 'moment';
+
 	export default {
 		created() {
+			moment.locale(this.$root.$i18n.locale);
 			this.loadData();
 		},
 		watch: {
@@ -180,17 +149,9 @@
 			return {
 				search: '',
 				total_rows: 0,
-				subscriberrows: [],
+				noderows: [],
 				errorMessage: false,
 				isLoadingData: true,
-				table: {
-					columns: [
-						{
-							id: 'actions',
-							title: 'general.actions'
-						}
-					]
-				},
 				pagination: {
 					sortBy: 'doc._id',
 					descending: true,
@@ -210,28 +171,14 @@
 					},
 					{
 						text: this.$i18n.t('general.description'),
+						sortable: true,
 						align: 'center',
 						value: 'description'
-					},
-					{
-						text: this.$i18n.t('general.pagers'),
-						align: 'center',
-						value: 'pagers'
-					},
-					{
-						text: this.$i18n.t('general.thirdpartyservices'),
-						align: 'center',
-						value: 'third_party_services'
 					},
 					{
 						text: this.$i18n.t('general.owner'),
 						align: 'center',
 						value: 'owners'
-					},
-					{
-						text: this.$i18n.t('general.subscriber_groups'),
-						align: 'center',
-						value: 'groups'
 					}
 				];
 				if (this.displayActionsColumn()) {
@@ -245,17 +192,32 @@
 				return answer;
 			}
 		},
+		mounted() {
+			this.$root.$on('LanguageChanged', () => {
+				// this.rerender_localized();
+			});
+		},
 		methods: {
+			/*rerender_localized() {
+				this.transmitterrows.forEach(transmitter => {
+					// Render last seen as prosa text
+					if (transmitter.status.last_seen) {
+						transmitter.status.last_seen_localized = moment(transmitter.status.last_seen).fromNow();
+					} else {
+						transmitter.status.last_seen_localized = '---';
+					}
+				});
+			},*/
 			displayActionsColumn() {
-				return ((this.$store.getters.permission('subscriber.update') === 'all') ||
-				(this.$store.getters.permission('subscriber.delete') === 'all'));
+				return ((this.$store.getters.permission('node.update') === 'all') ||
+				(this.$store.getters.permission('node.delete') === 'all'));
 			},
 			getPermissionsWrapper(mypermission) {
 				return (this.$store.getters.permission(mypermission));
 			},
 			loadData() {
 				this.isLoadingData = true;
-				this.$axios.get('subscribers', {
+				this.$axios.get('nodes', {
 					params: {
 						descending: !!this.pagination.descending,
 						limit: this.pagination.rowsPerPage,
@@ -272,68 +234,29 @@
 
 					// save rows
 					if (response.data.rows) {
-						response.data.rows.forEach(subscriber => {
-							// Set Description (if available)
-							if (subscriber.description === undefined) {
-								subscriber.description = '---';
-							}
-							// Render Pagers in a beautiful way  Rework, too much Copy here
-							let pagersRendered = [];
-							subscriber.pagers.forEach(pager => {
-								if (pager.type === 'alphapoc') {
-									pagersRendered.push({
-										color: 'green',
-										ric: pager.ric,
-										avatar: './img/pager/alphapoc.png',
-										type: pager.type,
-										enabled: pager.enabled
-									});
-								} else if (pager.type === 'skyper') {
-									pagersRendered.push({
-										color: 'red',
-										ric: pager.ric,
-										avatar: './img/pager/skyper.png',
-										type: pager.type,
-										enabled: pager.enabled
-									});
-								} else if (pager.type === 'swissphone') {
-									pagersRendered.push({
-										color: 'grey',
-										ric: pager.ric,
-										avatar: './img/pager/swissphone.png',
-										type: pager.type,
-										enabled: pager.enabled
-									});
-								} else if (pager.type === 'quix') {
-									pagersRendered.push({
-										color: 'purple',
-										ric: pager.ric,
-										avatar: './img/pager/quix.png',
-										type: pager.type,
-										enabled: pager.enabled
-									});
-								}
-							});
-							subscriber.pagers = pagersRendered;
+						/*
+						response.data.rows.forEach(nodes => {
 
-							// Render Third party assignments in a beautiful way
-							let thirdspartyRendered = [];
-							subscriber.third_party_services.forEach(service => {
-								if (service === 'APRS') {
-									thirdspartyRendered.push({
-										color: 'deep-orange',
-										text: 'APRS'
-									});
-								} else if (service === 'BM') {
-									thirdspartyRendered.push({
-										color: 'purple',
-										text: 'Brandmeister'
-									});
-								}
-							});
-							subscriber.third_party_services = thirdspartyRendered;
+							let usageRendered = [];
+							if (transmitter.usage === 'widerange') {
+								usageRendered.image = './img/icons/transmitter_widerange.png';
+								usageRendered.text = 'Widerange';
+							} else if (transmitter.usage === 'personal') {
+								usageRendered.image = './img/icons/transmitter_personal.png';
+								usageRendered.text = 'Personal';
+							}
+							transmitter.usage = usageRendered;
+
+							// Render last seen as prosa text
+							if (transmitter.status.last_seen) {
+								transmitter.status.last_seen_localized = moment(transmitter.status.last_seen).fromNow();
+							} else {
+								transmitter.status.last_seen_localized = '---';
+							}
 						});
-						this.subscriberrows = response.data.rows;
+						*/
+
+						this.noderows = response.data.rows;
 					}
 					this.isLoadingData = false;
 				}, response => {
@@ -343,14 +266,14 @@
 				});
 			},
 			mailToOwner(element) {
-				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20Subscriber%3A%20' + element._id;
+				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20Node%3A%20' + element._id;
 			},
 			editElement(element) {
-				this.$router.push({ name: 'Edit Subscriber', params: { id: element._id } });
+				this.$router.push({ name: 'Edit Node', params: { id: element._id } });
 			},
 			deleteElement(element) {
 				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('subscribers/' + element._id + '?revision=' + element._rev, {
+					this.axios.delete('nodes/' + element._id + '?revision=' + element._rev, {
 						// before(request) {
 						//	request.headers.delete('Content-Type');
 						// }
@@ -361,12 +284,14 @@
 						// error --> show error message
 						this.$dialogs.ajaxError(this, response);
 					});
+					this.$root.$emit('ReloadSidebarIcons');
 				});
 			}
 		}
 	};
 	// TODO: Make headers instant i18n updateable
 </script>
+
 
 <style scoped>
 	.action-buttons {
