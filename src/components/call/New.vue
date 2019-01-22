@@ -319,7 +319,8 @@
 					let individualGroupNames = this.formData.transmitter_groups[txGroupIndex].split('.');
 					result = this.$helpers.processTransmitterGroupsTreeNode(result, individualGroupNames[0], individualGroupNames[0], this.formData.transmitter_groups[txGroupIndex], 0);
 				}
-				// VERY IMPORTANT: Restore the deault TXGroups after Tree is build
+				// VERY IMPORTANT: Restore the default TXGroups after Tree is build
+				// TODO: To be checked for side effects
 				this.transmitter_groupsModel = this.orig_TXGroups;
 				return result;
 			},

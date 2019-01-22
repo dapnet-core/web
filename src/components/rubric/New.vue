@@ -174,29 +174,30 @@
 							<v-layout wrap>
 								<v-flex xs12 sm12 md12 lg6>
 									<!-- Display default expiration time -->
+									<div>{{ $t('general.default_expiration') }}</div>
 									<v-layout wrap justify-space-around>
 										<v-flex xs4>
 											<v-select
 												prepend-icon="timer"
 												v-model="expiration_selection.days"
-												v-bind:items="expiration_posibilities.days"
-												v-bind:label="$t('general.days')"
+												:items="expiration_posibilities.days"
+												:label="$t('general.days')"
 											>
 											</v-select>
 										</v-flex>
 										<v-flex xs3>
 											<v-select
 												v-model="expiration_selection.hours"
-												v-bind:items="expiration_posibilities.hours"
-												v-bind:label="$t('general.hours')"
+												:items="expiration_posibilities.hours"
+												:label="$t('general.hours')"
 											>
 											</v-select>
 										</v-flex>
 										<v-flex xs3>
 											<v-select
 												v-model="expiration_selection.minutes"
-												v-bind:items="expiration_posibilities.minutes"
-												v-bind:label="$t('general.minutes')"
+												:items="expiration_posibilities.minutes"
+												:label="$t('general.minutes')"
 											>
 											</v-select>
 										</v-flex>

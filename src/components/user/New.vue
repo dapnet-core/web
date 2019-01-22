@@ -408,6 +408,7 @@
 										</v-flex>
 										<!-- Display default expiration time -->
 										<v-flex xs12 sm12 md12 lg6>
+											<div>{{ $t('general.expiration') }}</div>
 											<v-layout wrap justify-space-around>
 												<v-flex xs4>
 													<v-select
