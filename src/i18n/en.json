@@ -419,6 +419,7 @@
           "highest": "highest"
         },
         "expiration": "Expiration time",
+        "default_expiration": "Default expiration time",
         "days": "Days",
         "hours": "Hours",
         "minutes": "Minutes",
@@ -479,63 +480,78 @@
         "title": "Function (SubRIC)",
         "help": "Non-Skyper-Function Bits are not avaiable on Skypers."
       },
+      "expirationdate": {
+        "title": "Expiration date",
+        "help": "Enter the expiration date."
+      },
+      "expirationtime": {
+        "title": "Expiration time",
+        "help": "Enter the expiration time."
+      },
       "notskyper": "This rubric will not be reveiced by Skpers, as the function SubRIC is not 3. That's ok, but be aware for this fact.",
+      "notskypershort": "NOT AVAILABLE ON SKYPERs",
       "highprioritywarning": "You selected a high priority for this rubric. In order to assure personal calls are delivered fast, please rethink if this is really necessary. A priority of maximum medium should be enough in most use cases. Please DO NOT abuse the priority for egoistic reasons.",
       "highestprioritywarning": "You selected the highest priority for this rubric. THIS IS NOT GOOD!",
-        "overview": {
-          "allrubrics": "All Rubrics",
-          "addrubric": "Add Rubric",
-          "totalrubrics": "Total Rubrics",
-          "editrubriccontentof": "Edit Rubric Content of",
-          "movecontentup": "Move content up",
-          "movecontentdown": "Move content down",
-          "deletecontent": "Delete this content and move the remaining content slots upwards",
-          "information": {
-            "help": "This is a list of all rubrics on the DAPNET. A rubric number can by assigned to several transmitter groups. Keep in mind that the transmitter groups are disjunct for the same rubric number in order to avoid overlapping number assigments.<br>Use the Activate Rubrics button to enable the reception of rubrics on your Skyper."
-          },
-          "addcontent": "Add content to this rubric"
+      "expirationenabled": {
+        "title": "Expires?"
+      },
+      "emptymessages": "There are empty messages between others with content. They will be removed once you save this form and the messages below will be moved up to fill the empty message slot.",
+      "overview": {
+        "dateinthepast": "Date is in the past",
+        "allrubrics": "All Rubrics",
+        "addrubric": "Add Rubric",
+        "totalrubrics": "Total Rubrics",
+        "editrubriccontentof": "Edit Rubric Content of",
+        "movecontentup": "Move content up",
+        "movecontentdown": "Move content down",
+        "addcontentabove": "Add content above",
+        "deletecontent": "Delete this content and move the remaining content slots upwards",
+        "information": {
+          "help": "This is a list of all rubrics on the DAPNET. A rubric number can by assigned to several transmitter groups. Keep in mind that the transmitter groups are disjunct for the same rubric number in order to avoid overlapping number assigments.<br>Use the Activate Rubrics button to enable the reception of rubrics on your Skyper."
         },
-        "new": {
-          "id":{
-            "help": "Enter an unique name for this rubric. It should be descriptive enough to get an idea about the content just from it. This is not the name that will appear on the Skyper."
-          },
-          "label": {
-            "help": "This how the rubric will be names on the Skyper."
-          },
-          "number" : {
-            "help": "This number is displayed on the Skyper."
-          },
-          "description": {
-            "help": "This description is only visible on the web interface, not on the paging receiver. Describe the content or purpose of this rubric so others can know what it is about."
-          },
-          "cyclicTransmit": {
-            "help": "This switch enabled cyclic retransmissions of the complete 10 message slots in this rubric. Useful for general news, DEFINITELY not useful for rubrics that are updated from third-party sources on a regular basis!"
-          },
-          "cyclicTransmitInterval": {
-            "title": "Cyclic retransmit interval",
-            "help": "Enter an interval in minutes, in which the complete content of this rubric shall be retransmitted."
-          },
-          "transmitters": {
-            "help": "Select specific transmitters on which this rubric shall be transmitted. If they are already part of a selected transmitter group, don't select them here!"
-          },
-          "transmitter_groups": {
-            "help": "Select specific transmitter groups on which this rubric shall be transmitted."
-          },
-          "owner": {
-            "help": "An owner of a rubric can edit its parameters."
-          },
-          "information": {
-            "help": "Rubrics are a Skyper based invention allowing to send news sorted into chategories (the rubrics). Assign the number with care and contact <code>support [at] hampager.de</code> in case of doubt. Be aware that the number of rubrics is limited netwide to 99."
-          },
-          "editrubric": "Edit Rubric"
+        "addcontent": "Add content to this rubric"
+      },
+      "new": {
+        "id": {
+          "help": "Enter an unique name for this rubric. It should be descriptive enough to get an idea about the content just from it. This is not the name that will appear on the Skyper."
         },
-        "activation": {
-            "pagernumber": "Pager-Number (your RIC)",
-            "information": {
-                "help": "Use the function to send an activation call to your Skyper. After successful reception, you can select the rubrics on \"Skyper Setup\" in the skyper menu."
-            },
-            "transmittergroup": "Transmitter Groups"
-        }
+        "label": {
+          "help": "This how the rubric will be names on the Skyper."
+        },
+        "number" : {
+          "help": "This number is displayed on the Skyper."
+        },
+        "description": {
+          "help": "This description is only visible on the web interface, not on the paging receiver. Describe the content or purpose of this rubric so others can know what it is about."
+        },
+        "cyclicTransmit": {
+          "help": "This switch enabled cyclic retransmissions of the complete 10 message slots in this rubric. Useful for general news, DEFINITELY not useful for rubrics that are updated from third-party sources on a regular basis!"
+        },
+        "cyclicTransmitInterval": {
+          "title": "Cyclic retransmit interval",
+          "help": "Enter an interval in minutes, in which the complete content of this rubric shall be retransmitted."
+        },
+        "transmitters": {
+          "help": "Select specific transmitters on which this rubric shall be transmitted. If they are already part of a selected transmitter group, don't select them here!"
+        },
+        "transmitter_groups": {
+          "help": "Select specific transmitter groups on which this rubric shall be transmitted."
+        },
+        "owner": {
+          "help": "An owner of a rubric can edit its parameters."
+        },
+        "information": {
+          "help": "Rubrics are a Skyper based invention allowing to send news sorted into chategories (the rubrics). Assign the number with care and contact <code>support [at] hampager.de</code> in case of doubt. Be aware that the number of rubrics is limited netwide to 99."
+        },
+        "editrubric": "Edit Rubric"
+      },
+      "activation": {
+        "pagernumber": "Pager-Number (your RIC)",
+        "information": {
+          "help": "Use the function to send an activation call to your Skyper. After successful reception, you can select the rubrics on \"Skyper Setup\" in the skyper menu."
+        },
+        "transmittergroup": "Transmitter Groups"
+      }
     },
     "subscribers": {
       "overviewonlynames": {
@@ -834,18 +850,18 @@
         "privacy": "Privacy",
         "notfound": "Not Found"
     },
-  "$vuetify": {
-    "dataIterator": {
-      "rowsPerPageText": "Items per page:",
-      "rowsPerPageAll": "All",
-      "pageText": "{0}-{1} of {2}",
-      "noResultsText": "No matching records found",
-      "nextPage": "Next page",
-      "prevPage": "Previous page"
-    },
-    "dataTable": {
-      "rowsPerPageText": "Rows per page:"
-    },
-    "noDataText": "No data available"
-  }
+    "$vuetify": {
+      "dataIterator": {
+        "rowsPerPageText": "Items per page:",
+        "rowsPerPageAll": "All",
+        "pageText": "{0}-{1} of {2}",
+        "noResultsText": "No matching records found",
+        "nextPage": "Next page",
+        "prevPage": "Previous page"
+      },
+      "dataTable": {
+        "rowsPerPageText": "Rows per page:"
+      },
+      "noDataText": "No data available"
+    }
 }

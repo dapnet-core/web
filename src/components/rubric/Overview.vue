@@ -210,35 +210,122 @@
 							</v-avatar>
 							{{ $t('rubrics.function.title') }}
 						</v-chip>
+						<v-chip
+							label
+							color="yellow"
+							v-if="this.rubriccontent.function !== 3"
+						>
+							<v-avatar>
+								<v-icon>warning</v-icon>
+							</v-avatar>
+							{{ $t('rubrics.notskypershort') }}
+						</v-chip>
+
 
 					</span>
 				</v-card-title>
 				<v-card-text>
-					<v-form v-model="isMessageFormValid" ref="messageForm">
+					<v-form v-model="editDialogFormValid" ref="editForm">
 						<v-layout
 							align-center
-							v-for="index in 10"
+							justify-space-between
+							v-for="(thiscontent, index) in this.rubriccontent.content"
 							:key="index"
 						>
 							<!--Data-->
-							<v-flex xs6>
+							<v-flex xs4>
 								<v-textarea
-									v-model="rubriccontent.content[index-1]['data']"
-									:prefix="index.toString()"
+									v-model="rubriccontent.content[index].data"
+									:prefix="(index + 1).toString()"
 									:counter="80"
 									rows="2"
+									:rules="validationRules.message"
+									@change="emptyMessagesInBetween = getEmptyMessagesInBetween()"
 								>
 								</v-textarea>
 							</v-flex>
-							<!--Expiration Time-->
 							<v-flex xs2>
-								asdj
+								<v-checkbox
+									v-model="rubriccontent.enableExpirationDateTime[index]"
+									:label="$t('rubrics.expirationenabled.title')"
+								>
+								</v-checkbox>
 							</v-flex>
+							<!--Expiration Time-->
+							<v-flex xs3 v-if="rubriccontent.enableExpirationDateTime[index]">
+								<v-menu
+									:close-on-content-click="false"
+									v-model="dateTimePicker.showDateMenu[index]"
+									:nudge-right="40"
+									lazy
+									transition="scale-transition"
+									offset-y
+									full-width
+									max-width="290px"
+									min-width="290px"
+								>
+									<v-text-field
+										slot="activator"
+										v-model="dateFormated[index]"
+										:label="$t('rubrics.expirationdate.title')"
+										:hint="$t('rubrics.expirationdate.help')"
+										prepend-icon="event"
+										readonly
+									></v-text-field>
+									<v-date-picker
+										v-model="dateNonFormated[index]"
+										no-title
+										@input="dateTimePicker.showDateMenu[index] = false"
+										:locale="$root.$i18n.locale"
+										:show-current="getCurrentDate"
+										:first-day-of-week="getFirstDayOfTheWeek"
+										:min="getCurrentDate"
+										:max="getMaxDate"
+									>
+									</v-date-picker>
+								</v-menu>
+							</v-flex>
+							<v-flex xs3 v-if="!rubriccontent.enableExpirationDateTime[index]"></v-flex>
+							<!--Expiration time-->
+							<v-flex xs2 v-if="rubriccontent.enableExpirationDateTime[index] && hoursSelect(index).length > 0">
+								<v-select
+									:items="hoursSelect(index)"
+									item-text="label"
+									item-value="value"
+									required
+									v-model="hour[index]"
+									:label="$t('rubrics.expirationtime.title')"
+									:hint="$t('rubrics.expirationtime.help')"
+								>
+								</v-select>
+							</v-flex>
+							<v-flex xs2 v-if="rubriccontent.enableExpirationDateTime[index] && (!(hoursSelect(index).length > 0))">
+								<v-chip label outline color="red">
+									{{ $t('rubrics.overview.dateinthepast') }}
+								</v-chip>
+							</v-flex>
+							<v-flex xs2 v-if="!rubriccontent.enableExpirationDateTime[index]"></v-flex>
 							<!--Action Buttons-->
-							<v-flex v-if="getPermissionsWrapper('news.update') === 'all'">
+							<v-flex xs2 v-if="getPermissionsWrapper('news.update') === 'all'">
 								<v-tooltip bottom>
 									<v-btn
-										v-if="index != 1"
+										v-if="index != 9 && index != 0"
+										class="action-buttons"
+										flat
+										icon
+										small
+										fab
+										color="pink"
+										v-on:click="AddContentAbove(index)"
+										slot="activator"
+									>
+										<v-icon>add</v-icon>
+									</v-btn>
+									<span>{{ $t('rubrics.overview.addcontentabove') }}</span>
+								</v-tooltip>
+								<v-tooltip bottom>
+									<v-btn
+										v-if="index != 0"
 										class="action-buttons"
 										flat
 										icon
@@ -252,22 +339,7 @@
 									</v-btn>
 									<span>{{ $t('rubrics.overview.movecontentup') }}</span>
 								</v-tooltip>
-								<v-tooltip bottom>
-									<v-btn
-										v-if="index != 10"
-										class="action-buttons"
-										flat
-										icon
-										small
-										fab
-										color="primary"
-										v-on:click="moveContentDown(index)"
-										slot="activator"
-									>
-										<v-icon>arrow_downward</v-icon>
-									</v-btn>
-									<span>{{ $t('rubrics.overview.movecontentdown') }}</span>
-								</v-tooltip>
+								<br />
 								<v-tooltip bottom>
 									<v-btn
 										class="action-buttons"
@@ -283,14 +355,40 @@
 									</v-btn>
 									<span>{{ $t('rubrics.overview.deletecontent') }}</span>
 								</v-tooltip>
+								<v-tooltip bottom>
+									<v-btn
+										v-if="index != 9"
+										class="action-buttons"
+										flat
+										icon
+										small
+										fab
+										color="primary"
+										v-on:click="moveContentDown(index)"
+										slot="activator"
+									>
+										<v-icon>arrow_downward</v-icon>
+									</v-btn>
+									<span>{{ $t('rubrics.overview.movecontentdown') }}</span>
+								</v-tooltip>
 							</v-flex>
 						</v-layout>
 					</v-form>
+					<v-layout v-if="emptyMessagesInBetween">
+						<v-flex xs12>
+							<v-alert
+								:value="true"
+								type="warning"
+							>
+								{{ $t('rubrics.emptymessages') }}
+							</v-alert>
+						</v-flex>
+					</v-layout>
 				</v-card-text>
 				<v-card-actions>
 					<v-btn
-						@click="messagesSaveChanges"
-						v-bind:disabled="!rubriccontent.formvalid"
+						@click="editDialogSaveButton"
+						v-bind:disabled="!editDialogFormValid"
 					>
 						Save changes
 					</v-btn>
@@ -316,7 +414,7 @@
 					</span>
 				</v-card-title>
 				<v-card-text>
-					<v-form v-model="isMessageFormValid" ref="messageForm">
+					<v-form v-model="addDialogFormValid" ref="addForm">
 						<v-text-field
 							v-for="index in 10"
 							:key="index"
@@ -329,15 +427,15 @@
 				</v-card-text>
 				<v-card-actions>
 					<v-btn
-						@click="messagesSaveChanges"
-						v-bind:disabled="!rubriccontent.formvalid"
+						@click="addDialogSaveButton"
+						v-bind:disabled="!addDialogFormValid"
 					>
 						Save changes
 					</v-btn>
 					<v-btn
 						color="primary"
 						flat
-						@click="EditContentDialogVisible=false"
+						@click="AddContentDialogVisible=false"
 					>
 						Close
 					</v-btn>
@@ -351,6 +449,13 @@
 	import moment from 'moment';
 
 	export default {
+		mounted() {
+			console.log(this.$vuetify.breakpoint);
+			this.$root.$on('LanguageChanged', () => {
+				this.formatDate(this.dateNonFormated);
+				console.log('lang changed');
+			});
+		},
 		created() {
 			moment.locale(this.$root.$i18n.locale);
 			this.loadData();
@@ -361,6 +466,11 @@
 					this.loadData();
 				},
 				deep: true
+			},
+			dateNonFormated: function(val) {
+				this.formatDate(val);
+				console.log('dateNonFormatted watch');
+				console.log(val);
 			}
 		},
 		data() {
@@ -372,15 +482,6 @@
 				isLoadingData: true,
 				EditContentDialogVisible: false,
 				AddContentDialogVisible: false,
-				isMessageFormValid: false,
-				table: {
-					columns: [
-						{
-							id: 'actions',
-							title: 'general.actions'
-						}
-					]
-				},
 				pagination: {
 					sortBy: 'doc._id',
 					descending: true,
@@ -394,6 +495,7 @@
 					function: 0,
 					description: '',
 					label: '',
+					enableExpirationDateTime: [],
 					content: [
 						{
 							'data': '',
@@ -445,22 +547,55 @@
 							'expires_on': '',
 							'priority': 0
 						}
-					],
-					formvalid: false
+					]
 				},
 				addcontent: {
 					_id: '',
 					_rev: '',
 					number: 0,
+					function: 0,
 					description: '',
 					label: '',
-					formvalid: false
-				}
+					content: {
+						'data': '',
+						'expires_on': '',
+						'priority': 0
+					}
+				},
+				addDialogFormValid: false,
+				editDialogFormValid: false,
+				dateTimePicker: {
+					showDateMenu: []
+				},
+				dateNonFormated: [],
+				dateFormated: [],
+				hour: [],
+				emptyMessagesInBetween: false
 			};
 		},
 		computed: {
-			isReadyLoadingData() {
-				return !this.isLoadingData;
+			getFirstDayOfTheWeek() {
+				if (this.$t('general.firstdayofweek') === 'Sunday') {
+					return 0;
+				} else {
+					return 1;
+				}
+			},
+			getCurrentDate() {
+				return moment().format('YYYY-MM-DD');
+			},
+			getMaxDate() {
+				return moment().add(1, 'years').format('YYYY-MM-DD');
+			},
+			validationRules() {
+				return {
+					'message': [
+						v => (!v) || (!!v && v.length <= 80) || this.$t('formvalidation.overlength', {
+							fieldname: this.$t('general.message'),
+							count: '80'
+						})
+					]
+				};
 			},
 			statTotal() {
 				return this.table.rows.length;
@@ -532,29 +667,95 @@
 			}
 		},
 		methods: {
+			getEmptyMessagesInBetween() {
+				for (let i = 1; i < (this.rubriccontent.content.length - 1); i++) {
+					console.log('Index: ' + i);
+					console.log(this.rubriccontent.content[i + 1].data);
+					console.log(this.rubriccontent.content[i].data);
+					if (this.rubriccontent.content[i + 1].data !== null &&
+						(this.rubriccontent.content[i].data === null ||
+						this.rubriccontent.content[i].data === '')) {
+						// Next message is present and filled and this is either null or empty
+						// delete it
+						//this.emptyMessagesInBetween = true;
+						return true;
+					}
+				}
+				//this.emptyMessagesInBetween = false;
+				return false;
+			},
+			hoursSelect(index) {
+				// index from 0 to 9
+				let returnvalue = [];
+				for (let myhour = 0; myhour < 24; myhour++) {
+					let selectedDateTime = moment(this.dateNonFormated[index]);
+					selectedDateTime.add(myhour, 'hours');
+					// console.log('selectedDateTime: ' + selectedDateTime.format('DD.MM.YYYY HH:mm:ss'));
+					// console.log('now: ' + moment().format('DD.MM.YYYY HH:mm:ss'));
+					if (selectedDateTime.isAfter(moment().add(1, 'hours'))) {
+						// console.log('vorher');
+						if (this.$t('general.24hr') === 'true') {
+							returnvalue.push(
+								{
+									value: myhour,
+									label: myhour.toString() + ':00'
+								}
+							);
+						} else {
+							returnvalue.push(
+								{
+									value: myhour,
+									label: (myhour % 12).toString() + (myhour < 12 ? ':00 am' : ':00 pm')
+								}
+							);
+						}
+					}
+				}
+				return returnvalue;
+			},
+			formatDate(val) {
+				if (val) {
+					for (let i = 0; i < val.length; i++) {
+						if (val[i]) {
+							this.dateFormated[i] = moment(val[i]).format('L');
+						} else {
+							this.dateFormated[i] = '';
+						}
+					}
+				}
+			},
+			AddContentAbove(index) {
+				this.rubriccontent.content.splice(index - 1 + 1, 0, {
+					'data': '',
+					'expires_on': '',
+					'priority': 0
+				});
+				// Delete last element, which is number 11, index 10
+				this.rubriccontent.content.splice(10, 1);
+			},
 			moveContentUp(index) {
-				// index starts at 1, ends at 10
-				let help = this.rubriccontent.content[index - 2];
-				this.rubriccontent.content[index - 2] = this.rubriccontent.content[index - 1];
-				this.rubriccontent.content[index - 1] = help;
+				// index starts at 0, ends at 9
+				let help = this.rubriccontent.content[index - 1];
+				this.rubriccontent.content[index - 1] = this.rubriccontent.content[index];
+				this.rubriccontent.content[index] = help;
 				// Workaround to update v-text-area
 				// TODO: Find better way
 				this.rubriccontent.content.push('');
 				this.rubriccontent.content.splice(-1, 1);
 			},
 			moveContentDown(index) {
-				// index starts at 1, ends at 10
-				let help = this.rubriccontent.content[index];
-				this.rubriccontent.content[index] = this.rubriccontent.content[index - 1];
-				this.rubriccontent.content[index - 1] = help;
+				// index starts at 0, ends at 9
+				let help = this.rubriccontent.content[index + 1];
+				this.rubriccontent.content[index + 1] = this.rubriccontent.content[index];
+				this.rubriccontent.content[index] = help;
 				// Workaround to update v-text-area
 				// TODO: Find better way
 				this.rubriccontent.content.push('');
 				this.rubriccontent.content.splice(-1, 1);
 			},
 			deleteContent(index) {
-				// index starts at 1, ends at 10
-				this.rubriccontent.content.splice(index - 1, 1);
+				// index starts at 0, ends at 9
+				this.rubriccontent.content.splice(index, 1);
 				// Restore number of elements to 10
 				this.rubriccontent.content.push('');
 			},
@@ -580,21 +781,33 @@
 						this.rubriccontent.description = response.data.description;
 						this.rubriccontent.label = response.data.label;
 						this.rubriccontent.function = response.data.function;
+						// Load 10 Messages and compute date and time display
 						for (var i = 0; i < 10; i++) {
 							if (response.data.content && response.data.content[i]) {
 								this.rubriccontent.content[i] = response.data.content[i];
+								if (this.rubriccontent.content[i].expires_on) {
+									this.dateNonFormated[i] = moment(this.rubriccontent.content[i].expires_on)
+										.format('YYYY-MM-DD');
+									this.hour[i] = parseInt(moment(this.rubriccontent.content[i].expires_on)
+										.format('HH'));
+								} else {
+									this.dateNonFormated[i] = null;
+								}
 							} else {
 								this.rubriccontent.content[i] = {
 									'data': null,
-									"expires_on": null,
-									"priority": null
+									'expires_on': null,
+									'priority': null
 								};
 							}
+							// Set selection state for each message
+							this.rubriccontent.enableExpirationDateTime[i] = (this.rubriccontent.content[i]['expires_on'] !== null);
 						}
-						console.log(this.rubriccontent.content[1]['data']);
+						console.log('Load rubric data');
 						this.EditContentDialogVisible = true;
 					}).catch(e => {
-						console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');
+						console.log('Error getting rubric\'s individual details with axios or any exception' +
+							'in the get handler of showEditContentDialog.' + e);
 				});
 			},
 			showAddContentDialog(element) {
@@ -608,7 +821,8 @@
 						this.addcontent.label = response.data.label;
 						this.AddContentDialogVisible = true;
 					}).catch(e => {
-						console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');
+						console.log('Error getting rubric\'s individual details with axios or any exception' +
+							'in the get handler of showAddContentDialog.');
 				});
 			},
 			displayActionsColumn() {
@@ -669,7 +883,58 @@
 					});
 				});
 			},
-			messagesSaveChanges() {
+			addDialogSaveButton() {
+
+			},
+			editDialogSaveButton() {
+				// Send changed rubric content to database Service
+				console.log('Save button');
+				console.log(this.rubriccontent);
+				console.log(this.hour);
+
+				if (this.$refs.editForm.validate()) {
+					let data2Send = {};
+					// Build data to send
+					data2Send._id = this.rubriccontent._id;
+					data2Send._rev = this.rubriccontent._rev;
+					data2Send.content = [];
+					for (let i = 0; i < this.rubriccontent.content.length; i++) {
+						console.log(i);
+						console.log(this.rubriccontent.content[i]);
+						if (this.rubriccontent.content[i].data !== null &&
+							this.rubriccontent.content[i].data !== '') {
+							let contentToAdd = {};
+
+							contentToAdd.data = this.rubriccontent.content[i]['data'];
+							// Combine Date and Time
+							if (this.dateNonFormated[i] &&
+								this.dateNonFormated[i] !== '') {
+								let expiration = moment(this.dateNonFormated[i]);
+								if (this.hour[i]) {
+									expiration.add(this.hour[i], 'hours');
+								}
+								contentToAdd.expires_on = expiration.toISOString();
+							} else {
+								contentToAdd.expires_on = null;
+							}
+							if (this.rubriccontent.content[i].priority &&
+								this.rubriccontent.content[i].priority >= 1 &&
+								this.rubriccontent.content[i].priority <= 5) {
+								contentToAdd.priority = this.rubriccontent.content[i].priority;
+							} else {
+								contentToAdd.priority = 1;
+							}
+							data2Send.content.push(contentToAdd);
+						}
+					}
+					console.log('Data2Send von rubrics:');
+					console.log(data2Send);
+					this.$helpers.sendData(this, 'rubrics', data2Send, '');
+
+					// Trigger Reload of sidebar Icons
+					this.$root.$emit('ReloadSidebarIcons');
+					this.EditContentDialogVisible = false;
+				}
 
 			}
 		}
