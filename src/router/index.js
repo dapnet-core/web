@@ -21,6 +21,7 @@ import RubricNew from '@/components/rubric/New';
 import RubricMy from '@/components/rubric/My';
 import NodeOverview from '@/components/node/Overview';
 import NodeNew from '@/components/node/New';
+import NodeMy from '@/components/node/My';
 
 Vue.use(Router);
 
@@ -248,6 +249,15 @@ export default new Router({
 			component: NodeNew,
 			meta: {
 				titleTranslationKey: 'pagetitle.node.new',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/mynodes',
+			name: 'My Nodes',
+			component: NodeMy,
+			meta: {
+				titleTranslationKey: 'pagetitle.node.my',
 				requireAuthentication: true
 			}
 		},

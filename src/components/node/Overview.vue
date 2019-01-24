@@ -25,7 +25,7 @@
 									to="/nodes/new"
 									slot="activator"
 								>
-										<v-icon>add</v-icon>
+										<v-icon>+</v-icon>
 								</v-btn>
 								<span>{{ $t('nodes.overview.newnode') }}</span>
 							</v-tooltip>

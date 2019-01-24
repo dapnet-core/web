@@ -90,6 +90,25 @@
 						</v-chip>
 					</v-list-tile-action>
 				</v-list-tile>
+
+				<!--My nodes-->
+				<v-list-tile
+					v-if="count_my.nodes > 0"
+					exact to="/mynodes"
+				>
+					<v-list-tile-action>
+						<v-icon>cloud</v-icon>
+					</v-list-tile-action>
+					<v-list-tile-content>
+						<v-list-tile-title>{{ $t('navigation.nodes.my') }}</v-list-tile-title>
+					</v-list-tile-content>
+					<v-list-tile-action>
+						<v-chip>
+							{{ count_my.nodes }}
+						</v-chip>
+					</v-list-tile-action>
+				</v-list-tile>
+
 			</v-list-group>
 
 			<!--All entities-->

@@ -889,9 +889,7 @@
 					data2Send._rev = this.rubriccontent._rev;
 					data2Send.content = [];
 					for (let i = 0; i < this.rubriccontent.content.length; i++) {
-						console.log(i);
-						console.log(this.rubriccontent.content[i]);
-						if (this.rubriccontent.content[i].data !== null && this.rubriccontent.content[i].data !== '') {
+						if (this.rubriccontent.content[i].data && this.rubriccontent.content[i].data !== null && this.rubriccontent.content[i].data !== '') {
 							let contentToAdd = {};
 							contentToAdd.data = this.rubriccontent.content[i]['data'];
 							// Combine Date and Time

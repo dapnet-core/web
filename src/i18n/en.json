@@ -129,13 +129,15 @@
           "personal": "Personal"
         },
         "status": {
-          "title": "Status",
+          "connected": "Connected",
           "online": "Online",
           "offline": "Offline",
           "software": "Software",
           "IPaddress": "Address",
           "node": "Node",
-          "lastseen": "Last seen"
+          "lastseen": "Last seen",
+          "onair": "On Air",
+          "messagequeue": "Queue"
          },
          "emergency_power": {
            "title": "Emerg. Power"
@@ -850,6 +852,7 @@
             "edit": "Edit Transmitter Group"
         },
         "node": {
+            "my": "My Nodes",
             "overview": "Node Overview",
             "new": "New Node",
             "edit": "Edit Node",

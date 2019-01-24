@@ -55,8 +55,36 @@
 
 							<!-- Status column -->
 							<td class="text-xs-right">
-								<v-icon v-if="props.item.status.online" color="green">signal_wifi_4_bar</v-icon>
+								<v-icon v-if="props.item.status.online" color="green">cloud_done</v-icon>
+								<v-icon v-else color ="red">cloud_off</v-icon>
+							</td>
+
+							<!-- OnAir column -->
+							<td class="text-xs-right">
+								<v-icon v-if="props.item.status.onair" color="green">signal_wifi_4_bar</v-icon>
 								<v-icon v-else color ="red">signal_wifi_off</v-icon>
+							</td>
+
+							<!-- Messages column -->
+							<td class="text-xs-right">
+								<div v-if="props.item.status.messages" class="chartContainer">
+									<!--<span v-for="(prio, index) in props.item.status.messages.queued" v-bind:key="`prio-${index}`">-->
+									<chart-message-queue
+										:chartData="chartDataMessageQueue(props.index)"
+										style="width: 100px; height: 70px;"
+									>
+									</chart-message-queue>
+										<!--
+										<v-chip
+											small
+											label
+											:color="getQueueColor(prio)"
+											>
+											{{ prio }}
+											</v-chip>
+										-->
+									<!--</span>-->
+								</div>
 							</td>
 
 							<!-- Node column -->
@@ -199,16 +227,33 @@
 				</v-card>
 			</v-flex>
 		</v-layout>
+		<!--
+		<v-layout>
+			<v-flex xs4>
+				<v-btn
+					@click="btnclick"
+				>button</v-btn>
+			</v-flex>
+			<v-flex xs4>
+				<chart-message-queue :chartData="chartDataMessageQueue(2)"></chart-message-queue>
+			</v-flex>
+		</v-layout>
+		-->
 	</v-container>
 </template>
 
 <script>
 	import moment from 'moment';
+	import ChartMessageQueue from '@/components/charts/MessageQueue';
 
 	export default {
+		components: {
+			ChartMessageQueue
+		},
 		created() {
 			moment.locale(this.$root.$i18n.locale);
-			this.loadData();
+			// Not needed, as called by pagination watcher
+			// this.loadData();
 		},
 		watch: {
 			pagination: {
@@ -220,6 +265,7 @@
 		},
 		data() {
 			return {
+				messagequeuepresent: false,
 				search: '',
 				total_rows: 0,
 				transmitterrows: [],
@@ -230,7 +276,8 @@
 					descending: true,
 					rowsPerPage: 10,
 					page: 1
-				}
+				},
+				wsHandler: []
 			};
 		},
 		computed: {
@@ -243,10 +290,22 @@
 						value: '_id'
 					},
 					{
-						text: this.$i18n.t('transmitters.status.title'),
+						text: this.$i18n.t('transmitters.status.connected'),
 						sortable: true,
 						align: 'center',
 						value: 'status.online'
+					},
+					{
+						text: this.$i18n.t('transmitters.status.onair'),
+						sortable: false,
+						align: 'center',
+						value: 'status.onair'
+					},
+					{
+						text: this.$i18n.t('transmitters.status.messagequeue'),
+						sortable: false,
+						align: 'center',
+						value: 'status.messages.sent'
 					},
 					{
 						text: this.$i18n.t('transmitters.status.node'),
@@ -310,6 +369,136 @@
 			});
 		},
 		methods: {
+			chartDataMessageQueue(transmitterindex) {
+				if (this.transmitterrows[transmitterindex] &&
+					'status' in this.transmitterrows[transmitterindex] &&
+					'messages' in this.transmitterrows[transmitterindex].status &&
+					'queued' in this.transmitterrows[transmitterindex].status.messages) {
+					return {
+						labels: ['L', '', 'M', '', 'H'],
+						datasets: [{
+							backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
+							data: this.transmitterrows[transmitterindex].status.messages.queued
+						}]
+					};
+				} else {
+					return {
+						labels: ['Lowest', 'Low', 'Medium', 'High', 'Highest'],
+						datasets: [{
+							backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
+							data: [0, 0, 0, 0, 0]
+						}]
+					};
+
+				}
+			},
+			getQueueColor(length) {
+				if (length < 10) {
+					return 'green';
+				} else if (length < 20) {
+					return 'yellow';
+				} else {
+					return 'red';
+				}
+			},
+			btnclick() {
+				console.log('button');
+				this.transmitterrows[0].status.online = true;
+			},
+			updateTableRows(data, transmittername) {
+				// Find corresponding transmitter object
+				let transmitterIndex = -1;
+				for (let i = 0; i < this.transmitterrows.length; i++) {
+					if (this.transmitterrows[i]._id === transmittername) {
+						transmitterIndex = i;
+						break;
+					}
+				}
+				if (transmitterIndex === -1) {
+					return;
+				}
+				console.log('UpdateTableRow txindex: ' + transmitterIndex.toString() + ' TXname ' + transmittername + ' received data:');
+				console.log(data);
+				// Update transmitter data from websocket
+				if ('config' in data && 'timeslots' in data.config) {
+					let object2update = this.transmitterrows[transmitterIndex];
+					object2update.timeslots = data.config.timeslots;
+					this.transmitterrows.splice(transmitterIndex, 1, object2update);
+				}
+				if ('config' in data && 'software' in data.config && 'name' in data.config.software) {
+					let object2update = this.transmitterrows[transmitterIndex];
+					object2update.status.software.name = data.config.software.name;
+					this.transmitterrows.splice(transmitterIndex, 1, object2update);
+				}
+				if ('config' in data && 'software' in data.config && 'version' in data.config.software) {
+					let object2update = this.transmitterrows[transmitterIndex];
+					object2update.status.software.version = data.config.software.version;
+					this.transmitterrows.splice(transmitterIndex, 1, object2update);
+				}
+				if ('node' in data && 'connected' in data.node) {
+					let object2update = this.transmitterrows[transmitterIndex];
+					object2update.status.online = data.node.connected;
+					this.transmitterrows.splice(transmitterIndex, 1, object2update);
+				}
+				if ('node' in data && 'connected_since' in data.node) {
+					let object2update = this.transmitterrows[transmitterIndex];
+					object2update.status.connected_since = data.node.connected_since;
+					this.transmitterrows.splice(transmitterIndex, 1, object2update);
+				}
+
+				let object2update = this.transmitterrows[transmitterIndex];
+				object2update.status.last_seen = moment();
+				object2update.status.last_seen_localized = moment().fromNow();
+				this.transmitterrows.splice(transmitterIndex, 1, object2update);
+
+				if ('node' in data && 'name' in data.node) {
+					let object2update = this.transmitterrows[transmitterIndex];
+					object2update.status.node = data.node.name;
+					this.transmitterrows.splice(transmitterIndex, 1, object2update);
+				}
+				if ('ntp' in data) {
+					let object2update = this.transmitterrows[transmitterIndex];
+					object2update.status.ntp = data.ntp;
+					this.transmitterrows.splice(transmitterIndex, 1, object2update);
+				}
+				if ('messages' in data) {
+					data.messages.sent.splice(6, 4);
+					data.messages.sent.splice(0, 1);
+
+					data.messages.queued.splice(6, 4);
+					data.messages.queued.splice(0, 1);
+					let object2update = this.transmitterrows[transmitterIndex];
+					object2update.status.messages = data.messages;
+					this.transmitterrows.splice(transmitterIndex, 1, object2update);
+				}
+				if ('onair' in data) {
+					let object2update = this.transmitterrows[transmitterIndex];
+					object2update.status.onair = data.onair
+					this.transmitterrows.splice(transmitterIndex, 1, object2update);
+				}
+			},
+			handleWebsocketConnetions() {
+				console.log('Starting setting up WS handler');
+				console.log(this.transmitterrows);
+				if (this.wsHandler.length !== 0) {
+					// Close active handlers
+				}
+				// Start WS connections
+				for (let i = 0; i < this.transmitterrows.length; i++) {
+					let transmittername = this.transmitterrows[i]._id;
+					this.wsHandler[i] = new WebSocket(this.$store.getters.url.telemetry + '/telemetry/transmitters/' + transmittername);
+					this.wsHandler[i].addEventListener('message', e => {
+						let data = JSON.parse(e.data);
+						if (!this.$helpers.isEmpty(data)) {
+							this.updateTableRows(data, transmittername);
+						} else {
+							let object2update = this.transmitterrows[i];
+							object2update.status.online = false;
+							this.transmitterrows.splice(i, 1, object2update);
+						}
+					});
+				}
+			},
 			rerender_localized() {
 				this.transmitterrows.forEach(transmitter => {
 					// Render last seen as prosa text
@@ -328,6 +517,7 @@
 				return (this.$store.getters.permission(mypermission));
 			},
 			loadData() {
+				console.log('Starting loading data');
 				this.isLoadingData = true;
 				this.$axios.get('transmitters', {
 					params: {
@@ -369,6 +559,7 @@
 						this.transmitterrows = response.data.rows;
 					}
 					this.isLoadingData = false;
+					this.handleWebsocketConnetions();
 				}, response => {
 					// error --> show error message
 					this.isLoadingData = false;
@@ -406,5 +597,9 @@
 		padding: 1px;
 		margin: 0px;
 		display: inline-block;
+	}
+	.chartContainer {
+		border: 1px solid lightgrey;
+		box-sizing: border-box;
 	}
 </style>
