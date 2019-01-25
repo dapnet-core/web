@@ -191,42 +191,57 @@
 		</v-layout>
 		<!--Edit Content Dialog-->
 		<v-dialog
-			max-width="800px"
+			max-width="900px"
 			v-model="EditContentDialogVisible"
 		>
 			<v-card>
 				<v-card-title>
-					<span class="headline">
-						{{ $t('rubrics.overview.editrubriccontentof') }}
-						<v-chip label>
-							<v-avatar class="teal">
-								{{ this.rubriccontent.number }}
-							</v-avatar>
-							{{ this.rubriccontent.label }}
-						</v-chip>
-						<v-chip label>
-							<v-avatar :class="this.rubriccontent.function === 3 ? 'green' : 'red'">
-								{{ this.rubriccontent.function }}
-							</v-avatar>
-							{{ $t('rubrics.function.title') }}
-						</v-chip>
-						<v-chip
-							label
-							color="yellow"
-							v-if="this.rubriccontent.function !== 3"
-						>
-							<v-avatar>
-								<v-icon>warning</v-icon>
-							</v-avatar>
-							{{ $t('rubrics.notskypershort') }}
-						</v-chip>
-					</span>
+					<v-layout>
+						<span class="headline">
+							{{ $t('rubrics.overview.editrubriccontentof') }}
+							<v-chip label>
+								<v-avatar class="teal">
+									{{ this.rubriccontent.number }}
+								</v-avatar>
+								{{ this.rubriccontent.label }}
+							</v-chip>
+							<v-chip label>
+								<v-avatar :class="this.rubriccontent.function === 3 ? 'green' : 'red'">
+									{{ this.rubriccontent.function }}
+								</v-avatar>
+								{{ $t('rubrics.function.title') }}
+							</v-chip>
+							<v-chip
+								label
+								color="yellow"
+								v-if="this.rubriccontent.function !== 3"
+							>
+								<v-avatar>
+									<v-icon>warning</v-icon>
+								</v-avatar>
+								{{ $t('rubrics.notskypershort') }}
+							</v-chip>
+						</span>
+					</v-layout>
+					<v-layout wrap>
+						<v-flex xs4>
+							<v-checkbox
+								v-model="rubriccontent.showExpirationInputs"
+								:label="$t('rubrics.expirationenabled.show')"
+							></v-checkbox>
+						</v-flex>
+						<v-flex xs4>
+							<v-checkbox
+								v-model="rubriccontent.showPriorityBootsInputs"
+								:label="$t('rubrics.priorityboost.show')"
+							></v-checkbox>
+						</v-flex>
+					</v-layout>
 				</v-card-title>
 				<v-card-text>
 					<v-form v-model="editDialogFormValid" ref="editForm">
 						<v-layout
 							align-center
-							justify-space-between
 							v-for="(thiscontent, index) in this.rubriccontent.content"
 							:key="index"
 						>
@@ -242,15 +257,16 @@
 								>
 								</v-textarea>
 							</v-flex>
-							<v-flex xs2>
+							<v-flex xs2 v-if="rubriccontent.showExpirationInputs">
 								<v-checkbox
 									v-model="rubriccontent.enableExpirationDateTime[index]"
 									:label="$t('rubrics.expirationenabled.title')"
+									@change="initializeExpiration(index)"
 								>
 								</v-checkbox>
 							</v-flex>
 							<!--Expiration Time-->
-							<v-flex xs3 v-if="rubriccontent.enableExpirationDateTime[index]">
+							<v-flex xs3 v-if="rubriccontent.showExpirationInputs && rubriccontent.enableExpirationDateTime[index]">
 								<v-menu
 									:close-on-content-click="false"
 									v-model="dateTimePicker.showDateMenu[index]"
@@ -283,9 +299,9 @@
 									</v-date-picker>
 								</v-menu>
 							</v-flex>
-							<v-flex xs3 v-if="!rubriccontent.enableExpirationDateTime[index]"></v-flex>
+							<v-flex xs3 v-if="rubriccontent.showExpirationInputs && !rubriccontent.enableExpirationDateTime[index]"></v-flex>
 							<!--Expiration time-->
-							<v-flex xs2 v-if="rubriccontent.enableExpirationDateTime[index] && hoursSelect(index).length > 0">
+							<v-flex xs2 v-if="rubriccontent.showExpirationInputs && rubriccontent.enableExpirationDateTime[index] && hoursSelect(index).length > 0">
 								<v-select
 									:items="hoursSelect(index)"
 									item-text="label"
@@ -297,12 +313,19 @@
 								>
 								</v-select>
 							</v-flex>
-							<v-flex xs2 v-if="rubriccontent.enableExpirationDateTime[index] && (!(hoursSelect(index).length > 0))">
+							<v-flex xs2 v-if="rubriccontent.showExpirationInputs && rubriccontent.enableExpirationDateTime[index] && (!(hoursSelect(index).length > 0))">
 								<v-chip label outline color="red">
 									{{ $t('rubrics.overview.dateinthepast') }}
 								</v-chip>
 							</v-flex>
-							<v-flex xs2 v-if="!rubriccontent.enableExpirationDateTime[index]"></v-flex>
+							<v-flex xs2 v-if="rubriccontent.showExpirationInputs && !rubriccontent.enableExpirationDateTime[index]"></v-flex>
+							<v-flex v-if="rubriccontent.showPriorityBootsInputs">
+								<v-checkbox
+									v-model="rubriccontent.priorityBoost[index]"
+									:label="$t('rubrics.priorityboost.title')"
+								>
+								</v-checkbox>
+							</v-flex>
 							<!--Action Buttons-->
 							<v-flex xs2 v-if="getPermissionsWrapper('news.update') === 'all'">
 								<v-tooltip bottom>
@@ -493,12 +516,22 @@
 					function: 0,
 					description: '',
 					label: '',
+					default_priority: 0,
+					default_expiration: 0,
 					enableExpirationDateTime: [],
+					priorityBoost: [],
+					showExpirationInputs: false,
+					showPriorityBootsInputs: false,
 					content: [
 						{
 							'data': '',
-							'expires_on': '',
-							'priority': 0
+							'expires_on': null,
+							'priority': null
+						},
+						{
+							'data': '',
+							'expires_on': null,
+							'priority': null
 						},
 						{
 							'data': '',
@@ -532,18 +565,13 @@
 						},
 						{
 							'data': '',
-							'expires_on': '',
-							'priority': 0
+							'expires_on': null,
+							'priority': null
 						},
 						{
 							'data': '',
-							'expires_on': '',
-							'priority': 0
-						},
-						{
-							'data': '',
-							'expires_on': '',
-							'priority': 0
+							'expires_on': null,
+							'priority': null
 						}
 					]
 				},
@@ -662,6 +690,38 @@
 			}
 		},
 		methods: {
+			initializeExpiration(index) {
+				if (this.rubriccontent.enableExpirationDateTime[index]) {
+					console.log('activated expiration on: ' + index.toString());
+					// if changed to true
+					let defaultExpirationTimeStamp = moment().add(this.rubriccontent.default_expiration, 'seconds');
+					console.log(defaultExpirationTimeStamp);
+					console.log(defaultExpirationTimeStamp.format('LLL'));
+					this.dateNonFormated[index] = defaultExpirationTimeStamp.format('YYYY-MM-DD');
+					this.dateFormated[index] = defaultExpirationTimeStamp.format('L');
+					this.hour[index] = parseInt(defaultExpirationTimeStamp.format('HH'));
+					this.rubriccontent.content[index].expires_on = defaultExpirationTimeStamp.toISOString();
+					console.log(this.dateNonFormated[index]);
+					console.log(this.dateFormated[index]);
+					console.log(this.hour[index]);
+				}
+			},
+			atLeastOnePriorityBoostEnabled() {
+				for (let i = 0; i < this.rubriccontent.priorityBoost.length; i++) {
+					if (this.rubriccontent.priorityBoost[i]) {
+						return true;
+					}
+				}
+				return false;
+			},
+			atLeastOneExpirationDateset() {
+				for (let i = 0; i < this.rubriccontent.enableExpirationDateTime.length; i++) {
+					if (this.rubriccontent.enableExpirationDateTime[i]) {
+						return true;
+					}
+				}
+				return false;
+			},
 			getEmptyMessagesInBetween() {
 				for (let i = 1; i < (this.rubriccontent.content.length - 1); i++) {
 					console.log('Index: ' + i);
@@ -771,17 +831,33 @@
 						this.rubriccontent.description = response.data.description;
 						this.rubriccontent.label = response.data.label;
 						this.rubriccontent.function = response.data.function;
+						this.rubriccontent.default_expiration = response.data.default_expiration;
+						this.rubriccontent.default_priority = response.data.default_priority;
+
 						// Load 10 Messages and compute date and time display
 						for (var i = 0; i < 10; i++) {
 							if (response.data.content && response.data.content[i]) {
 								this.rubriccontent.content[i] = response.data.content[i];
-								if (this.rubriccontent.content[i].expires_on) {
+								console.log(this.rubriccontent.content[i]);
+								if (this.rubriccontent.content[i].priority &&
+									(this.rubriccontent.content[i].priority > this.rubriccontent.default_priority)) {
+									this.rubriccontent.priorityBoost[i] = true;
+									this.rubriccontent.content[i].priority = this.rubriccontent.default_priority + 1;
+								} else {
+									this.rubriccontent.priorityBoost[i] = false;
+									this.rubriccontent.content[i].priority = this.rubriccontent.default_priority;
+								}
+
+								if (this.rubriccontent.content[i].expires_on && this.rubriccontent.content[i].expires_on !== null) {
 									this.dateNonFormated[i] = moment(this.rubriccontent.content[i].expires_on)
 										.format('YYYY-MM-DD');
 									this.hour[i] = parseInt(moment(this.rubriccontent.content[i].expires_on)
 										.format('HH'));
+									this.rubriccontent.enableExpirationDateTime[i] = true;
 								} else {
 									this.dateNonFormated[i] = null;
+									this.rubriccontent.enableExpirationDateTime[i] = false;
+									console.log('false in slot ' + i.toString());
 								}
 							} else {
 								this.rubriccontent.content[i] = {
@@ -790,9 +866,10 @@
 									'priority': null
 								};
 							}
-							// Set selection state for each message
-							this.rubriccontent.enableExpirationDateTime[i] = (this.rubriccontent.content[i]['expires_on'] !== null);
 						}
+						this.rubriccontent.showPriorityBootsInputs = this.atLeastOnePriorityBoostEnabled();
+						this.rubriccontent.showExpirationInputs = this.atLeastOneExpirationDateset();
+
 						console.log('Load rubric data');
 						this.EditContentDialogVisible = true;
 					}).catch(e => {
@@ -892,22 +969,19 @@
 						if (this.rubriccontent.content[i].data && this.rubriccontent.content[i].data !== null && this.rubriccontent.content[i].data !== '') {
 							let contentToAdd = {};
 							contentToAdd.data = this.rubriccontent.content[i]['data'];
-							// Combine Date and Time
-							if (this.dateNonFormated[i] && this.dateNonFormated[i] !== '') {
-								let expiration = moment(this.dateNonFormated[i]);
-								if (this.hour[i]) {
-									expiration.add(this.hour[i], 'hours');
+							// If expires checkbox is false, set expiration to null
+							if (this.rubriccontent.enableExpirationDateTime[i]) {
+								// Combine Date and Time
+								if (this.dateNonFormated[i] && this.dateNonFormated[i] !== '') {
+									let expiration = moment(this.dateNonFormated[i]);
+									if (this.hour[i]) {
+										expiration.add(this.hour[i], 'hours');
+									}
+									contentToAdd.expires_on = expiration.toISOString();
 								}
-								contentToAdd.expires_on = expiration.toISOString();
-							} else {
-								contentToAdd.expires_on = null;
 							}
-							if (this.rubriccontent.content[i].priority &&
-								this.rubriccontent.content[i].priority >= 1 &&
-								this.rubriccontent.content[i].priority <= 5) {
-									contentToAdd.priority = this.rubriccontent.content[i].priority;
-							} else {
-								contentToAdd.priority = 1;
+							if (this.rubriccontent.priorityBoost[i]) {
+								contentToAdd.priority = this.rubriccontent.content[i].priority + 1;
 							}
 							data2Send.content.push(contentToAdd);
 						}

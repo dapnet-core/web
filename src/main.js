@@ -17,7 +17,7 @@ import globalMethods from './global';
 import swal from 'sweetalert2';
 import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
-// Fonts, TODO: test
+
 import 'material-design-icons/iconfont/material-icons.css';
 import 'typeface-roboto/index.css';
 

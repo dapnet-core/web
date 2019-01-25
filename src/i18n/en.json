@@ -495,7 +495,12 @@
       "highprioritywarning": "You selected a high priority for this rubric. In order to assure personal calls are delivered fast, please rethink if this is really necessary. A priority of maximum medium should be enough in most use cases. Please DO NOT abuse the priority for egoistic reasons.",
       "highestprioritywarning": "You selected the highest priority for this rubric. THIS IS NOT GOOD!",
       "expirationenabled": {
-        "title": "Expires?"
+        "title": "Expires?",
+        "show": "Show expiration selection fields"
+      },
+      "priorityboost": {
+        "title": "Prio. Boost",
+        "show": "Show priority boost selection"
       },
       "emptymessages": "There are empty messages between others with content. They will be removed once you save this form and the messages below will be moved up to fill the empty message slot.",
       "overview": {
