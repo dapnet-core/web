@@ -417,8 +417,8 @@
 				if (transmitterIndex === -1) {
 					return;
 				}
-				console.log('UpdateTableRow txindex: ' + transmitterIndex.toString() + ' TXname ' + transmittername + ' received data:');
-				console.log(data);
+				// console.log('UpdateTableRow txindex: ' + transmitterIndex.toString() + ' TXname ' + transmittername + ' received data:');
+				// console.log(data);
 				// Update transmitter data from websocket
 				if ('config' in data && 'timeslots' in data.config) {
 					let object2update = this.transmitterrows[transmitterIndex];
