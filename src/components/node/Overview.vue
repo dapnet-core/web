@@ -198,7 +198,7 @@
 			});
 		},
 		methods: {
-			/*rerender_localized() {
+			/* rerender_localized() {
 				this.transmitterrows.forEach(transmitter => {
 					// Render last seen as prosa text
 					if (transmitter.status.last_seen) {
@@ -207,7 +207,8 @@
 						transmitter.status.last_seen_localized = '---';
 					}
 				});
-			},*/
+			},
+			*/
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('node.update') === 'all') ||
 				(this.$store.getters.permission('node.delete') === 'all'));
@@ -291,7 +292,6 @@
 	};
 	// TODO: Make headers instant i18n updateable
 </script>
-
 
 <style scoped>
 	.action-buttons {

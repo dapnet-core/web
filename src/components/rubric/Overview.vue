@@ -834,7 +834,7 @@
 								this.rubriccontent.content[i] = response.data.content[i];
 								console.log(this.rubriccontent.content[i]);
 								if (this.rubriccontent.content[i].priority &&
-									(this.rubriccontent.content[i].priority > this.rubriccontent.default_priority)) {
+								(this.rubriccontent.content[i].priority > this.rubriccontent.default_priority)) {
 									this.rubriccontent.priorityBoost[i] = true;
 									this.rubriccontent.content[i].priority = this.rubriccontent.default_priority + 1;
 								} else {

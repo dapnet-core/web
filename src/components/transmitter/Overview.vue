@@ -1,9 +1,5 @@
 <template>
 	<v-container fluid>
-
-		<!--				<info-error :message="errorMessage"></info-error>
-
-		-->
 		<v-layout>
 			<v-flex xs12>
 				<v-card>
@@ -374,13 +370,13 @@
 					'status' in this.transmitterrows[transmitterindex] &&
 					'messages' in this.transmitterrows[transmitterindex].status &&
 					'queued' in this.transmitterrows[transmitterindex].status.messages) {
-					return {
-						labels: ['L', '', 'M', '', 'H'],
-						datasets: [{
-							backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
-							data: this.transmitterrows[transmitterindex].status.messages.queued
-						}]
-					};
+						return {
+							labels: ['L', '', 'M', '', 'H'],
+							datasets: [{
+								backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
+								data: this.transmitterrows[transmitterindex].status.messages.queued
+							}]
+						};
 				} else {
 					return {
 						labels: ['Lowest', 'Low', 'Medium', 'High', 'Highest'],
@@ -389,7 +385,6 @@
 							data: [0, 0, 0, 0, 0]
 						}]
 					};
-
 				}
 			},
 			getQueueColor(length) {
@@ -473,7 +468,7 @@
 				}
 				if ('onair' in data) {
 					let object2update = this.transmitterrows[transmitterIndex];
-					object2update.status.onair = data.onair
+					object2update.status.onair = data.onair;
 					this.transmitterrows.splice(transmitterIndex, 1, object2update);
 				}
 			},
