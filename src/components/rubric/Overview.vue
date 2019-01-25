@@ -692,18 +692,12 @@
 		methods: {
 			initializeExpiration(index) {
 				if (this.rubriccontent.enableExpirationDateTime[index]) {
-					console.log('activated expiration on: ' + index.toString());
 					// if changed to true
 					let defaultExpirationTimeStamp = moment().add(this.rubriccontent.default_expiration, 'seconds');
-					console.log(defaultExpirationTimeStamp);
-					console.log(defaultExpirationTimeStamp.format('LLL'));
 					this.dateNonFormated[index] = defaultExpirationTimeStamp.format('YYYY-MM-DD');
 					this.dateFormated[index] = defaultExpirationTimeStamp.format('L');
 					this.hour[index] = parseInt(defaultExpirationTimeStamp.format('HH'));
 					this.rubriccontent.content[index].expires_on = defaultExpirationTimeStamp.toISOString();
-					console.log(this.dateNonFormated[index]);
-					console.log(this.dateFormated[index]);
-					console.log(this.hour[index]);
 				}
 			},
 			atLeastOnePriorityBoostEnabled() {
