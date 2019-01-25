@@ -68,7 +68,7 @@
 												flat
 												icon
 												small
-												:v-clipboard:copy="form.auth_key"
+												v-clipboard:copy="form.auth_key"
 												slot="activator"
 											>
 												<v-icon>assignment</v-icon>

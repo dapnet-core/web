@@ -165,7 +165,7 @@
 											flat
 											icon
 											small
-											:v-clipboard:copy="form.password"
+											v-clipboard:copy="form.password"
 											slot="activator"
 										>
 											<v-icon>assignment</v-icon>
