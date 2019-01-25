@@ -150,7 +150,7 @@
 											hide-selected
 											prepend-icon="cloud_upload"
 											v-model="form.third_party_services"
-											:items="formData.third_party_serivces"
+											:items="formData.third_party_services_items"
 											v-bind:label="$t('general.thirdpartyservices')"
 											v-bind:hint="$t('subscribers.new.thirdpartyservices.help')"
 											persistent-hint
@@ -292,7 +292,7 @@
 					groups: []
 				},
 				formData: {
-					third_party_serivces: [
+					third_party_services: [
 						'APRS',
 						'Brandmeister'
 					],
@@ -304,6 +304,10 @@
 						{ value: 1, label: '1/B' },
 						{ value: 2, label: '2/C' },
 						{ value: 3, label: '3/D' }
+					],
+					third_party_services_items: [
+						{ value: 'APRS', text: 'APRS' },
+						{ value: 'BM', text: 'Brandmeister' }
 					],
 					pagertypes: [
 						{ value: 'alphapoc', label: 'AlphaPoc' },
@@ -418,7 +422,7 @@
 							this.form._rev = response.data._rev;
 							this.form.description = response.data.description;
 							this.form.pagers = response.data.pagers;
-							this.form.third_party_services = response.data.third_party_serivces;
+							this.form.third_party_services = response.data.third_party_services;
 							this.form.owners = response.data.owners;
 							this.form.groups = response.data.groups;
 							// Format timestamp into readable version
@@ -472,6 +476,14 @@
 				if (this.$refs.form.validate()) {
 					if (!this.isEditMode) {
 						delete this.form._rev;
+					}
+					for (let pagerIndex = 0; pagerIndex < this.form.pagers.length; pagerIndex++) {
+						if (this.form.pagers[pagerIndex].ric) {
+							this.form.pagers[pagerIndex].ric = parseInt(this.form.pagers[pagerIndex].ric);
+						}
+						if (this.form.pagers[pagerIndex].function) {
+							this.form.pagers[pagerIndex].function = parseInt(this.form.pagers[pagerIndex].function);
+						}
 					}
 					console.log('Data2Send von subscriber:');
 					console.log(this.form);
