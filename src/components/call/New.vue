@@ -203,8 +203,6 @@
 										<v-flex xs12 md12 lg6>
 											<v-select
 												:items="hoursSelect"
-												item-text="label"
-												item-value="value"
 												required
 												v-model="hour"
 												:label="$t('calls.new.expirationtime.title')"
@@ -337,14 +335,14 @@
 							returnvalue.push(
 								{
 									value: hour,
-									label: hour.toString() + ':00'
+									text: hour.toString() + ':00'
 								}
 							);
 						} else {
 							returnvalue.push(
 								{
 									value: hour,
-									label: (hour % 12).toString() + (hour < 12 ? ':00 am' : ':00 pm')
+									text: (hour % 12).toString() + (hour < 12 ? ':00 am' : ':00 pm')
 								}
 							);
 						}
