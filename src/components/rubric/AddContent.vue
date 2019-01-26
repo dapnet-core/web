@@ -181,6 +181,7 @@
 
 <script>
 	import moment from 'moment';
+	import axios from 'axios';
 
 	export default {
         name: "AddContent",
@@ -221,7 +222,7 @@
 					enableExpirationDateTime: false,
 					priorityBoost: false,
 					showExpirationInputs: false,
-					showPriorityBootsInputs: false,
+					showPriorityBoostInputs: false,
 					content: []
 				},
 				isFormValid: false,
@@ -411,38 +412,33 @@
 				console.log(this.rubriccontent);
 				console.log(this.hour);
 
-				if (this.$refs.editForm.validate()) {
+				if (this.$refs.addForm.validate()) {
 					let data2Send = {};
 					// Build data to send
 					data2Send._id = this.rubriccontent._id;
-					data2Send._rev = this.rubriccontent._rev;
-					data2Send.content = [];
-					for (let i = 0; i < this.rubriccontent.content.length; i++) {
-						if (this.rubriccontent.content[i].data && this.rubriccontent.content[i].data !== null && this.rubriccontent.content[i].data !== '') {
-							let contentToAdd = {};
-							contentToAdd.data = this.rubriccontent.content[i]['data'];
-							// If expires checkbox is false, set expiration to null
-							if (this.rubriccontent.enableExpirationDateTime[i]) {
-								// Combine Date and Time
-								if (this.dateNonFormated[i] && this.dateNonFormated[i] !== '') {
-									let expiration = moment(this.dateNonFormated[i]);
-									if (this.hour[i]) {
-										expiration.add(this.hour[i], 'hours');
-									}
-									contentToAdd.expires_on = expiration.toISOString();
-								}
-							}
-							if (this.rubriccontent.priorityBoost[i]) {
-								contentToAdd.priority = this.rubriccontent.content[i].priority + 1;
-							}
-							data2Send.content.push(contentToAdd);
-						}
+					data2Send.data = this.newcontent_data;
+					if (this.enableExpirationTime) {
+						data2Send.expires_on = moment(this.dateNonFormated, 'YYYY-MM-DD').add(this.hour, 'hours').toISOString();
+					}
+					if (this.priorityBoost) {
+						data2Send.priority = parseInt(this.rubriccontent.default_priority + 1);
 					}
 					console.log('Data2Send von rubrics:');
 					console.log(data2Send);
-					this.$helpers.sendData(this, 'rubrics', data2Send, '');
+					let url = '';
+					if (this.selectedSlot === -1) {
+						url = 'rubrics/content/first';
+					} else {
+						url = 'rubrics/content/slot/' + (this.selectedSlot + 1).toString();
+					}
 
-					this.$router.go(-1);
+					let context = this;
+					axios.post(url, data2Send)
+						.then(function(response) {
+							context.$router.go(-1);
+					}).catch(function(error) {
+						console.log('Error in put rubric content', error);
+					});
 				}
 			},
 			CloseButton() {
