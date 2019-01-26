@@ -19,6 +19,8 @@ import TransmitterMy from '@/components/transmitter/My';
 import RubricOverview from '@/components/rubric/Overview';
 import RubricNew from '@/components/rubric/New';
 import RubricMy from '@/components/rubric/My';
+import RubricEditBulkContent from '@/components/rubric/EditBulkContent';
+import RubricAddContent from '@/components/rubric/AddContent';
 import NodeOverview from '@/components/node/Overview';
 import NodeNew from '@/components/node/New';
 import NodeMy from '@/components/node/My';
@@ -231,6 +233,24 @@ export default new Router({
 			component: RubricNew,
 			meta: {
 				titleTranslationKey: 'pagetitle.rubric.edit',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/rubrics/content/edit/:id',
+			name: 'Edit Rubric Bulk Content',
+			component: RubricEditBulkContent,
+			meta: {
+				titleTranslationKey: 'pagetitle.rubric.content.edit',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/rubrics/content/add/:id',
+			name: 'Add Rubric Content',
+			component: RubricAddContent,
+			meta: {
+				titleTranslationKey: 'pagetitle.rubric.content.add',
 				requireAuthentication: true
 			}
 		},

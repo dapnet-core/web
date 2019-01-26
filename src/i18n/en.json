@@ -498,9 +498,23 @@
         "title": "Expires?",
         "show": "Show expiration selection fields"
       },
+      "message" : {
+        "help": "Enter your new message here."
+      },
       "priorityboost": {
         "title": "Prio. Boost",
         "show": "Show priority boost selection"
+      },
+      "livepreview": {
+        "title": "Live preview",
+        "help": "Show live preview of your changes"
+      },
+      "addfirst": {
+        "selecttext": "Add as first"
+      },
+      "slotselect": {
+        "title": "Select slot",
+        "help": "You can either choose a specific slot or add it as first."
       },
       "emptymessages": "There are empty messages between others with content. They will be removed once you save this form and the messages below will be moved up to fill the empty message slot.",
       "overview": {
@@ -516,7 +530,8 @@
         "information": {
           "help": "This is a list of all rubrics on the DAPNET. A rubric number can by assigned to several transmitter groups. Keep in mind that the transmitter groups are disjunct for the same rubric number in order to avoid overlapping number assigments.<br>Use the Activate Rubrics button to enable the reception of rubrics on your Skyper."
         },
-        "addcontent": "Add content to this rubric"
+        "addcontent": "Add content to this rubric",
+        "addcontenttorubric": "Add content to rubric"
       },
       "new": {
         "id": {
@@ -836,8 +851,10 @@
             "edit": "Edit Rubric",
             "activate": "Activate Rubrics",
             "content": {
-                "overview": "Rubric Content Overview",
-                "new": "New Rubric Content"
+              "edit": "Edit Rubric Content",
+              "add": "Add Rubric Content",
+              "overview": "Rubric Content Overview",
+              "new": "New Rubric Content"
             }
         },
         "transmitter": {
