@@ -533,6 +533,7 @@
 							}
 							this.rubriccontent.showPriorityBootsInputs = this.atLeastOnePriorityBoostEnabled();
 							this.rubriccontent.showExpirationInputs = this.atLeastOneExpirationDateset();
+							this.formatDate(this.dateNonFormated);
 
 						}).catch(e => {
 						console.log('Error getting rubric\'s individual details with axios or any exception' +
