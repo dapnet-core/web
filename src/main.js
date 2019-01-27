@@ -18,8 +18,10 @@ import swal from 'sweetalert2';
 import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import 'material-design-icons/iconfont/material-icons.css';
-import 'typeface-roboto/index.css';
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
+
+// import 'material-design-icons/iconfont/material-icons.css';
+// import 'typeface-roboto/index.css';
 
 // import partials for rendering
 // import ActionButtons from '@/components/partials/ActionButtons';

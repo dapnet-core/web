@@ -19,9 +19,8 @@
 							<v-tooltip bottom>
 								<v-btn
 									color="pink"
-									fab
 									dark
-									small
+									icon
 									to="/transmitters/new"
 									slot="activator"
 								>
@@ -63,7 +62,7 @@
 
 							<!-- Messages column -->
 							<td class="text-xs-right">
-								<div v-if="props.item.status.messages" class="chartContainer">
+								<div v-if="props.item.status.online" class="chartContainer">
 									<!--<span v-for="(prio, index) in props.item.status.messages.queued" v-bind:key="`prio-${index}`">-->
 									<chart-message-queue
 										:chartData="chartDataMessageQueue(props.index)"
@@ -379,7 +378,7 @@
 						};
 				} else {
 					return {
-						labels: ['Lowest', 'Low', 'Medium', 'High', 'Highest'],
+						labels: ['E', 'M', 'P', 'T', 'Y'],
 						datasets: [{
 							backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
 							data: [0, 0, 0, 0, 0]
@@ -395,10 +394,6 @@
 				} else {
 					return 'red';
 				}
-			},
-			btnclick() {
-				console.log('button');
-				this.transmitterrows[0].status.online = true;
 			},
 			updateTableRows(data, transmittername) {
 				// Find corresponding transmitter object

@@ -1,6 +1,6 @@
 {
   "name": "dapnet-web",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "description": "The default DAPNET Web-frontend.",
   "author": "Marvin Menzerath, Ralf Wilke",
   "private": true,
@@ -10,14 +10,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "vue": "^2.5.21",
-    "vuetify": "^1.4.1",
+    "vue": "^2.5.22",
+    "vuetify": "^1.4.3",
     "vue-router": "^3.0.2",
-    "vue-i18n": "^8.3.0",
+    "vue-i18n": "^8.7.0",
     "vue-cookie-law": "^1.8.0",
     "vue-clipboard2": "^0.2.1",
     "vue-axios": "^2.1.4",
-    "vuex": "^3.0.1",
+    "vuex": "^3.1.0",
     "vuex-persistedstate": "^2.5.4",
     "vue-avatar-editor-improved": "^1.0.4",
     "vue-chartjs": "^3.4.0",
@@ -26,11 +26,10 @@
     "flag-icon-css": "^3.2.1",
     "leaflet.fullscreen": "^1.4.5",
     "axios": "^0.18.0",
-    "moment": "^2.23.0",
-    "sweetalert2": "^7.28.11",
+    "moment": "^2.24.0",
+    "sweetalert2": "^8.0.1",
     "vue2-leaflet": "^1.2.3",
-    "material-design-icons": "^3.0.1",
-    "typeface-roboto": "^0.0.54"
+    "material-design-icons-iconfont": "^4.0.4"
   },
   "devDependencies": {
     "@mdi/font": "^3.3.92",

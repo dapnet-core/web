@@ -18,145 +18,202 @@
 						<v-fab-transition v-if="this.$store.getters.permission('subscriber.create')">
 							<v-tooltip bottom>
 								<v-btn
-									color="pink"
-									fab
-									dark
-									small
-									to="/subscribers/new"
 									slot="activator"
+									color="pink"
+									dark
+									icon
+									to="/subscribers/new"
 								>
-										<v-icon>add</v-icon>
+									<v-icon dark>add</v-icon>
 								</v-btn>
 								<span>{{ $t('subscribers.overview.addsubscriber') }}</span>
 							</v-tooltip>
 						</v-fab-transition>
 					</v-card-title>
-					<v-data-table
-						:headers="getHeaders"
-						:items="subscriberrows"
-						:pagination.sync="pagination"
-						:total-items="total_rows"
-						:loading="isLoadingData"
-						:rows-per-page-items="[10, 25, 50, 100]"
-						must-sort
-						class="elevation-1"
-						:search="search"
-					>
-						<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
-						<template slot="items" slot-scope="props">
-							<!-- ID column -->
-							<td>{{ props.item._id }}</td>
+					<v-card-text>
+						<v-data-table
+							:headers="getHeaders"
+							:items="subscriberrows"
+							:pagination.sync="pagination"
+							:total-items="total_rows"
+							:loading="isLoadingData"
+							:rows-per-page-items="[10, 25, 50, 100]"
+							must-sort
+							class="elevation-1"
+							:search="search"
+						>
+							<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+							<template slot="items" slot-scope="props">
+								<!-- ID column -->
+								<td>{{ props.item._id }}</td>
 
-							<!-- Description column -->
-							<td class="text-xs-left">{{ props.item.description }}</td>
+								<!-- Description column -->
+								<td class="text-xs-left">{{ props.item.description }}</td>
 
-							<!-- Pager column -->
-							<td class="text-xs-left">
-								<span v-for="(pager, index) in props.item.pagers" v-bind:key="`pager-${index}`">
-									<v-chip
-										v-bind:color="`${pager.color}`"
-										text-color="white"
-										small
-									>
-										<v-avatar>
-											<img v-bind:src="`${pager.avatar}`" v-bind:alt="`${pager.type}`">
-										</v-avatar>
-										{{ pager.ric }}
-									</v-chip>
-								</span>
-							</td>
-							<!-- Third-Party-Services column -->
-							<td class="text-xs-left">
-								<span v-for="(service, index) in props.item.third_party_services" v-bind:key="`service-${index}`">
-									<v-chip
-										v-bind:color="`${service.color}`"
-										text-color="white"
-										small
-									>
-										{{ service.text }}
-									</v-chip>
-								</span>
-							</td>
-							<!-- owner column -->
-							<td class="text-xs-center">
-								<span v-for="(owner, index) in props.item.owners" v-bind:key="`owner-${index}`">
-									<v-chip
-										color="grey"
-										text-color="white"
-										small
-									>
-										{{ owner }}
-									</v-chip>
-								</span>
-							</td>
-							<!-- Subscriber Groups column -->
-							<td class="text-xs-left">
-								<span v-for="(group, index) in props.item.groups" v-bind:key="`group-${index}`">
-									<v-chip
-										color="grey"
-										text-color="white"
-										small
-									>
-										{{ group }}
-									</v-chip>
-								</span>
-							</td>
-							<!-- Action Buttons -->
-							<td class="text-xs-center" v-if="displayActionsColumn">
-								<!-- Edit -->
-								<v-tooltip bottom>
-									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('subscriber.update') === 'all'"
-											flat
-											icon
+								<!-- Pager column -->
+								<td class="text-xs-left">
+									<span v-for="(pager, index) in props.item.pagers" v-bind:key="`pager-${index}`">
+										<v-chip
+											v-bind:color="`${pager.color}`"
+											text-color="white"
 											small
-											fab
-											color="blue"
-											v-on:click="editElement(props.item)"
+										>
+											<v-avatar>
+												<img v-bind:src="`${pager.avatar}`" v-bind:alt="`${pager.type}`">
+											</v-avatar>
+											{{ pager.ric }}
+										</v-chip>
+									</span>
+								</td>
+								<!-- Third-Party-Services column -->
+								<td class="text-xs-left">
+									<span v-for="(service, index) in props.item.third_party_services" v-bind:key="`service-${index}`">
+										<v-chip
+											v-bind:color="`${service.color}`"
+											text-color="white"
+											small
+										>
+											{{ service.text }}
+										</v-chip>
+									</span>
+								</td>
+								<!-- owner column -->
+								<td class="text-xs-center">
+									<span v-for="(owner, index) in props.item.owners" v-bind:key="`owner-${index}`">
+										<v-chip
+											color="grey"
+											text-color="white"
+											small
+										>
+											{{ owner }}
+										</v-chip>
+									</span>
+								</td>
+								<!-- Subscriber Groups column -->
+								<td class="text-xs-left">
+									<span v-for="(group, index) in props.item.groups" v-bind:key="`group-${index}`">
+										<v-chip
+											color="grey"
+											text-color="white"
+											small
+										>
+											{{ group }}
+										</v-chip>
+									</span>
+								</td>
+								<!-- Action Buttons -->
+								<td class="text-xs-center" v-if="displayActionsColumn">
+<!--
+									<v-speed-dial
+										direction="left"
+										transition="slide-y-reverse-transition"
+										class="action-buttons"
+										open-on-hover
+									>
+										<v-btn
+											v-if="getPermissionsWrapper('subscriber.update') === 'all' || getPermissionsWrapper('subscriber.update') === 'if_owner'"
 											slot="activator"
-									>
-										<v-icon>edit</v-icon>
-									</v-btn>
-									<span>{{ $t('table.actionbuttons.edit') }}</span>
-								</v-tooltip>
-								<!-- Delete -->
-								<v-tooltip bottom>
-									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('subscriber.delete') === 'all'"
-											flat
-											icon
-											small
+											color="blue darken-2"
+											dark
 											fab
+											small
+										>
+											<v-icon>settings</v-icon>
+											<v-icon>close</v-icon>
+										</v-btn>
+
+										<v-tooltip bottom>
+											<v-btn
+												v-if="getPermissionsWrapper('subscriber.update') === 'all' || getPermissionsWrapper('subscriber.update') === 'if_owner'"
+												fab
+												dark
+												small
+												color="blue"
+												v-on:click="editElement(props.item)"
+											>
+												<v-icon>edit</v-icon>
+											</v-btn>
+											<span>{{ $t('table.actionbuttons.edit') }}</span>
+										</v-tooltip>
+
+										<v-btn
+											v-if="getPermissionsWrapper('subscriber.delete') === 'all' || getPermissionsWrapper('subscriber.delete') === 'if_owner'"
+											fab
+											dark
+											small
 											color="pink"
 											v-on:click="deleteElement(props.item)"
-											slot="activator"
-									>
-										<v-icon>delete</v-icon>
-									</v-btn>
-									<span>{{ $t('table.actionbuttons.delete') }}</span>
-								</v-tooltip>
-								<!-- Send Email -->
-								<v-tooltip bottom class="action-buttons">
-									<v-btn class="action-buttons"
-											v-if="getPermissionsWrapper('subscriber.update') === 'all'"
-											flat
-											icon
-											small
+										>
+											<v-icon>delete</v-icon>
+										</v-btn>
+
+										<v-btn
+											v-if="getPermissionsWrapper('subscriber.update') === 'all' || getPermissionsWrapper('subscriber.update') === 'if_owner'"
 											fab
+											dark
+											small
 											color="grey"
 											v-on:click="mailToOwner(props.item)"
-											slot="activator"
-									>
-										<v-icon>contact_mail</v-icon>
-									</v-btn>
-									<span>{{ $t('table.actionbuttons.email') }}</span>
-								</v-tooltip>
-							</td>
-						</template>
-						<v-alert slot="no-results" :value="true" color="error" icon="warning">
-							Your search for "{{ search }}" found no results.
-						</v-alert>
-					</v-data-table>
+										>
+											<v-icon>contact_mail</v-icon>
+										</v-btn>
+									</v-speed-dial>
+-->
+									<!-- Edit -->
+									<v-tooltip bottom>
+										<v-btn class="action-buttons"
+												v-if="getPermissionsWrapper('subscriber.update') === 'all'"
+												flat
+												icon
+												small
+												fab
+												color="blue"
+												v-on:click="editElement(props.item)"
+												slot="activator"
+										>
+											<v-icon>edit</v-icon>
+										</v-btn>
+										<span>{{ $t('table.actionbuttons.edit') }}</span>
+									</v-tooltip>
+									<!-- Delete -->
+									<v-tooltip bottom>
+										<v-btn class="action-buttons"
+												v-if="getPermissionsWrapper('subscriber.delete') === 'all'"
+												flat
+												icon
+												small
+												fab
+												color="pink"
+												v-on:click="deleteElement(props.item)"
+												slot="activator"
+										>
+											<v-icon>delete</v-icon>
+										</v-btn>
+										<span>{{ $t('table.actionbuttons.delete') }}</span>
+									</v-tooltip>
+									<!-- Send Email -->
+									<v-tooltip bottom class="action-buttons">
+										<v-btn class="action-buttons"
+												v-if="getPermissionsWrapper('subscriber.update') === 'all'"
+												flat
+												icon
+												small
+												fab
+												color="grey"
+												v-on:click="mailToOwner(props.item)"
+												slot="activator"
+										>
+											<v-icon>contact_mail</v-icon>
+										</v-btn>
+										<span>{{ $t('table.actionbuttons.email') }}</span>
+									</v-tooltip>
+								</td>
+							</template>
+							<v-alert slot="no-results" :value="true" color="error" icon="warning">
+								Your search for "{{ search }}" found no results.
+							</v-alert>
+						</v-data-table>
+					</v-card-text>
 				</v-card>
 			</v-flex>
 		</v-layout>
@@ -178,6 +235,7 @@
 		},
 		data() {
 			return {
+				fab: false,
 				search: '',
 				total_rows: 0,
 				subscriberrows: [],
@@ -372,6 +430,5 @@
 	.action-buttons {
 		padding: 1px;
 		margin: 0px;
-		display: inline-block;
 	}
 </style>

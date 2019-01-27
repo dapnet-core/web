@@ -19,13 +19,12 @@
 							<v-tooltip bottom>
 								<v-btn
 									color="pink"
-									fab
 									dark
-									small
+									icon
 									to="/nodes/new"
 									slot="activator"
 								>
-										<v-icon>+</v-icon>
+										<v-icon>add</v-icon>
 								</v-btn>
 								<span>{{ $t('nodes.overview.newnode') }}</span>
 							</v-tooltip>

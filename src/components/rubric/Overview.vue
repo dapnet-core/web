@@ -19,9 +19,8 @@
 							<v-tooltip bottom>
 								<v-btn
 									color="pink"
-									fab
 									dark
-									small
+									icon
 									to="/rubrics/new"
 									slot="activator"
 								>
@@ -260,7 +259,7 @@
 						text: this.$i18n.t('rubrics.cyclicTX'),
 						sortable: true,
 						align: 'center',
-						value: 'cyclic_transmit',
+						value: 'cyclic_transmit'
 					},
 					{
 						text: this.$i18n.t('rubrics.numberofMessages'),

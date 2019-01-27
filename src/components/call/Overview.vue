@@ -19,9 +19,8 @@
 							<v-tooltip bottom>
 								<v-btn
 									color="pink"
-									fab
+									icon
 									dark
-									small
 									to="/calls/new"
 									slot="activator"
 								>

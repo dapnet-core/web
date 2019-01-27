@@ -19,9 +19,8 @@
 							<v-tooltip bottom>
 								<v-btn
 									color="pink"
-									fab
+									icon
 									dark
-									small
 									to="/users/new"
 									slot="activator"
 								>
@@ -35,9 +34,8 @@
 							<v-tooltip bottom>
 								<v-btn
 									color="green"
-									fab
+									icon
 									dark
-									small
 									v-on:click="mailToAll"
 									slot="activator"
 								>
@@ -117,7 +115,7 @@
 									</v-btn>
 									<span>{{ $t('table.actionbuttons.delete') }}</span>
 								</v-tooltip>
-								<v-tooltip bottom class="action-buttons">
+								<v-tooltip bottom>
 									<v-btn class="action-buttons"
 											v-if="getPermissionsWrapper('user.update') === 'all'"
 											flat
@@ -335,6 +333,5 @@
 	.action-buttons {
 		padding: 1px;
 		margin: 0px;
-		display: inline-block;
 	}
 </style>
