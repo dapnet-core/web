@@ -16,6 +16,7 @@ import TransmitterOverview from '@/components/transmitter/Overview';
 import TransmitterOverviewOnlyNames from '@/components/transmitter/OverviewOnlyNames';
 import TransmitterNew from '@/components/transmitter/New';
 import TransmitterMy from '@/components/transmitter/My';
+import TransmitterMap from '@/components/transmitter/Map';
 import RubricOverview from '@/components/rubric/Overview';
 import RubricNew from '@/components/rubric/New';
 import RubricMy from '@/components/rubric/My';
@@ -197,6 +198,24 @@ export default new Router({
 			component: TransmitterNew,
 			meta: {
 				titleTranslationKey: 'pagetitle.transmitter.edit',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/transmitters/map',
+			name: 'Transmitter Map',
+			component: TransmitterMap,
+			meta: {
+				titleTranslationKey: 'pagetitle.transmitter.map.overview',
+				requireAuthentication: true
+			}
+		},
+		{
+			path: '/transmitters/map/:id',
+			name: 'Transmitter Map Details',
+			component: TransmitterMap,
+			meta: {
+				titleTranslationKey: 'pagetitle.transmitter.map.detail',
 				requireAuthentication: true
 			}
 		},

@@ -15,7 +15,7 @@ import store from './store';
 import VueClipboard from 'vue-clipboard2';
 import globalMethods from './global';
 import swal from 'sweetalert2';
-import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+import { L, LMap, LTileLayer, LMarker, LIcon, LPopup, LTooltip } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
@@ -37,6 +37,9 @@ Vue.use(VueClipboard);
 Vue.component('l-map', LMap);
 Vue.component('l-tile-layer', LTileLayer);
 Vue.component('l-marker', LMarker);
+Vue.component('l-icon', LIcon);
+Vue.component('l-popup', LPopup);
+Vue.component('l-tooltip', LTooltip);
 
 delete L.Icon.Default.prototype._getIconUrl;
 

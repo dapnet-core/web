@@ -24,6 +24,20 @@
 				</v-list-tile-content>
 			</v-list-tile>
 
+			<!--Send call-->
+			<v-list-tile
+				exact to="/transmitters/map"
+				v-if="this.$store.getters.isUserLoggedIn"
+			>
+				<v-list-tile-action>
+					<v-icon>map</v-icon>
+				</v-list-tile-action>
+				<v-list-tile-content>
+					<v-list-tile-title>{{ $t('navigation.transmitters.map') }}</v-list-tile-title>
+				</v-list-tile-content>
+			</v-list-tile>
+
+
 			<!--My entities-->
 			<v-list-group
 				value="true"
@@ -192,6 +206,7 @@
 						</v-chip>
 					</v-list-tile-action>
 				</v-list-tile>
+
 				<!--All transmitters, read !== 'all'-->
 				<v-list-tile
 					v-else
