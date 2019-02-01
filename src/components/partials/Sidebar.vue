@@ -37,7 +37,6 @@
 				</v-list-tile-content>
 			</v-list-tile>
 
-
 			<!--My entities-->
 			<v-list-group
 				value="true"

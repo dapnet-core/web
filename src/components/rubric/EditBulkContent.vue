@@ -355,7 +355,7 @@
 						})
 					]
 				};
-			},
+			}
 		},
 		methods: {
 			initializeExpiration(index) {

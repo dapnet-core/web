@@ -30,7 +30,7 @@
 					</span>
 				</v-layout>
 			</v-card-title>
-			<v-card-text
+			<v-card-text>
 				<v-layout>
 					<v-flex xs2>
 						<v-select
@@ -184,7 +184,7 @@
 	import axios from 'axios';
 
 	export default {
-        name: "AddContent",
+		name: 'AddContent',
 		mounted() {
 			console.log(this.$vuetify.breakpoint);
 			this.$root.$on('LanguageChanged', () => {
@@ -266,8 +266,7 @@
 						})
 					]
 				};
-			},
-
+			}
 		},
 		methods: {
 			generateLivePreview() {
@@ -297,7 +296,6 @@
 					this.rubriccontent.content = [];
 					this.rubriccontent.content = JSON.parse(JSON.stringify(this.contentOriginal));
 				}
-
 			},
 			slotSelect() {
 				let returnvalue = [];
@@ -401,8 +399,8 @@
 							// Save origial content if the user disables the live preview again
 							this.contentOriginal = JSON.parse(JSON.stringify(this.rubriccontent.content));
 						}).catch(e => {
-						console.log('Error getting rubric\'s individual details with axios or any exception' +
-							'in the get handler of AddRubricContent.' + e);
+							console.log('Error getting rubric\'s individual details with axios or any exception' +
+								'in the get handler of AddRubricContent.' + e);
 					});
 				}
 			},
@@ -436,8 +434,9 @@
 					axios.post(url, data2Send)
 						.then(function(response) {
 							context.$router.go(-1);
-					}).catch(function(error) {
-						console.log('Error in put rubric content', error);
+						})
+						.catch(function(error) {
+							console.log('Error in put rubric content', error);
 					});
 				}
 			},
