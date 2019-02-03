@@ -63,22 +63,11 @@
 							<!-- Messages column -->
 							<td class="text-xs-right">
 								<div v-if="props.item.status.online" class="chartContainer">
-									<!--<span v-for="(prio, index) in props.item.status.messages.queued" v-bind:key="`prio-${index}`">-->
 									<chart-message-queue
 										:chartData="chartDataMessageQueue(props.index)"
 										style="width: 100px; height: 70px;"
 									>
 									</chart-message-queue>
-										<!--
-										<v-chip
-											small
-											label
-											:color="getQueueColor(prio)"
-											>
-											{{ prio }}
-											</v-chip>
-										-->
-									<!--</span>-->
 								</div>
 							</td>
 
@@ -260,7 +249,6 @@
 		},
 		data() {
 			return {
-				messagequeuepresent: false,
 				search: '',
 				total_rows: 0,
 				transmitterrows: [],
