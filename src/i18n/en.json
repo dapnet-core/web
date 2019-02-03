@@ -251,6 +251,7 @@
                 "title": "Settings"
             },
             "checkbox": {
+                "showpttstatus": "Show live OnAir Status",
                 "showonlineonly": "Show online transmitters only",
                 "showwiderangeonly": "Show Widerange-transmitter only",
                 "showbytimeslot": "Show transmitters by timeslots",
