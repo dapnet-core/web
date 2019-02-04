@@ -28,8 +28,9 @@
 							{{ item.details.changed_on }}
 							asas
 						</l-popup>
+						<!--Transmitter Tooltip-->
 						<l-tooltip
-							v-if="transmitterDetailsLoaded(item.id)"
+							v-if="item.type === 'transmitter' && transmitterDetailsLoaded(item.id)"
 							style="width: 400px;"
 						>
 							<v-layout fluid>
@@ -40,16 +41,17 @@
 											<v-spacer></v-spacer>
 											<v-flex xs3>
 												<span class="align-end">
-													<!--
-													<div v-if="item.details.status.online" class="chartContainer">
-
+													<div
+														v-if="transmitterQueueDataPresent(item.id)"
+														class="chartContainer"
+													>
 														<chart-message-queue
-															:chartData="chartDataMessageQueue(item.name)"
+															:chartData="chartDataMessageQueue(item.id)"
 															style="width: 100px; height: 70px;"
 														>
 														</chart-message-queue>
 													</div>
-													-->
+													<div v-else>No graph</div>
 												</span>
 											</v-flex>
 										</v-layout>
@@ -113,7 +115,60 @@
 								</v-card>
 							</v-layout>
 						</l-tooltip>
+						<!--Node Tooltip-->
+						<l-tooltip
+							v-if="item.type === 'node'"
+							style="width: 400px;"
+						>
+							<v-layout fluid>
+								<v-card flat color="yellow">
+									<v-card-title class="headline">
+										<v-layout align-center justify-space-between row>
+											<v-flex xs2>{{ item.id }}</v-flex>
+										</v-layout>
+									</v-card-title>
+									<v-card-text>
+										<div style="width: 350px;">
+											<v-layout row wrap>
+												<v-flex xs5>{{ $t('general.description') }}</v-flex>
+												<v-flex xs7>{{ staticData.nodes[item.id].description }}
+												</v-flex>
+											</v-layout>
+											<v-layout wrap>
+												<v-flex xs5>{{ $t('general.owners') }}</v-flex>
+												<v-flex xs7>
+													<v-chip
+														v-for="(owner, ownerindex) in staticData.nodes[item.id].owners"
+														:key="ownerindex"
+														small
+														label
+														color="primary"
+													>
+														{{ owner }}
+													</v-chip>
+												</v-flex>
+												<v-flex xs5>{{ $t('nodes.new.hamcloud.title') }}</v-flex>
+												<v-flex xs7>
+													<v-chip v-if="staticData.nodes[item.id].hamcloud" color="green" small>YES</v-chip>
+													<v-chip v-else color="red" small>NO</v-chip>
+												</v-flex>
+												<v-flex xs5>{{ $t('general.changed_on') }}</v-flex>
+												<v-flex xs7>{{ getTimestampFormated(staticData.nodes[item.id].changed_on) }}
+													{{ $t('general.byUser') }} {{ staticData.nodes[item.id].changed_by }}
+												</v-flex>
+											</v-layout></div>
+									</v-card-text>
+								</v-card>
+							</v-layout>
+						</l-tooltip>
 					</l-marker>
+					<l-polyline
+						v-for="(polyline,index) in map.polylines"
+						:key="index"
+						:lat-lngs="polyline.latlngs"
+						:color="polyline.color"
+					>
+					</l-polyline>
 				</l-map>
 			</v-card-media>
 			<v-card-text>
@@ -140,6 +195,23 @@
 						</v-checkbox>
 					</v-flex>
 				</v-layout>
+				<v-layout wrap row>
+					<v-flex xs3>
+						<v-checkbox
+							v-model="checkbox.shownodes"
+							:label="$t('transmitters.map.checkbox.shownodes')"
+							>
+						</v-checkbox>
+					</v-flex>
+					<v-flex xs3>
+						<v-checkbox
+							v-model="checkbox.shownodeline"
+							:label="$t('transmitters.map.checkbox.shownodeline')"
+							:disabled="!checkbox.shownodes"
+						>
+						</v-checkbox>
+					</v-flex>
+				</v-layout>
 			</v-card-text>
 		</v-card>
 	</v-container>
@@ -147,10 +219,12 @@
 
 <script>
 	import moment from 'moment';
+	import ChartMessageQueue from '@/components/charts/MessageQueue';
 
 	export default {
 		name: 'Map',
 		components: {
+			ChartMessageQueue
 		},
 		created() {
 			this.createIcons();
@@ -181,6 +255,15 @@
 			},
 			'checkbox.widerangeonly'() {
 				this.updateMapContent();
+			},
+			'checkbox.shownodes'() {
+				if (!this.checkbox.shownodes) {
+					this.checkbox.shownodeline = false;
+				}
+				this.updateMapContent();
+			},
+			'checkbox.shownodeline'() {
+				this.updateMapContent();
 			}
 		},
 		data() {
@@ -188,7 +271,9 @@
 				checkbox: {
 					pttstatus: false,
 					onlineonly: false,
-					widerangeonly: false
+					widerangeonly: false,
+					shownodes: false,
+					shownodeline: false
 				},
 				centerLatLong: null,
 				isLoadingData: {
@@ -201,7 +286,7 @@
 					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
 					url: this.$store.getters.url.map,
 					markers: [],
-					lines: [],
+					polylines: [],
 					coverageLayers: [],
 					center: [50, 6],
 					bounds: null
@@ -221,27 +306,30 @@
 		computed: {
 		},
 		methods: {
+			transmitterQueueDataPresent(transmittername) {
+				return (transmittername in this.monitoringData.transmitters &&
+					'messages' in this.monitoringData.transmitters[transmittername] &&
+					'queued' in this.monitoringData.transmitters[transmittername].messages);
+			},
 			transmitterDetailsLoaded(transmittername) {
 				// return true, if transmitter is already present and details are already loaded (by existens of _rev)
 				return ((transmittername in this.staticData.transmitters) &&
 				('_rev' in this.staticData.transmitters[transmittername]));
 			},
-			updateMapContent(){
+			updateMapContent() {
 				this.updateWSConnections();
 				this.generateAllMarkersOnMap();
+				this.generateAllPolylinesOnMap();
 			},
 			chartDataMessageQueue(transmittername) {
-				if (this.transmitterrows[transmitterindex] &&
-					'status' in this.transmitterrows[transmitterindex] &&
-					'messages' in this.transmitterrows[transmitterindex].status &&
-					'queued' in this.transmitterrows[transmitterindex].status.messages) {
-						return {
-							labels: ['L', '', 'M', '', 'H'],
-							datasets: [{
-								backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
-								data: this.transmitterrows[transmitterindex].status.messages.queued
-							}]
-						};
+				if (this.transmitterQueueDataPresent(transmittername)) {
+					return {
+						labels: ['L', '', 'M', '', 'H'],
+						datasets: [{
+							backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
+							data: this.monitoringData.transmitters[transmittername].messages.queued
+						}]
+					};
 				} else {
 					return {
 						labels: ['E', 'M', 'P', 'T', 'Y'],
@@ -280,7 +368,8 @@
 			generateAllMarkersOnMap() {
 				console.log('generateAllMarkersOnMap executed');
 				let markerTransmitters = [];
-				let polylineTransmitters = [];
+				let makerNodes = [];
+				// Transmitters
 				// Only put transmitters inside of bound on map
 				for (let transmitterID in this.staticData.transmitters) {
 					if (this.transmitterInBounds(transmitterID)) {
@@ -307,8 +396,46 @@
 						}
 					}
 				}
-				this.map.markers = markerTransmitters;
+				// Nodes
+				if (this.checkbox.shownodes) {
+					for (let nodeID in this.staticData.nodes) {
+						makerNodes.push({
+							id: nodeID,
+							type: 'node',
+							coordinates: this.staticData.nodes[nodeID].coordinates,
+							// TODO: get online state via WS and add corresponding Icon
+							icon: this.icons.iconNodeOnline
+						});
+					}
+				}
+				this.map.markers = markerTransmitters.concat(makerNodes);
 				console.log(this.map.markers);
+			},
+			generateAllPolylinesOnMap() {
+				let polylineTransmitterToNodes = [];
+				if (this.checkbox.shownodeline) {
+					for (let transmitterID in this.monitoringData.transmitters) {
+						if (this.displayThisTransmitter(transmitterID)) {
+							for (let nodeID in this.staticData.nodes) {
+								console.log(nodeID + ' -> ' + this.monitoringData.transmitters[transmitterID].node.name);
+								if (('node' in this.monitoringData.transmitters[transmitterID]) &&
+									('name' in this.monitoringData.transmitters[transmitterID].node) &&
+								(nodeID.search(this.monitoringData.transmitters[transmitterID].node.name) !== -1)) {
+									if (('coordinates' in this.staticData.transmitters[transmitterID]) &&
+									('coordinates' in this.staticData.nodes[nodeID])) {
+										polylineTransmitterToNodes.push({
+											latlngs: [this.staticData.transmitters[transmitterID].coordinates,
+												this.staticData.nodes[nodeID].coordinates],
+											color: this.$helpers.stringToColor(nodeID)
+										});
+									}
+								}
+							}
+						}
+					}
+				}
+				this.map.polylines = polylineTransmitterToNodes;
+				console.log(this.map.polylines);
 			},
 			updateOnlineStatusOnMap(transmittername) {
 				// Find corresponding marker
@@ -376,6 +503,13 @@
 							// Useful data received, TX is online
 							console.log(transmittername);
 							console.log(data);
+							if ('messages' in data) {
+								data.messages.sent.splice(6, 4);
+								data.messages.sent.splice(0, 1);
+
+								data.messages.queued.splice(6, 4);
+								data.messages.queued.splice(0, 1);
+							}
 							if (!(transmittername in this.monitoringData.transmitters)) {
 								// save initial copy of data
 								this.monitoringData.transmitters[transmittername] = data;
@@ -390,6 +524,8 @@
 							delete this.monitoringData.transmitters[transmittername];
 						}
 						this.updateOnlineStatusOnMap(transmittername);
+						// TODO: Only add lines from this transmitter, not all like here
+						this.generateAllPolylinesOnMap();
 					});
 				}
 			},

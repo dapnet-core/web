@@ -15,7 +15,7 @@ import store from './store';
 import VueClipboard from 'vue-clipboard2';
 import globalMethods from './global';
 import swal from 'sweetalert2';
-import { L, LMap, LTileLayer, LMarker, LIcon, LPopup, LTooltip } from 'vue2-leaflet';
+import { L, LMap, LTileLayer, LMarker, LIcon, LPopup, LTooltip, LPolyline } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import 'leaflet-fullscreen/dist/Leaflet.fullscreen';
@@ -44,6 +44,7 @@ Vue.component('l-marker', LMarker);
 Vue.component('l-icon', LIcon);
 Vue.component('l-popup', LPopup);
 Vue.component('l-tooltip', LTooltip);
+Vue.component('l-polyline', LPolyline);
 
 delete L.Icon.Default.prototype._getIconUrl;
 
