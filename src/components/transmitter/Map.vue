@@ -24,12 +24,12 @@
 						:icon="item.icon"
 						@click="loadCoverage(item.id)"
 					>
-						<l-popup v-if="item.details !== undefined">
+						<l-popup v-if="false">
 							{{ item.details.changed_on }}
 							asas
 						</l-popup>
 						<l-tooltip
-							v-if="item.details"
+							v-if="transmitterDetailsLoaded(item.id)"
 							style="width: 400px;"
 						>
 							<v-layout fluid>
@@ -60,7 +60,7 @@
 											<v-flex xs5>{{ $t('general.transmitter_groups') }}</v-flex>
 											<v-flex xs7>
 												<v-chip
-													v-for="(group, groupindex) in item.details.groups"
+													v-for="(group, groupindex) in staticData.transmitters[item.id].groups"
 													:key="groupindex"
 													small
 													label
@@ -74,7 +74,7 @@
 											<v-flex xs5>{{ $t('general.owners') }}</v-flex>
 											<v-flex xs7>
 												<v-chip
-													v-for="(owner, ownerindex) in item.details.owners"
+													v-for="(owner, ownerindex) in staticData.transmitters[item.id].owners"
 													:key="ownerindex"
 													small
 													label
@@ -85,28 +85,28 @@
 											</v-flex>
 											<v-flex xs5>{{ $t('transmitters.new.aprs_broadcast.title') }}</v-flex>
 											<v-flex xs7>
-												<v-chip v-if="item.details.aprs_broadcast" color="green" small>YES</v-chip>
+												<v-chip v-if="staticData.transmitters[item.id].aprs_broadcast" color="green" small>YES</v-chip>
 												<v-chip v-else color="red" small>NO</v-chip>
 											</v-flex>
 											<v-flex xs5>{{ $t('transmitters.new.emergency.available.title') }}</v-flex>
 											<v-flex xs7>
-												<v-chip v-if="item.details.emergency_power && item.details.emergency_power.available" color="green" small>YES</v-chip>
+												<v-chip v-if="staticData.transmitters[item.id].emergency_power && staticData.transmitters[item.id].available" color="green" small>YES</v-chip>
 												<v-chip v-else color="red" small>NO</v-chip>
 											</v-flex>
 											<v-flex xs5>{{ $t('transmitters.usage.title') }}</v-flex>
 											<v-flex xs7>
-												<v-chip v-if="item.details.usage === 'widerange'" color="primary" small label>Widerange</v-chip>
+												<v-chip v-if="staticData.transmitters[item.id].usage === 'widerange'" color="primary" small label>Widerange</v-chip>
 												<v-chip v-else color="red" small label>personal</v-chip>
 											</v-flex>
 											<v-flex xs5>{{ $t('transmitters.power') }}</v-flex>
-											<v-flex xs7>{{ item.details.power }} W</v-flex>
+											<v-flex xs7>{{ staticData.transmitters[item.id].power }} W</v-flex>
 											<v-flex xs5>{{ $t('general.created_on') }}</v-flex>
-											<v-flex xs7>{{ getTimestampFormated(item.details.created_on) }}
-												{{ $t('general.byUser') }} {{ item.details.created_by }}
+											<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].created_on) }}
+												{{ $t('general.byUser') }} {{ staticData.transmitters[item.id].created_by }}
 											</v-flex>
 											<v-flex xs5>{{ $t('general.changed_on') }}</v-flex>
-											<v-flex xs7>{{ getTimestampFormated(item.details.changed_on) }}
-												{{ $t('general.byUser') }} {{ item.details.changed_by }}
+											<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].changed_on) }}
+												{{ $t('general.byUser') }} {{ staticData.transmitters[item.id].changed_by }}
 											</v-flex>
 										</v-layout></div>
 									</v-card-text>
@@ -220,9 +220,14 @@
 		computed: {
 		},
 		methods: {
+			transmitterDetailsLoaded(transmittername) {
+				// return true, if transmitter is already present and details are already loaded (by existens of _rev)
+				return ((transmittername in this.staticData.transmitters) &&
+					('_rev' in this.staticData.transmitters[transmittername]));
+			},
 			updateMapContent(){
 				this.updateWSConnections();
-				this.updateMarkersOnMap();
+				this.generateAllMarkersOnMap();
 			},
 			chartDataMessageQueue(transmittername) {
 				if (this.transmitterrows[transmitterindex] &&
@@ -252,23 +257,13 @@
 			loadCoverage() {
 			},
 			displayThisTransmitter(transmittername) {
-				if (this.checkbox.widerangeonly && this.staticData.transmitters[transmittername].usage === 'widerange') {
-					console.log(transmittername + ' is online and widerange');
-					if (this.checkbox.onlineonly) {
-						return (transmittername in this.monitoringData.transmitters);
-					} else {
-						return true;
-					}
-
-				} else {
-					console.log(transmittername + ' has ws data of ');
-					console.log(this.monitoringData.transmitters[transmittername]);
-					if (this.checkbox.onlineonly) {
-						return (transmittername in this.monitoringData.transmitters);
-					} else {
-						return true;
-					}
+				if (this.checkbox.widerangeonly && this.staticData.transmitters[transmittername].usage !== 'widerange') {
+					return false;
 				}
+				if (this.checkbox.onlineonly && (!(transmittername in this.monitoringData.transmitters))) {
+					return false;
+				}
+				return true;
 			},
 			transmitterInBounds(transmittername) {
 				if (transmittername in this.staticData.transmitters &&
@@ -281,8 +276,8 @@
 					return false;
 				}
 			},
-			updateMarkersOnMap() {
-				console.log('updateMarkersonMap executed');
+			generateAllMarkersOnMap() {
+				console.log('generateAllMarkersOnMap executed');
 				let markerTransmitters = [];
 				let polylineTransmitters = [];
 				// Only put transmitters inside of bound on map
@@ -293,7 +288,7 @@
 							if (this.displayThisTransmitter(transmitterID)) {
 								markerTransmitters.push({
 									id: transmitterID,
-									name: 't_' + transmitterID,
+									type: 'transmitter',
 									coordinates: this.staticData.transmitters[transmitterID].coordinates,
 									icon: this.getCorrespondingStaticIcon(transmitterID)
 								});
@@ -305,6 +300,26 @@
 				}
 				this.map.markers = markerTransmitters;
 				console.log(this.map.markers);
+			},
+			updateOnlineStatusOnMap(transmittername) {
+				// Find corresponding marker
+				let found = false;
+				let i = 0;
+				while (i < this.map.markers.length) {
+					if ((this.map.markers[i].id === transmittername && this.map.markers[i].type === 'transmitter')) {
+						found = true;
+						break;
+					} else {
+						i++;
+					}
+				}
+				if (!found) {
+					console.log('TX ' + transmittername + ' not found, so cannot update online status');
+					return;
+				}
+				let markerToUpdate = this.map.markers[i];
+				markerToUpdate.icon = this.getCorrespondingStaticIcon(transmittername);
+				this.map.markers.splice(i, 1, markerToUpdate);
 			},
 			loadMissingTransmitterDetailsInBound() {
 				for (let transmitterID in this.staticData.transmitters) {
@@ -345,6 +360,7 @@
 					this.wsHandler[transmittername].addEventListener('message', e => {
 						let data = JSON.parse(e.data);
 						if (!this.$helpers.isEmpty(data)) {
+							// Useful data received, TX is online
 							console.log(transmittername);
 							console.log(data);
 							if (!(transmittername in this.monitoringData.transmitters)) {
@@ -356,17 +372,18 @@
 									Object.assign(this.monitoringData.transmitters[transmittername], data);
 							}
 						} else {
+							// Empty JSON reveiced, TX is offline
 							console.log('TX ' + transmittername + ' is offline, as the websocket answer was empty');
 							delete this.monitoringData.transmitters[transmittername];
 						}
+						this.updateOnlineStatusOnMap(transmittername);
 					});
 				}
 			},
 			loadMissingTransmitterDetail(transmittername) {
 				// If transmitter is not already present or details not already loaded (by existens of _rev)
-				if ((!(transmittername in this.staticData.transmitters)) ||
-					(!('_rev' in this.staticData.transmitters[transmittername]))) {
-					// Load transmitter details
+				if (!(this.transmitterDetailsLoaded(transmittername))) {
+				// Load transmitter details
 					console.log('Loading TX details of: ' + transmittername);
 					this.isLoadingData.transmitterdetails = true;
 					this.$axios.get('transmitters/' + transmittername)
