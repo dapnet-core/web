@@ -17,6 +17,8 @@ import globalMethods from './global';
 import swal from 'sweetalert2';
 import { L, LMap, LTileLayer, LMarker, LIcon, LPopup, LTooltip } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
+import 'leaflet-fullscreen/dist/Leaflet.fullscreen';
 
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 

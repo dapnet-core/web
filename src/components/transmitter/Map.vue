@@ -168,9 +168,9 @@
 			});
 			// Initialize zoom
 			this.map.zoom = this.$store.getters.map.zoom;
+			const map = this.$refs.map.mapObject;
+			map.addControl(new window.L.Control.Fullscreen());
 		},
-
-
 		watch: {
 			'checkbox.pttstatus'() {
 				this.updateMapContent();

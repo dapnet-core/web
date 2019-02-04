@@ -25,11 +25,12 @@
     "bcryptjs": "^2.4.3",
     "chart.js": "^2.7.3",
     "flag-icon-css": "^3.2.1",
-    "leaflet.fullscreen": "^1.4.5",
+    "leaflet-fullscreen": "^1.0.2",
     "axios": "^0.18.0",
     "moment": "^2.24.0",
     "sweetalert2": "^8.0.1",
     "vue2-leaflet": "^1.2.3",
+    "@ansur/leaflet-pulse-icon": "^0.1.1",
     "material-design-icons-iconfont": "^4.0.4"
   },
   "devDependencies": {
