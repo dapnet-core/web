@@ -164,30 +164,24 @@
 				this.map.bounds = this.$refs.map.mapObject.getBounds();
 				console.log('map was moved');
 				this.loadMissingTransmitterDetailsInBound();
-				this.updateWSConnections();
-				this.updateMarkersOnMapafterMove();
+				this.updateMapContent();
 			});
 			// Initialize zoom
 			this.map.zoom = this.$store.getters.map.zoom;
 		},
 
-		/*
+
 		watch: {
-			'isLoadingData.transmitters'() {
-				if (!this.isLoadingData.transmitters) {
-					this.updateMapContent();
-				}
+			'checkbox.pttstatus'() {
+				this.updateMapContent();
+			},
+			'checkbox.onlineonly'() {
+				this.updateMapContent();
+			},
+			'checkbox.widerangeonly'() {
+				this.updateMapContent();
 			}
-
-			,
-			'isLoadingData.nodes'() {
-				if (!this.isLoadingData.nodes) {
-					this.updateMapContent();
-				}
-			}
-
 		},
-*/
 		data() {
 			return {
 				checkbox: {
@@ -226,6 +220,10 @@
 		computed: {
 		},
 		methods: {
+			updateMapContent(){
+				this.updateWSConnections();
+				this.updateMarkersOnMap();
+			},
 			chartDataMessageQueue(transmittername) {
 				if (this.transmitterrows[transmitterindex] &&
 					'status' in this.transmitterrows[transmitterindex] &&
@@ -253,11 +251,23 @@
 			},
 			loadCoverage() {
 			},
-			skipthisTransmitter(transmittername) {
+			displayThisTransmitter(transmittername) {
 				if (this.checkbox.widerangeonly && this.staticData.transmitters[transmittername].usage === 'widerange') {
-					return (this.checkbox.onlineonly && (transmittername in this.monitoringData.transmitters));
+					console.log(transmittername + ' is online and widerange');
+					if (this.checkbox.onlineonly) {
+						return (transmittername in this.monitoringData.transmitters);
+					} else {
+						return true;
+					}
+
 				} else {
-					return false;
+					console.log(transmittername + ' has ws data of ');
+					console.log(this.monitoringData.transmitters[transmittername]);
+					if (this.checkbox.onlineonly) {
+						return (transmittername in this.monitoringData.transmitters);
+					} else {
+						return true;
+					}
 				}
 			},
 			transmitterInBounds(transmittername) {
@@ -271,7 +281,7 @@
 					return false;
 				}
 			},
-			updateMarkersOnMapafterMove() {
+			updateMarkersOnMap() {
 				console.log('updateMarkersonMap executed');
 				let markerTransmitters = [];
 				let polylineTransmitters = [];
@@ -280,7 +290,7 @@
 					if (this.transmitterInBounds(transmitterID)) {
 						if (!this.checkbox.pttstatus) {
 							// Static Display
-							if (!this.skipthisTransmitter(transmitterID)) {
+							if (this.displayThisTransmitter(transmitterID)) {
 								markerTransmitters.push({
 									id: transmitterID,
 									name: 't_' + transmitterID,
@@ -346,6 +356,7 @@
 									Object.assign(this.monitoringData.transmitters[transmittername], data);
 							}
 						} else {
+							console.log('TX ' + transmittername + ' is offline, as the websocket answer was empty');
 							delete this.monitoringData.transmitters[transmittername];
 						}
 					});
@@ -372,7 +383,7 @@
 				// find icon
 				if (this.staticData.transmitters[transmittername].usage === 'widerange') {
 					// Widerange
-					if (transmittername in this.monitoringData) {
+					if (transmittername in this.monitoringData.transmitters) {
 						// Widerange and online
 						return this.icons.iconTransmitterWiderangeOnline;
 					} else {
@@ -381,12 +392,12 @@
 					}
 				} else {
 					// Personal
-					if (transmittername in this.monitoringData) {
+					if (transmittername in this.monitoringData.transmitters) {
 						// Personal and online
 						return this.icons.iconTransmitterPersonalOnline;
 					} else {
 						// Peronal and offline
-						this.icons.iconTransmitterPersonalOffline;
+						return this.icons.iconTransmitterPersonalOffline;
 					}
 				}
 			},
