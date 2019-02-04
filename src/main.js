@@ -19,6 +19,8 @@ import { L, LMap, LTileLayer, LMarker, LIcon, LPopup, LTooltip } from 'vue2-leaf
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import 'leaflet-fullscreen/dist/Leaflet.fullscreen';
+import '@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.js';
+import '@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css';
 
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 

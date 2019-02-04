@@ -173,6 +173,7 @@
 		},
 		watch: {
 			'checkbox.pttstatus'() {
+				this.checkbox.onlineonly = this.checkbox.pttstatus;
 				this.updateMapContent();
 			},
 			'checkbox.onlineonly'() {
@@ -223,7 +224,7 @@
 			transmitterDetailsLoaded(transmittername) {
 				// return true, if transmitter is already present and details are already loaded (by existens of _rev)
 				return ((transmittername in this.staticData.transmitters) &&
-					('_rev' in this.staticData.transmitters[transmittername]));
+				('_rev' in this.staticData.transmitters[transmittername]));
 			},
 			updateMapContent(){
 				this.updateWSConnections();
@@ -234,13 +235,13 @@
 					'status' in this.transmitterrows[transmitterindex] &&
 					'messages' in this.transmitterrows[transmitterindex].status &&
 					'queued' in this.transmitterrows[transmitterindex].status.messages) {
-					return {
-						labels: ['L', '', 'M', '', 'H'],
-						datasets: [{
-							backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
-							data: this.transmitterrows[transmitterindex].status.messages.queued
-						}]
-					};
+						return {
+							labels: ['L', '', 'M', '', 'H'],
+							datasets: [{
+								backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
+								data: this.transmitterrows[transmitterindex].status.messages.queued
+							}]
+						};
 				} else {
 					return {
 						labels: ['E', 'M', 'P', 'T', 'Y'],
@@ -267,10 +268,10 @@
 			},
 			transmitterInBounds(transmittername) {
 				if (transmittername in this.staticData.transmitters &&
-				'coordinates' in this.staticData.transmitters[transmittername]) {
-					let bounds = this.$refs.map.mapObject.getBounds();
-					return bounds.contains(new L.LatLng(this.staticData.transmitters[transmittername].coordinates[0],
-						this.staticData.transmitters[transmittername].coordinates[1]));
+					'coordinates' in this.staticData.transmitters[transmittername]) {
+						let bounds = this.$refs.map.mapObject.getBounds();
+						return bounds.contains(new L.LatLng(this.staticData.transmitters[transmittername].coordinates[0],
+							this.staticData.transmitters[transmittername].coordinates[1]));
 				} else {
 					console.log('Transmitter ' + transmittername + ' not found in staticData or coodinated not present');
 					return false;
@@ -295,6 +296,14 @@
 							}
 						} else {
 							// OnAir Display
+							if (this.displayThisTransmitter(transmitterID)) {
+								markerTransmitters.push({
+									id: transmitterID,
+									type: 'transmitter',
+									coordinates: this.staticData.transmitters[transmitterID].coordinates,
+									icon: this.icons.pulsingIconOffAir
+								});
+							}
 						}
 					}
 				}
@@ -318,7 +327,11 @@
 					return;
 				}
 				let markerToUpdate = this.map.markers[i];
-				markerToUpdate.icon = this.getCorrespondingStaticIcon(transmittername);
+				if (!this.checkbox.pttstatus) {
+					markerToUpdate.icon = this.getCorrespondingStaticIcon(transmittername);
+				} else {
+					markerToUpdate.icon = this.getCorrespondingMonitoringIcon(transmittername);
+				}
 				this.map.markers.splice(i, 1, markerToUpdate);
 			},
 			loadMissingTransmitterDetailsInBound() {
@@ -341,7 +354,7 @@
 				}
 			},
 			removeWShandler(transmittername) {
-				//console.log('try removeWS TX: ' + transmittername);
+				// console.log('try removeWS TX: ' + transmittername);
 				if (transmittername in this.wsHandler) {
 					console.log('removeWS TX: ' + transmittername);
 					this.wsHandler[transmittername].close();
@@ -352,7 +365,7 @@
 				}
 			},
 			addWShandler(transmittername) {
-				//console.log('try AddWS TX: ' + transmittername);
+				// console.log('try AddWS TX: ' + transmittername);
 				if (!(transmittername in this.wsHandler)) {
 					console.log('newWS TX: ' + transmittername);
 					this.wsHandler[transmittername] = new WebSocket(this.$store.getters.url.telemetry +
@@ -383,7 +396,7 @@
 			loadMissingTransmitterDetail(transmittername) {
 				// If transmitter is not already present or details not already loaded (by existens of _rev)
 				if (!(this.transmitterDetailsLoaded(transmittername))) {
-				// Load transmitter details
+					// Load transmitter details
 					console.log('Loading TX details of: ' + transmittername);
 					this.isLoadingData.transmitterdetails = true;
 					this.$axios.get('transmitters/' + transmittername)
@@ -416,6 +429,13 @@
 						// Peronal and offline
 						return this.icons.iconTransmitterPersonalOffline;
 					}
+				}
+			},
+			getCorrespondingMonitoringIcon(transmittername) {
+				if (transmittername in this.monitoringData.transmitters && (this.monitoringData.transmitters[transmittername].onair)) {
+					return this.icons.pulsingIconOnAir;
+				} else {
+					return this.icons.pulsingIconOffAir;
 				}
 			},
 			createIcons() {
@@ -462,21 +482,29 @@
 					iconAnchor: [15, 30],
 					popupAnchor: [0, -25]
 				});
+				this.icons.pulsingIconOnAir = L.icon.pulse({
+					iconSize: [12, 12],
+					color: 'green',
+					animate: true
+				});
+				this.icons.pulsingIconOffAir = L.icon.pulse({
+					iconSize: [12, 12],
+					color: 'green',
+					animate: false
+				});
 			},
 			loadTransmitterLocations() {
 				// Load avaiable users
 				this.isLoadingData.transmitters = true;
 				this.$axios.get('transmitters/map')
 					.then(response => {
-						for (let i = 0; i < response.data.rows.length; i++)
-						{
-							this.staticData.transmitters[response.data.rows[i].id] =  {
-									'usage': response.data.rows[i].value.usage,
-									'coordinates': response.data.rows[i].value.coordinates
-								};
+						for (let i = 0; i < response.data.rows.length; i++) {
+							this.staticData.transmitters[response.data.rows[i].id] = {
+								'usage': response.data.rows[i].value.usage,
+								'coordinates': response.data.rows[i].value.coordinates
+							};
 						}
 						this.isLoadingData.transmitters = false;
-
 					})
 					.catch(e => {
 						console.log('Error getting transmitter locations in transmitters/Map.vue');
