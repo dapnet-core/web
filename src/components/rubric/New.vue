@@ -306,7 +306,10 @@
 							</v-layout>
 						</v-card-text>
 						<!-- Timestamps -->
-						<v-card color="">
+						<v-card
+							color=""
+							v-if="this.isEditMode"
+						>
 							<v-card-text
 								v-if="$vuetify.breakpoint.lgAndUp"
 							>
@@ -415,7 +418,8 @@
 					owners: [],
 					function: 3,
 					default_expiration: 297600,
-					default_priority: 2
+					default_priority: 2,
+					content: []
 				},
 				formData: {
 					users: [],
@@ -523,7 +527,7 @@
 						})
 					],
 					'description': [
-						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('rubrics.new.description') }),
+						v => !!v || this.$t('formvalidation.isrequired', { fieldname: this.$t('rubrics.new.description.help') }),
 						v => (v && v.length <= 30) || this.$t('formvalidation.overlength', {
 							fieldname: this.$t('rubrics.description'),
 							count: '30'
