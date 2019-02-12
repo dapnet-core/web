@@ -120,7 +120,7 @@
 							}).catch(e => {
 								console.log('Error getting avatar in app.vue');
 								console.log(e);
-						});
+							});
 					}
 					// Trigger Reload of sidebar Icons
 					this.$root.$emit('ReloadSidebarIcons');

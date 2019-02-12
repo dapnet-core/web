@@ -401,7 +401,7 @@
 						}).catch(e => {
 							console.log('Error getting rubric\'s individual details with axios or any exception' +
 								'in the get handler of AddRubricContent.' + e);
-					});
+						});
 				}
 			},
 			SaveButton() {
@@ -437,7 +437,7 @@
 						})
 						.catch(function(error) {
 							console.log('Error in put rubric content', error);
-					});
+						});
 				}
 			},
 			CloseButton() {

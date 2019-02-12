@@ -390,7 +390,7 @@
 					console.log(this.rubriccontent.content[i + 1].data);
 					console.log(this.rubriccontent.content[i].data);
 					if (this.rubriccontent.content[i + 1].data !== null &&
-					(this.rubriccontent.content[i].data === null || this.rubriccontent.content[i].data === '')) {
+						(this.rubriccontent.content[i].data === null || this.rubriccontent.content[i].data === '')) {
 						return true;
 					}
 				}
@@ -505,7 +505,7 @@
 								if (response.data.content && response.data.content[i]) {
 									this.rubriccontent.content[i] = response.data.content[i];
 									if (this.rubriccontent.content[i].priority &&
-									(this.rubriccontent.content[i].priority > this.rubriccontent.default_priority)) {
+										(this.rubriccontent.content[i].priority > this.rubriccontent.default_priority)) {
 										this.rubriccontent.priorityBoost[i] = true;
 										this.rubriccontent.content[i].priority = this.rubriccontent.default_priority + 1;
 									} else {
@@ -537,7 +537,7 @@
 						}).catch(e => {
 							console.log('Error getting rubric\'s individual details with axios or any exception' +
 								'in the get handler of EditBulkContent.' + e);
-					});
+						});
 				}
 			},
 			SaveButton() {

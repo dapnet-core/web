@@ -489,7 +489,7 @@
 			},
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('transmitter.update') === 'all') ||
-				(this.$store.getters.permission('transmitter.delete') === 'all'));
+					(this.$store.getters.permission('transmitter.delete') === 'all'));
 			},
 			getPermissionsWrapper(mypermission) {
 				return (this.$store.getters.permission(mypermission));
