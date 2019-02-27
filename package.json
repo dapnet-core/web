@@ -31,7 +31,8 @@
     "sweetalert2": "^8.0.1",
     "vue2-leaflet": "^1.2.3",
     "@ansur/leaflet-pulse-icon": "^0.1.1",
-    "material-design-icons-iconfont": "^4.0.4"
+    "material-design-icons-iconfont": "^4.0.4",
+    "vuetify-confirm": "^0.2.1"
   },
   "devDependencies": {
     "@mdi/font": "^3.3.92",

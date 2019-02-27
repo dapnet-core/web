@@ -359,18 +359,19 @@
 				this.$router.push({ name: 'Add Rubric Content', params: { id: element._id } });
 			},
 			deleteElement(element) {
-				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('rubrics/' + element._id + '?revision=' + element._rev, {
-						// before(request) {
-						//	request.headers.delete('Content-Type');
-						// }
-					}).then(response => {
-						// success --> reload data
-						this.loadData();
-					}, response => {
-						// error --> show error message
-						this.$dialogs.ajaxError(this, response);
-					});
+				this.$confirm('Do you really want to delete rubric ' + element._id + ' ?').then(res => {
+					if (res) {
+						this.axios.delete('rubrics/' + element._id + '?revision=' + element._rev, {
+							// before(request) {
+							//	request.headers.delete('Content-Type');
+							// }
+						}).then(response => {
+							// success --> reload data
+							this.loadData();
+						}).catch(e => {
+							console.log('Error deleting rubric ' + element._id + ' in rubric/Overview.vue. ' + e);
+						});
+					}
 				});
 			}
 		}

@@ -204,7 +204,6 @@
 									</v-layout>
 								</v-flex>
 							</v-layout>
-
 							<!-- Transmitters -->
 							<v-layout wrap>
 								<v-flex xs12 sm12 md12 lg6>
@@ -645,6 +644,7 @@
 							this.form.description = response.data.description;
 							this.form.label = response.data.label;
 							this.form.owners = response.data.owners;
+							this.form.content = response.data.content;
 							this.form.transmitters = response.data.transmitters;
 
 							if (response.data.transmitter_groups) {

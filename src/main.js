@@ -23,6 +23,7 @@ import '@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.js';
 import '@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css';
 
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import VuetifyConfirm from 'vuetify-confirm';
 
 // import 'material-design-icons/iconfont/material-icons.css';
 // import 'typeface-roboto/index.css';
@@ -34,6 +35,7 @@ import AppFooter from '@/components/partials/Footer';
 Vue.use(globalMethods);
 
 Vue.use(VueAxios, axios);
+Vue.use(VuetifyConfirm);
 
 Vue.use(VueClipboard);
 
