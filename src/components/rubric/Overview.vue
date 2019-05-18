@@ -219,7 +219,6 @@
 				search: '',
 				total_rows: 0,
 				rubricrows: [],
-				errorMessage: false,
 				isLoadingData: true,
 				pagination: {
 					sortBy: 'doc._id',
@@ -343,7 +342,15 @@
 				}, response => {
 					// error --> show error message
 					this.isLoadingData = false;
-					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+					this.$swal({
+						title: this.$i18n.t('alerts.errorLoadRubrics.title'),
+						type: 'error',
+						html: this.$i18n.t('alerts.ticketlink', {
+							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+						}) + '<br>' + response,
+						showConfirmButton: true,
+						confirmButtonText: this.$i18n.t('alerts.ok')
+					});
 				});
 			},
 			mailToOwner(element) {
@@ -359,17 +366,44 @@
 				this.$router.push({ name: 'Add Rubric Content', params: { id: element._id } });
 			},
 			deleteElement(element) {
-				this.$confirm('Do you really want to delete rubric ' + element._id + ' ?').then(res => {
-					if (res) {
+				this.$swal({
+					title: this.$i18n.t('alerts.deleterubric.title', { fieldname: element._id }),
+					text: this.$i18n.t('alerts.noUndo'),
+					showConfirmButton: true,
+					confirmButtonText: this.$i18n.t('alerts.deleterubric.confirm', { fieldname: element._id }),
+					confirmButtonColor: '#F44336',
+					showCancelButton: true,
+					cancelButtonText: this.$i18n.t('alerts.cancel'),
+					cancelButtonColor: '#33691E',
+					type: 'question'
+				}).then((result) => {
+					if (result.value) {
+						console.log('Deleting rubric ' + element._id);
 						this.axios.delete('rubrics/' + element._id + '?revision=' + element._rev, {
 							// before(request) {
 							//	request.headers.delete('Content-Type');
 							// }
 						}).then(response => {
 							// success --> reload data
+							this.$swal({
+								type: 'info',
+								title: this.$i18n.t('alerts.deleterubric.success', { fieldname: element._id }),
+								showConfirmButton: true,
+								confirmButtonText: this.$i18n.t('alerts.ok')
+							});
 							this.loadData();
-						}).catch(e => {
-							console.log('Error deleting rubric ' + element._id + ' in rubric/Overview.vue. ' + e);
+							this.$root.$emit('ReloadSidebarIcons');
+						}, response => {
+							// error --> show error message
+							this.$swal({
+								type: 'error',
+								title: this.$i18n.t('alerts.deleterubric.error', { fieldname: element._id}),
+								html: this.$i18n.t('alerts.ticketlink', {
+									htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+								}) + '<br>' + response,
+								showConfirmButton: true,
+								confirmButtonText: this.$i18n.t('alerts.ok')
+							});
 						});
 					}
 				});

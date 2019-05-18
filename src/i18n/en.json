@@ -348,6 +348,10 @@
         }
     },
     "alerts": {
+        "noUndo": "You will not be able to undo this step once it is done.",
+        "cancel": "Cancel",
+        "ok": "OK",
+        "ticketlink": "Please open a ticket at {htmlcode}.",
         "success": {
             "title": "Success",
             "text": "Operation successfully executed."
@@ -356,9 +360,41 @@
             "title": "No roles selected",
             "text": "There must be at least one role selected."
         },
-        "delete": {
-            "title": "Are you sure?",
-            "text": "You will not be able to recover this data once it is deleted."
+        "deletetransmitter": {
+            "title": "Are you sure to delete transmitter {fieldname} ?",
+            "confirm": "Yes, I know what I'm doing, delete transmitter {fieldname}.",
+            "success": "Transmitter {fieldname} was deleted.",
+            "error": "An error occurred deleting transmitter {fieldname}."
+        },
+        "deleterubric": {
+            "title": "Are you sure to delete rubric {fieldname} ?",
+            "confirm": "Yes, I know what I'm doing, delete rubric {fieldname}.",
+            "success": "Rubric {fieldname} was deleted.",
+            "error": "An error occurred deleting rubric {fieldname}."
+        },
+        "deletenode": {
+            "title": "Are you sure to delete node {fieldname} ?",
+            "confirm": "Yes, I know what I'm doing, delete node {fieldname}.",
+            "success": "Node {fieldname} was deleted.",
+            "error": "An error occurred deleting node {fieldname}."
+        },
+        "deleteuser": {
+            "title": "Are you sure to delete user {fieldname} ?",
+            "confirm": "Yes, I know what I'm doing, delete user {fieldname}.",
+            "success": "User {fieldname} was deleted.",
+            "error": "An error occurred deleting user {fieldname}."
+        },
+        "errorLoadNodes": {
+            "title": "Could not load list of nodes."
+        },
+        "errorLoadUsers": {
+            "title": "Could not load list of users."
+        },
+        "errorLoadRubrics": {
+            "title": "Could not load list of rubrics."
+        },
+        "errorLoadTransmitters": {
+            "title": "Could not load list of transmitters."
         },
         "input": {
             "title": "Missing input",
@@ -564,7 +600,7 @@
           "help": "An owner of a rubric can edit its parameters."
         },
         "information": {
-          "help": "Rubrics are a Skyper based invention allowing to send news sorted into chategories (the rubrics). Assign the number with care and contact <code>support [at] hampager.de</code> in case of doubt. Be aware that the number of rubrics is limited netwide to 99."
+          "help": "Rubrics are a Skyper based invention allowing to send news sorted into categories (the rubrics). Assign the number with care and contact <code>support [at] hampager.de</code> in case of doubt. Be aware that the number of rubrics is limited netwide to 99."
         },
         "editrubric": "Edit Rubric"
       },

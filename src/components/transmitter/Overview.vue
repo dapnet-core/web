@@ -229,7 +229,6 @@
 <script>
 	import moment from 'moment';
 	import ChartMessageQueue from '@/components/charts/MessageQueue';
-
 	export default {
 		components: {
 			ChartMessageQueue
@@ -252,7 +251,6 @@
 				search: '',
 				total_rows: 0,
 				transmitterrows: [],
-				errorMessage: false,
 				isLoadingData: true,
 				pagination: {
 					sortBy: 'doc._id',
@@ -541,7 +539,15 @@
 				}, response => {
 					// error --> show error message
 					this.isLoadingData = false;
-					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+					this.$swal({
+						title: this.$i18n.t('alerts.errorLoadTransmitters.title'),
+						type: 'error',
+						html: this.$i18n.t('alerts.ticketlink', {
+							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+						}) + '<br>' + response,
+						showConfirmButton: true,
+						confirmButtonText: this.$i18n.t('alerts.ok')
+					});
 				});
 			},
 			mailToOwner(element) {
@@ -551,18 +557,46 @@
 				this.$router.push({ name: 'Edit Transmitter', params: { id: element._id } });
 			},
 			deleteElement(element) {
-				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('transmitter/' + element._id + '?revision=' + element._rev, {
-						// before(request) {
-						//	request.headers.delete('Content-Type');
-						// }
-					}).then(response => {
-						// success --> reload data
-						this.loadData();
-					}, response => {
-						// error --> show error message
-						this.$dialogs.ajaxError(this, response);
-					});
+				this.$swal({
+					title: this.$i18n.t('alerts.deletetransmitter.title', { fieldname: element._id }),
+					text: this.$i18n.t('alerts.noUndo'),
+					showConfirmButton: true,
+					confirmButtonText: this.$i18n.t('alerts.deletetransmitter.confirm', { fieldname: element._id }),
+					confirmButtonColor: '#F44336',
+					showCancelButton: true,
+					cancelButtonText: this.$i18n.t('alerts.cancel'),
+					cancelButtonColor: '#33691E',
+					type: 'question'
+				}).then((result) => {
+					if (result.value) {
+						console.log('Deleting transmitter ' + element._id);
+						this.axios.delete('transmitter/' + element._id + '?revision=' + element._rev, {
+							// before(request) {
+							//	request.headers.delete('Content-Type');
+							// }
+						}).then(response => {
+							// success --> reload data
+							this.$swal({
+								type: 'info',
+								title: this.$i18n.t('alerts.deletetransmitter.success', { fieldname: element._id }),
+								showConfirmButton: true,
+								confirmButtonText: this.$i18n.t('alerts.ok')
+							});
+							this.loadData();
+							this.$root.$emit('ReloadSidebarIcons');
+						}, response => {
+							// error --> show error message
+							this.$swal({
+								type: 'error',
+								title: this.$i18n.t('alerts.deletetransmitter.error', { fieldname: element._id}),
+								html: this.$i18n.t('alerts.ticketlink', {
+									htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+								}) + '<br>' + response,
+								showConfirmButton: true,
+								confirmButtonText: this.$i18n.t('alerts.ok')
+							});
+						});
+					}
 				});
 			}
 		}

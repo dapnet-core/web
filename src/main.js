@@ -13,8 +13,9 @@ import VueAxios from 'vue-axios';
 import Sidebar from './components/partials/Sidebar';
 import store from './store';
 import VueClipboard from 'vue-clipboard2';
-import globalMethods from './global';
-import swal from 'sweetalert2';
+// import globalMethods from './global';
+// import swal from 'sweetalert2';
+import VueSweetalert2 from 'vue-sweetalert2';
 import { L, LMap, LTileLayer, LMarker, LIcon, LPopup, LTooltip, LPolyline } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
@@ -32,10 +33,10 @@ import VuetifyConfirm from 'vuetify-confirm';
 // import ActionButtons from '@/components/partials/ActionButtons';
 import AppFooter from '@/components/partials/Footer';
 
-Vue.use(globalMethods);
-
 Vue.use(VueAxios, axios);
 Vue.use(VuetifyConfirm);
+Vue.use(VueSweetalert2);
+
 
 Vue.use(VueClipboard);
 
@@ -61,11 +62,14 @@ Vue.config.productionTip = false;
 
 Vue.prototype.$axios = axios;
 
+/*
 const swalPlugin = {};
 swalPlugin.install = function(Vue) {
 	Vue.prototype.$swal = swal;
 };
 Vue.use(swalPlugin);
+Vue.use(globalMethods);
+*/
 
 // set initial locale
 i18n.locale = store.getters.language;

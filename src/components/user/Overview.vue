@@ -160,7 +160,6 @@
 				search: '',
 				total_rows: 0,
 				userrows: [],
-				errorMessage: false,
 				isLoadingData: true,
 				table: {
 					columns: [
@@ -290,7 +289,15 @@
 				}, response => {
 					// error --> show error message
 					this.isLoadingData = false;
-					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+					this.$swal({
+						title: this.$i18n.t('alerts.errorLoadUsers.title'),
+						type: 'error',
+						html: this.$i18n.t('alerts.ticketlink', {
+							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+						}) + '<br>' + response,
+						showConfirmButton: true,
+						confirmButtonText: this.$i18n.t('alerts.ok')
+					});
 				});
 			},
 			mailToOwner(element) {
@@ -300,18 +307,46 @@
 				this.$router.push({ name: 'Edit User', params: { id: element._id } });
 			},
 			deleteElement(element) {
-				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('users/' + element._id + '?revision=' + element._rev, {
-						// before(request) {
-						//	request.headers.delete('Content-Type');
-						// }
-					}).then(response => {
-						// success --> reload data
-						this.loadData();
-					}, response => {
-						// error --> show error message
-						this.$dialogs.ajaxError(this, response);
-					});
+				this.$swal({
+					title: this.$i18n.t('alerts.deleteuser.title', { fieldname: element._id }),
+					text: this.$i18n.t('alerts.noUndo'),
+					showConfirmButton: true,
+					confirmButtonText: this.$i18n.t('alerts.deleteuser.confirm', { fieldname: element._id }),
+					confirmButtonColor: '#F44336',
+					showCancelButton: true,
+					cancelButtonText: this.$i18n.t('alerts.cancel'),
+					cancelButtonColor: '#33691E',
+					type: 'question'
+				}).then((result) => {
+					if (result.value) {
+						console.log('Deleting user ' + element._id);
+						this.axios.delete('users/' + element._id + '?revision=' + element._rev, {
+							// before(request) {
+							//	request.headers.delete('Content-Type');
+							// }
+						}).then(response => {
+							// success --> reload data
+							this.$swal({
+								type: 'info',
+								title: this.$i18n.t('alerts.deleteuser.success', { fieldname: element._id }),
+								showConfirmButton: true,
+								confirmButtonText: this.$i18n.t('alerts.ok')
+							});
+							this.loadData();
+							this.$root.$emit('ReloadSidebarIcons');
+						}, response => {
+							// error --> show error message
+							this.$swal({
+								type: 'error',
+								title: this.$i18n.t('alerts.deleteuser.error', { fieldname: element._id}),
+								html: this.$i18n.t('alerts.ticketlink', {
+									htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+								}) + '<br>' + response,
+								showConfirmButton: true,
+								confirmButtonText: this.$i18n.t('alerts.ok')
+							});
+						});
+					}
 				});
 			},
 			mailToAll() {

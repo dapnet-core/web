@@ -149,7 +149,6 @@
 				search: '',
 				total_rows: 0,
 				noderows: [],
-				errorMessage: false,
 				isLoadingData: true,
 				pagination: {
 					sortBy: 'doc._id',
@@ -262,7 +261,15 @@
 				}, response => {
 					// error --> show error message
 					this.isLoadingData = false;
-					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
+					this.$swal({
+						title: this.$i18n.t('alerts.errorLoadNodes.title'),
+						type: 'error',
+						html: this.$i18n.t('alerts.ticketlink', {
+							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+						}) + '<br>' + response,
+						showConfirmButton: true,
+						confirmButtonText: this.$i18n.t('alerts.ok')
+					});
 				});
 			},
 			mailToOwner(element) {
@@ -272,19 +279,45 @@
 				this.$router.push({ name: 'Edit Node', params: { id: element._id } });
 			},
 			deleteElement(element) {
-				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('nodes/' + element._id + '?revision=' + element._rev, {
-						// before(request) {
-						//	request.headers.delete('Content-Type');
-						// }
-					}).then(response => {
-						// success --> reload data
-						this.loadData();
-					}, response => {
-						// error --> show error message
-						this.$dialogs.ajaxError(this, response);
-					});
-					this.$root.$emit('ReloadSidebarIcons');
+				this.$swal({
+					title: this.$i18n.t('alerts.deletenode.title', { fieldname: element._id }),
+					text: this.$i18n.t('alerts.noUndo'),
+					showConfirmButton: true,
+					confirmButtonText: this.$i18n.t('alerts.deletenode.confirm', { fieldname: element._id }),
+					confirmButtonColor: '#F44336',
+					showCancelButton: true,
+					cancelButtonText: this.$i18n.t('alerts.cancel'),
+					type: 'question'
+				}).then((result) => {
+					if (result.value) {
+						console.log('Deleting Node ' + element._id);
+						this.axios.delete('nodes/' + element._id + '?revision=' + element._rev, {
+							// before(request) {
+							//	request.headers.delete('Content-Type');
+							// }
+						}).then(response => {
+							// success --> reload data
+							this.$swal({
+								type: 'info',
+								title: this.$i18n.t('alerts.deletenode.success', { fieldname: element._id }),
+								showConfirmButton: true,
+								confirmButtonText: this.$i18n.t('alerts.ok')
+							});
+							this.loadData();
+							this.$root.$emit('ReloadSidebarIcons');
+						}, response => {
+							// error --> show error message
+							this.$swal({
+								type: 'error',
+								title: this.$i18n.t('alerts.deletenode.error', { fieldname: element._id}),
+								html: this.$i18n.t('alerts.ticketlink', {
+									htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+								}) + '<br>' + response,
+								showConfirmButton: true,
+								confirmButtonText: this.$i18n.t('alerts.ok')
+							});
+						});
+					}
 				});
 			}
 		}
