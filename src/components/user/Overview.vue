@@ -171,7 +171,7 @@
 				},
 				pagination: {
 					sortBy: 'doc._id',
-					descending: true,
+					descending: false,
 					rowsPerPage: 10,
 					page: 1
 				}

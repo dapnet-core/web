@@ -222,7 +222,7 @@
 				isLoadingData: true,
 				pagination: {
 					sortBy: 'doc._id',
-					descending: true,
+					descending: false,
 					rowsPerPage: 10,
 					page: 1
 				}
@@ -312,7 +312,7 @@
 				return ((this.$store.getters.permission('rubric.update') === 'all') ||
 					(this.$store.getters.permission('rubric.delete') === 'all') ||
 					(this.$store.getters.permission('rubric.read') === 'all') ||
-				(this.$store.getters.permission('news.update') === 'all'));
+					(this.$store.getters.permission('news.update') === 'all'));
 			},
 			getPermissionsWrapper(mypermission) {
 				return (this.$store.getters.permission(mypermission));
