@@ -441,7 +441,10 @@
 								</v-card-text>
 							</v-card>
 							<!-- Timestamps -->
-							<v-card color="">
+							<v-card
+								v-if="isEditMode"
+								color=""
+							>
 								<v-card-text
 									v-if="$vuetify.breakpoint.lgAndUp"
 								>
@@ -521,6 +524,7 @@
 				moment.locale(this.$root.$i18n.locale);
 				this.updateTimeStampFormat();
 			});
+			this.$refs.form.validate();
 		},
 		created() {
 			moment.locale(this.$root.$i18n.locale);

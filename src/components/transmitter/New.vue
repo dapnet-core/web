@@ -414,24 +414,53 @@
 							</v-container>
 						</v-card-text>
 						<!-- Timestamps -->
-						<v-card-text>
-							<v-card color="red lighten-2" v-if="isEditMode">
-								<v-card-text>
-									<v-layout row wrap class="dark--text">
-										<v-flex xs3>{{ $t('general.created_on') }}</v-flex>
-										<v-flex xs3>{{ $t('general.byUser') }}</v-flex>
-										<v-flex xs3>{{ $t('general.changed_on') }}</v-flex>
-										<v-flex xs3>{{ $t('general.byUser') }}</v-flex>
-									</v-layout>
-									<v-layout row wrap>
-										<v-flex xs3>{{ this.created_on}}</v-flex>
-										<v-flex xs3>{{ this.created_by}}</v-flex>
-										<v-flex xs3>{{ this.changed_on}}</v-flex>
-										<v-flex xs3>{{ this.changed_by}}</v-flex>
-									</v-layout>
-								</v-card-text>
-							</v-card>
-						</v-card-text>
+						<v-card
+							v-if="isEditMode"
+							color=""
+						>
+							<v-card-text
+								v-if="$vuetify.breakpoint.lgAndUp"
+							>
+								<v-layout row wrap class="dark--text">
+									<v-flex lg3>{{ $t('general.created_on') }}</v-flex>
+									<v-flex lg>{{ $t('general.byUser') }}</v-flex>
+									<v-flex lg3>{{ $t('general.changed_on') }}</v-flex>
+									<v-flex lg3>{{ $t('general.byUser') }}</v-flex>
+								</v-layout>
+								<v-layout row wrap>
+									<v-flex lg3>{{ this.created_on}}</v-flex>
+									<v-flex lg3>{{ this.created_by}}</v-flex>
+									<v-flex lg3>{{ this.changed_on}}</v-flex>
+									<v-flex lg3>{{ this.changed_by}}</v-flex>
+								</v-layout>
+							</v-card-text>
+							<v-card-text
+								v-if="!$vuetify.breakpoint.lgAndUp"
+							>
+								<v-layout row wrap class="dark--text">
+									<v-flex xs6>{{ $t('general.created_on') }}</v-flex>
+									<v-flex xs6>{{ $t('general.byUser') }}</v-flex>
+								</v-layout>
+								<v-layout row wrap>
+									<v-flex xs6>{{ this.created_on}}</v-flex>
+									<v-flex xs6>{{ this.created_by}}</v-flex>
+								</v-layout>
+							</v-card-text>
+							<v-card-text
+								v-if="!$vuetify.breakpoint.lgAndUp"
+							>
+								<v-layout row wrap class="dark--text">
+									<v-flex xs6>{{ $t('general.changed_on') }}</v-flex>
+									<v-flex xs6>{{ $t('general.byUser') }}</v-flex>
+								</v-layout>
+								<v-layout row wrap>
+									<v-flex xs6>{{ this.changed_on}}</v-flex>
+									<v-flex xs6>{{ this.changed_by}}</v-flex>
+								</v-layout>
+							</v-card-text>
+
+						</v-card>
+
 						<!-- Buttons -->
 						<v-card-actions>
 							<v-btn
@@ -462,6 +491,9 @@
 		},
 		created() {
 			this.loadData();
+		},
+		mounted() {
+			this.$refs.form.validate();
 		},
 		data() {
 			return {
