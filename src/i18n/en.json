@@ -231,7 +231,7 @@
 				"help": "Enter the antenna elevation over ground; NOT over NN (!) in meters."
 			},
 			"antennagain": {
-				"title":"Antenna gain",
+				"title": "Antenna gain",
 				"help": "Enter the antenna gain in the main lobe direction for directional antennas and the average gain for omnidirectional antennas in dBi (dBi: Gain over isotropic radiator)."
 			},
 			"txidentric": {
@@ -487,7 +487,7 @@
 					"title": "Could not load details of node {fieldname}."
 				},
 				"names": {
-					"title:": "Could not load list of node names."
+					"title": "Could not load list of node names."
 				}
 			},
 			"users": {
@@ -495,7 +495,7 @@
 					"title": "Could not load list of users."
 				},
 				"names": {
-					"title:": "Could not load list of user names."
+					"title": "Could not load list of user names."
 				},
 				"details": {
 					"title": "Could not load details of user {fieldname}."
@@ -512,7 +512,7 @@
 					"title": "Could not load data of my rubrics."
 				},
 				"names": {
-					"title:": "Could not load list of rubric names."
+					"title": "Could not load list of rubric names."
 				},
 				"details": {
 					"title": "Could not load details of rubric {fieldname}."
@@ -526,7 +526,7 @@
 					"title": "Could not load data of my transmitters."
 				},
 				"names": {
-					"title:": "Could not load list of transmitter names."
+					"title": "Could not load list of transmitter names."
 				},
 				"groups": {
 					"title": "Could not load list of transmitter groups."
@@ -543,7 +543,7 @@
 					"title": "Could not load data of my subscribers."
 				},
 				"names": {
-					"title:": "Could not load list of subscriber names."
+					"title": "Could not load list of subscriber names."
 				},
 				"groups": {
 					"title": "Could not load list of subscriber groups."
@@ -649,7 +649,7 @@
 		"description": "Description",
 		"name": "Name",
 		"latlong": {
-			"latitude":"Latitude",
+			"latitude": "Latitude",
 			"longitude": "Longitude",
 			"title": "Latitude / Longitude",
 			"north": "North",
