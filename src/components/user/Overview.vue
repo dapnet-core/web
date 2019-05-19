@@ -286,15 +286,14 @@
 						this.userrows = response.data.rows;
 					}
 					this.isLoadingData = false;
-				}, response => {
-					// error --> show error message
+				}).catch(e => {
 					this.isLoadingData = false;
 					this.$swal({
 						title: this.$i18n.t('alerts.errorLoadUsers.title'),
 						type: 'error',
 						html: this.$i18n.t('alerts.ticketlink', {
 							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
-						}) + '<br>' + response,
+						}) + '<br>' + e,
 						showConfirmButton: true,
 						confirmButtonText: this.$i18n.t('alerts.ok')
 					});
@@ -334,14 +333,14 @@
 							});
 							this.loadData();
 							this.$root.$emit('ReloadSidebarIcons');
-						}, response => {
-							// error --> show error message
+						}).catch(e => {
+							this.isLoadingData = false;
 							this.$swal({
+								title: this.$i18n.t('alerts.deleteuser.error'),
 								type: 'error',
-								title: this.$i18n.t('alerts.deleteuser.error', { fieldname: element._id}),
 								html: this.$i18n.t('alerts.ticketlink', {
 									htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
-								}) + '<br>' + response,
+								}) + '<br>' + e,
 								showConfirmButton: true,
 								confirmButtonText: this.$i18n.t('alerts.ok')
 							});

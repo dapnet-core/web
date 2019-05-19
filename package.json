@@ -1,6 +1,6 @@
 {
   "name": "dapnet-web",
-  "version": "3.0.10",
+  "version": "3.0.11",
   "description": "The default DAPNET Web-frontend.",
   "author": "Marvin Menzerath, Ralf Wilke",
   "private": true,
@@ -33,7 +33,8 @@
     "@ansur/leaflet-pulse-icon": "^0.1.1",
     "material-design-icons-iconfont": "^4.0.4",
     "vuetify-confirm": "^0.2.1",
-    "vue-sweetalert2": "^2.0.5"
+    "vue-sweetalert2": "^2.0.5",
+    "snackbarstack": "^1.0.18"
   },
   "devDependencies": {
     "@mdi/font": "^3.3.92",

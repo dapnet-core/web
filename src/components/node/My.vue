@@ -88,7 +88,16 @@
 					}).catch(e => {
 						console.log('Error getting nodes\'s individual details with axios or any exception in the get handler.');
 						console.log(e);
-				});
+						this.$swal({
+							title: this.$i18n.t('alerts.errorLoadNodes.title'),
+							type: 'error',
+							html: this.$i18n.t('alerts.ticketlink', {
+								htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+							}) + '<br>' + e,
+							showConfirmButton: true,
+							confirmButtonText: this.$i18n.t('alerts.ok')
+						});
+					});
 				console.log(this.myrubrics);
 			}
 		}

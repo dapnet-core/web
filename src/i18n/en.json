@@ -416,8 +416,26 @@
             "title": "Invalid location",
             "text": "Please check the given location and make sure to use your locale's decimal separator (e.g. <code>,</code> in German or <code>.</code> in US-English)."
         }
-    },
-    "formvalidation": {
+      },
+      "sidebar": {
+        "errorLoading": {
+          "my": {
+            "subscribers": "Error loading count of my subscribers.",
+            "rubrics": "Error loading count of my rubrics.",
+            "transmitters": "Error loading count of my transmitters.",
+            "nodes": "Error loading count of my nodes."
+          },
+          "total": {
+            "subscribers": "Error loading total count of nodes.",
+            "rubrics": "Error loading total count of rubrics.",
+            "transmitters": "Error loading total count of transmitters.",
+            "nodes": "Error loading total count of nodes.",
+            "users": "Error loading total count of users.",
+            "calls": "Error loading total count of calls."
+          }
+        }
+      },
+      "formvalidation": {
       "overlength": "{fieldname} must be less or equal than {count} characters.",
       "underlength": "{fieldname} must be minimum {count} characters.",
       "isrequired": "{fieldname} is required.",
@@ -488,6 +506,7 @@
         "password_new": "New Password",
         "yes": "Yes",
         "no": "No",
+        "confirm": "Confirm",
         "permalink": "Permalink",
         "duplication": "Changing this name will create a duplication and <i>not</i> change the element's name.",
         "news": "News",

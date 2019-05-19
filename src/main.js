@@ -11,6 +11,7 @@ import Vuetify from 'vuetify';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Sidebar from './components/partials/Sidebar';
+import SnackbarStackPlugin from 'snackbarstack';
 import store from './store';
 import VueClipboard from 'vue-clipboard2';
 // import globalMethods from './global';
@@ -36,7 +37,9 @@ import AppFooter from '@/components/partials/Footer';
 Vue.use(VueAxios, axios);
 Vue.use(VuetifyConfirm);
 Vue.use(VueSweetalert2);
-
+Vue.use(SnackbarStackPlugin, {
+	duration: 3000
+});
 
 Vue.use(VueClipboard);
 

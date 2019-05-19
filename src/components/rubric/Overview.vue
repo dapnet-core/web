@@ -339,15 +339,14 @@
 						this.rubricrows = response.data.rows;
 					}
 					this.isLoadingData = false;
-				}, response => {
-					// error --> show error message
+				}).catch(e => {
 					this.isLoadingData = false;
 					this.$swal({
 						title: this.$i18n.t('alerts.errorLoadRubrics.title'),
 						type: 'error',
 						html: this.$i18n.t('alerts.ticketlink', {
 							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
-						}) + '<br>' + response,
+						}) + '<br>' + e,
 						showConfirmButton: true,
 						confirmButtonText: this.$i18n.t('alerts.ok')
 					});

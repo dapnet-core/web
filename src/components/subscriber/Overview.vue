@@ -394,12 +394,18 @@
 						this.subscriberrows = response.data.rows;
 					}
 					this.isLoadingData = false;
-				}, response => {
-					// error --> show error message
+				}).catch(e => {
 					this.isLoadingData = false;
-					this.errorMessage = this.$helpers.getAjaxErrorMessage(this, response);
-				});
-			},
+					this.$swal({
+						title: this.$i18n.t('alerts.errorLoadSubscribers.title'),
+						type: 'error',
+						html: this.$i18n.t('alerts.ticketlink', {
+							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+						}) + '<br>' + e,
+						showConfirmButton: true,
+						confirmButtonText: this.$i18n.t('alerts.ok')
+					});
+				});			},
 			mailToOwner(element) {
 				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20Subscriber%3A%20' + element._id;
 			},

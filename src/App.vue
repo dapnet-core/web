@@ -14,6 +14,7 @@
 				v-model="drawer"
 		>
 			<Sidebar></Sidebar>
+
 		</v-navigation-drawer>
 		<v-toolbar color="indigo" dark fixed app>
 			<v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -99,9 +100,9 @@
 		<main>
 			<v-content>
 				<router-view :key="$route.fullPath"></router-view>
+				<app-footer></app-footer>
 			</v-content>
 		</main>
-		<app-footer></app-footer>
 	</v-app>
 </template>
 
