@@ -99,8 +99,8 @@
 										</v-card-title>
 										<v-card-text>
 											<v-layout wrap>
-												<v-flex>
-													<v-select xs3 sm1 md1
+												<v-flex xs3 sm3 md3>
+													<v-select
 														:items="northsouthSelect"
 														item-text="label"
 														item-value="value"
@@ -110,7 +110,7 @@
 													>
 													</v-select>
 												</v-flex>
-												<v-flex xs9 sm2 md2>
+												<v-flex xs9 sm3 md3>
 													<v-text-field
 														required
 														v-bind:rules="validationRules.latitude"
@@ -122,8 +122,8 @@
 													>
 													</v-text-field>
 												</v-flex>
-												<v-flex>
-													<v-select xs3 sm1 md1
+												<v-flex xs3 sm3 md3>
+													<v-select
 														:items="westeastSelect"
 														item-text="label"
 														item-value="value"
@@ -133,7 +133,7 @@
 													>
 													</v-select>
 												</v-flex>
-												<v-flex xs3 sm md2>
+												<v-flex xs9 sm3 md3>
 													<v-text-field
 														required
 														v-bind:rules="validationRules.longitude"
@@ -178,6 +178,7 @@
 											item-value="value"
 											required
 											v-model="form.usage"
+											v-bind:rules="validationRules.usage"
 											v-bind:label="$t('transmitters.usage.title')"
 											v-bind:hint="$t('transmitters.new.usage.help')"
 											persistent-hint
@@ -190,6 +191,7 @@
 										<v-text-field
 											required
 											v-model="form.power"
+											v-bind:rules="validationRules.power"
 											v-bind:label="$t('transmitters.power')"
 											v-bind:hint="$t('transmitters.new.power.help')"
 											persistent-hint
@@ -208,6 +210,7 @@
 											item-value="value"
 											required
 											v-model="form.antenna.type"
+											v-bind:rules="validationRules.antennaType"
 											v-bind:label="$t('transmitters.new.antennatype.title')"
 											v-bind:hint="$t('transmitters.new.antennatype.help')"
 											persistent-hint
@@ -216,7 +219,7 @@
 										</v-select>
 									</v-flex>
 									<v-flex xs12 sm6 md6
-											v-if="form.antenna.type !== 'omni'"
+											v-if="(form.antenna.type === 'directional') "
 									>
 										<v-text-field
 											required
@@ -239,6 +242,7 @@
 											v-model="form.antenna.gain"
 											v-bind:label="$t('transmitters.new.antennagain.title')"
 											v-bind:hint="$t('transmitters.new.antennagain.help')"
+											v-bind:rules="validationRules.antennaGain"
 											persistent-hint
 											prepend-icon="360"
 											type="number"
@@ -250,6 +254,7 @@
 										<v-text-field
 											required
 											v-model="form.antenna.agl"
+											v-bind:rules="validationRules.antennaElevation"
 											v-bind:label="$t('transmitters.new.antennalevel.title')"
 											v-bind:hint="$t('transmitters.new.antennalevel.help')"
 											persistent-hint
@@ -330,7 +335,18 @@
 									<v-card-title>
 										{{ this.$t('transmitters.new.timeslots.title') }}
 									</v-card-title>
+
 									<v-card-text>
+										<v-layout v-if="noTimeslotsSelected">
+											<v-flex xs12>
+												<v-alert
+													:value="true"
+													type="error"
+												>
+													{{ $t('formvalidation.noTimeslotSelected') }}
+												</v-alert>
+											</v-flex>
+										</v-layout>
 										<!--Button Group-->
 										<v-layout row wrap justify-space-around>
 											<v-flex xs12 sm9 class="py-2">
@@ -466,7 +482,7 @@
 							<v-btn
 								color="primary"
 								@click="submitForm"
-								:disabled="!isFormValid"
+								:disabled="!isFormValid || noTimeslotsSelected"
 							>
 								{{ $t('general.submit') }}
 							</v-btn>
@@ -520,11 +536,11 @@
 					},
 					coordinates: [0, 0],
 					latlong: {
-						northsouth: '1',
-						westeast: '1',
+						northsouth: 1,
+						westeast: 1,
 						absolute: {
-							latitude: 0,
-							longitude: 0
+							latitude: 50,
+							longitude: 10
 						}
 					},
 					aprs_broadcast: false,
@@ -532,7 +548,7 @@
 					auth_key: '',
 					antenna: {
 						type: '',
-						gain: 0,
+						gain: null,
 						direction: 0,
 						agl: 0
 					}
@@ -609,6 +625,10 @@
 					}
 				];
 			},
+			noTimeslotsSelected() {
+				console.log(this.timeslots_numeric.length <= 0);
+				return (this.timeslots_numeric.length <= 0);
+			},
 			validationRules() {
 				return {
 					'_id': [
@@ -664,6 +684,25 @@
 							min: 0,
 							max: 360
 						})
+					],
+					'antennaGain': [
+						v => (v && v >= -40 && v <= 60) || this.$t('formvalidation.OutOfRange', {
+							fieldname: this.$t('transmitters.new.antennagain.title_short'),
+							min: -40,
+							max: 60
+						})
+					],
+					'antennaType': [
+						v => (v && v !== '') || this.$t('formvalidation.antennaTypeSelected')
+					],
+					'antennaElevation': [
+						v => (v && v > 0) || this.$t('formvalidation.notzeroornegative', { fieldname: this.$t('transmitters.new.antennalevel.title_short') })
+					],
+					'usage': [
+						v => (v && v !== '') || this.$t('formvalidation.usageSelected')
+					],
+					'power': [
+						v => (v && v > 0) || this.$t('formvalidation.notzeroornegative', { fieldname: this.$t('transmitters.new.power.title_short') })
 					]
 				};
 			}

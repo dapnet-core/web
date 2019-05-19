@@ -224,15 +224,18 @@
 				"help": "Enter the antenna main beam direction in degrees according to \"True North\" (in German \"rechtweisend Nord\")."
 			},
 			"power": {
+				"title_short": "Output power",
 				"help": "Enter the transmitter output power in Watts including your cable losses."
 			},
 			"antennalevel": {
 				"title": "Antenna elevation over ground",
-				"help": "Enter the antenna elevation over ground; NOT over NN (!) in meters."
+				"help": "Enter the antenna elevation over ground; NOT over NN (!) in meters.",
+				"title_short": "Antenna elevation"
 			},
 			"antennagain": {
 				"title": "Antenna gain",
-				"help": "Enter the antenna gain in the main lobe direction for directional antennas and the average gain for omnidirectional antennas in dBi (dBi: Gain over isotropic radiator)."
+				"help": "Enter the antenna gain in the main lobe direction for directional antennas and the average gain for omnidirectional antennas in dBi (dBi: Gain over isotropic radiator).",
+				"title_short": "Antenna gain in dBi"
 			},
 			"txidentric": {
 				"help": "<b>Transmitter identification RIC</b>: Enter a RIC (default value is 8) which will be used to generate an artificial paging message containing the amateur radio callsign as given in this form."
@@ -604,7 +607,7 @@
 		"isvalidEmail": "The given email must be valid.", 
 		"minonerole": "At least one role",
 		"minoneowner": "At least one owner",
-		"OutOfRange": "{fieldname} must be between {min} and {max}",
+		"OutOfRange": "{fieldname} must be between {min} and {max}.",
 		"onlyInteger": "Only integer numbers allowed as {fieldname}",
 		"notzeroornegative": "{fieldname} must be greater than 0.",
 		"notnegative": "{fieldname} must be not negative.",
@@ -612,7 +615,10 @@
 		"maximal": "{fieldname} cannot be greater than {max}.",
 		"notlessorequalthan": "{fieldname} cannot be less or equal than {min}.",
 		"minonetransmitterorgroup": "There must be at least one transmitter or one transmitter group selected.",
-		"allreadypresent": "{fieldname} is already present in database. Select another one."
+		"allreadypresent": "{fieldname} is already present in database. Select another one.",
+		"usageSelected": "The usage of the transmitter must be selected.",
+		"antennaTypeSelected": "The antenna type of the transmitter must be selected.",
+		"noTimeslotSelected": "At least one timeslot must be selected."
 	},
 	"general": {
 		"callsign": "Callsign",
