@@ -12,6 +12,7 @@
 							v-bind:label="$t('table.search')"
 							single-line
 							hide-details
+							v-on:input="loadData"
 						>
 						</v-text-field>
 						<!-- Add User Button -->
@@ -54,9 +55,9 @@
 						:rows-per-page-items="[10, 25, 50, 100]"
 						must-sort
 						class="elevation-1"
-						:search="search"
 					>
 						<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+
 						<template slot="items" slot-scope="props">
 							<td>{{ props.item._id }}</td>
 							<td class="text-xs-center">{{ props.item.email }}</td>
@@ -132,9 +133,6 @@
 								</v-tooltip>
 							</td>
 						</template>
-						<v-alert slot="no-results" :value="true" color="error" icon="warning">
-							Your search for "{{ search }}" found no results.
-						</v-alert>
 					</v-data-table>
 				</v-card>
 			</v-flex>
@@ -216,7 +214,7 @@
 		methods: {
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('user.update') === 'all') ||
-				(this.$store.getters.permission('user.delete') === 'all'));
+					(this.$store.getters.permission('user.delete') === 'all'));
 			},
 			getPermissionsWrapper(mypermission) {
 				return (this.$store.getters.permission(mypermission));
@@ -233,8 +231,10 @@
 				}).then(response => {
 					// success --> save new data
 
-					// save total rows
-					if (response.data.total_rows) {
+					// save total rows of answer
+					if (this.search !== '' && response.data.rows) {
+						this.total_rows = response.data.rows.length;
+					} else if (response.data.total_rows) {
 						this.total_rows = response.data.total_rows;
 					}
 

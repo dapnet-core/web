@@ -689,7 +689,8 @@
 		"toggleauthkeyvisibility": "Toggle auth key visibility",
 		"generaterandomauthkey": "Generate random auth key",
 		"copyauthkeytoclipboard": "Copy auth key to clipboard",
-		"authkey": "Authentication Key"
+		"authkey": "Authentication Key",
+		"noResultsInDataTable": "No matching results ofr {fieldname} found."
 	},
 	"rubrics": {
 		"number": "Number",
@@ -1116,15 +1117,20 @@
 	},
 	"$vuetify": {
 		"dataIterator": {
-		"rowsPerPageText": "Items per page:",
-		"rowsPerPageAll": "All",
-		"pageText": "{0}-{1} of {2}",
-		"noResultsText": "No matching records found",
-		"nextPage": "Next page",
-		"prevPage": "Previous page"
+			"rowsPerPageText": "Items per page:",
+			"rowsPerPageAll": "All",
+			"pageText": "{0}-{1} of {2}",
+			"noResultsText": "No matching records found",
+			"nextPage": "Next page",
+			"prevPage": "Previous page"
 		},
 		"dataTable": {
-		"rowsPerPageText": "Rows per page:"
+			"rowsPerPageText": "Rows per page:",
+			"rowsPerPageAll": "All",
+			"pageText": "{0}-{1} of {2}",
+			"noResultsText": "No matching records found",
+			"nextPage": "Next page",
+			"prevPage": "Previous page"
 		},
 		"noDataText": "No data available"
 	}
