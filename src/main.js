@@ -14,8 +14,7 @@ import Sidebar from './components/partials/Sidebar';
 import SnackbarStackPlugin from 'snackbarstack';
 import store from './store';
 import VueClipboard from 'vue-clipboard2';
-// import globalMethods from './global';
-// import swal from 'sweetalert2';
+import globalMethods from './global';
 import VueSweetalert2 from 'vue-sweetalert2';
 import { L, LMap, LTileLayer, LMarker, LIcon, LPopup, LTooltip, LPolyline } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -71,8 +70,9 @@ swalPlugin.install = function(Vue) {
 	Vue.prototype.$swal = swal;
 };
 Vue.use(swalPlugin);
-Vue.use(globalMethods);
 */
+
+Vue.use(globalMethods);
 
 // set initial locale
 i18n.locale = store.getters.language;

@@ -78,7 +78,7 @@
 		},
 		methods: {
 			loadData() {
-				// load data of given id
+				// load data of my nodes
 				this.isLoadingData.general = true;
 				this.$axios.get('nodes/_my')
 					.then(response => {
@@ -86,17 +86,9 @@
 						this.mynodes = response.data;
 						this.isLoadingData.general = false;
 					}).catch(e => {
-						console.log('Error getting nodes\'s individual details with axios or any exception in the get handler.');
+						console.log('Error getting my nodes\'s details with axios or any exception in the get handler.');
 						console.log(e);
-						this.$swal({
-							title: this.$i18n.t('alerts.errorLoadNodes.title'),
-							type: 'error',
-							html: this.$i18n.t('alerts.ticketlink', {
-								htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
-							}) + '<br>' + e,
-							showConfirmButton: true,
-							confirmButtonText: this.$i18n.t('alerts.ok')
-						});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.nodes.my.title'), e);
 					});
 				console.log(this.myrubrics);
 			}

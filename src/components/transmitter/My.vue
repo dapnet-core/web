@@ -108,13 +108,13 @@
 					'status' in this.mytransmitters.rows[transmitterindex] &&
 					'messages' in this.mytransmitters.rows[transmitterindex].status &&
 					'queued' in this.mytransmitters.rows[transmitterindex].status.messages) {
-						return {
-							labels: ['L', '', 'M', '', 'H'],
-							datasets: [{
-								backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
-								data: this.mytransmitters.rows[transmitterindex].status.messages.queued
-							}]
-						};
+					return {
+						labels: ['L', '', 'M', '', 'H'],
+						datasets: [{
+							backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
+							data: this.mytransmitters.rows[transmitterindex].status.messages.queued
+						}]
+					};
 				} else {
 					return {
 						labels: ['E', 'M', 'P', 'T', 'Y'],
@@ -241,9 +241,10 @@
 						this.isLoadingData.general = false;
 						this.handleWebsocketConnetions();
 					}).catch(e => {
-						console.log('Error getting transmitters\'s individual details with axios or any exception in the get handler.');
+						console.log('Error getting my transmitters\'s details with axios or any exception in the get handler.');
 						console.log(e);
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.my.title'), e);
+					});
 			}
 		}
 	};

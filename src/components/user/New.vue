@@ -1,6 +1,6 @@
 <template>
 	<v-container fluid fill-height>
-		<v-layout align-center justify-center>
+		<v-layout justify-center>
 			<v-flex xs12 sm9 md9>
 				<v-card class="elevation-12">
 					<!--General Headline-->
@@ -496,7 +496,7 @@
 							</v-btn>
 							<v-btn
 								color="red"
-								exact to="/"
+								@click="abortButton"
 							>
 								{{ $t('general.abort') }}
 							</v-btn>
@@ -794,7 +794,7 @@
 				this.rotation = 0;
 			},
 			loadData() {
-				// Load avaiable user roles
+				// Load available user roles
 				this.isLoadingData.roles = true;
 				this.$axios.get('auth/users/roles')
 					.then(response => {
@@ -803,13 +803,14 @@
 						this.isLoadingData.roles = false;
 					}).catch(e => {
 						console.log('Error getting user\'s roles in user/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.users.roles.title'), e);
+					});
 
 				// TODO: Load availableThirdPartyRoles from API:
 				// Workaround: Set static
 				this.availableThirdPartyRoles = ['thirdparty.brandmeister'];
 
-				// Load avaiable users
+				// Load available users
 				this.isLoadingData.users = true;
 				this.$axios.get('users/_usernames')
 					.then(response => {
@@ -817,7 +818,8 @@
 						this.isLoadingData.users = false;
 					}).catch(e => {
 						console.log('Error getting user names in transmitter/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.users.names.title'), e);
+					});
 
 				// Load available subscriber names
 				this.isLoadingData.subscribers = true;
@@ -827,7 +829,8 @@
 						this.isLoadingData.subscribers = false;
 					}).catch(e => {
 						console.log('Error getting subscriber names in user/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.subscribers.names.title'), e);
+					});
 
 				// Load available subscriber groups
 				this.isLoadingData.subscriber_groups = true;
@@ -837,7 +840,8 @@
 						this.isLoadingData.subscriber_groups = false;
 					}).catch(e => {
 						console.log('Error getting subscriber groups in user/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.subscribers.groups.title'), e);
+					});
 
 				// Load available transmitter names
 				this.isLoadingData.transmitters = true;
@@ -847,7 +851,8 @@
 						this.isLoadingData.transmitters = false;
 					}).catch(e => {
 						console.log('Error getting subscriber names in user/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.names.title'), e);
+					});
 
 				// Load available transmitter groups
 				this.isLoadingData.transmitter_groups = true;
@@ -857,7 +862,8 @@
 						this.isLoadingData.transmitter_groups = false;
 					}).catch(e => {
 						console.log('Error getting subscriber groups in user/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.groups.title'), e);
+					});
 
 				// load data of given id
 				this.isLoadingData.general = true;
@@ -947,15 +953,16 @@
 						}).catch(e => {
 							console.log('Error getting user\'s individual details with axios or any exception in the get handler.');
 							console.log(e);
-							// this.$router.push('/users');
-					});
+							this.$helpers.swalError(this,
+								this.$i18n.t('alerts.errorLoad.users.details.title', { fieldname: this.$route.params.id }),
+								e);
+							this.$router.push('/users');
+						});
 				} else {
 					this.userformReadonly = false;
 				}
 				this.enabledReadonly = !(this.$store.getters.permission('user.change_role'));
 
-				console.log('this.$route.params.id ' + this.$route.params.id);
-				console.log('EditMode: ' + this.isEditMode);
 				this.isLoadingData.general = false;
 			},
 			changeAvailableRoles() {
@@ -990,13 +997,42 @@
 
 					console.log('Data2Send:');
 					console.log(this.form2send);
-					this.$helpers.sendData(this, 'users', this.form2send, '/users');
+					// Send data via axios by PUT
+					this.$axios.put('users', this.form2send)
+						.then(response => {
+							// this.$router.push('/users');
+							this.$router.go(-1);
 
-					// Trigger Reload of sidebar Icons
-					this.$root.$emit('ReloadSidebarIcons');
+							// Show Info snackbox of success
+							if (this.isEditMode) {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.editmode.user.success.title', { fieldname: this.form._id }));
+							} else {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.addmode.user.success.title', { fieldname: this.form._id }));
+								// Trigger Reload of sidebar Icons
+								this.$root.$emit('ReloadSidebarIcons');
+							}
+						}).catch(e => {
+							console.log('Error in Data Put in user/New.vue');
+							console.log(e);
+							// Show Error SWAL2
+							if (this.isEditMode) {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.editmode.user.fail.title', { fieldname: this.form._id }),
+									e);
+							} else {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.addmode.user.fail.title', { fieldname: this.form._id }),
+									e);
+							}
+						});
 
 					// TODO: Update auth if a user change their own password
 				}
+			},
+			abortButton(event) {
+				this.$router.push('/users');
 			}
 		}
 	};

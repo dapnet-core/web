@@ -1,6 +1,6 @@
 <template>
 	<v-container fluid fill-height>
-		<v-layout align-center justify-center>
+		<v-layout justify-center>
 			<v-flex xs12 sm9 md9>
 				<v-card class="elevation-12">
 					<!--General toolbar-->
@@ -357,7 +357,7 @@
 						v => (v && /^[0-9]+$/i.test(v)) || this.$t('formvalidation.onlyInteger', {
 							fieldname: this.$t('subscribers.new.pager.ric.title')
 						}),
-						v => (v && v > 0 && v <= 2097151) || this.$t('formvalidation.ricOutOfRange', {
+						v => (v && v > 0 && v <= 2097151) || this.$t('formvalidation.OutOfRange', {
 							fieldname: this.$t('subscribers.new.pager.ric.title'),
 							min: '0',
 							max: '2097151'
@@ -389,7 +389,8 @@
 						this.isLoadingData.users = false;
 					}).catch(e => {
 						console.log('Error getting user names in subscriber/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.users.names.title'), e);
+					});
 
 				// Load available subscriber names
 				this.isLoadingData.subscribers = true;
@@ -399,7 +400,8 @@
 						this.isLoadingData.subscribers = false;
 					}).catch(e => {
 						console.log('Error getting subscriber names in subscriber/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.subscribers.names.title'), e);
+					});
 
 				// Load available subscriber groups
 				this.isLoadingData.subscriber_groups = true;
@@ -409,7 +411,8 @@
 						this.isLoadingData.subscriber_groups = false;
 					}).catch(e => {
 						console.log('Error getting subscriber groups in subscriber/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.subscribers.groups.title'), e);
+					});
 
 				// load data of given id
 				this.isLoadingData.general = true;
@@ -448,9 +451,11 @@
 							}
 						}).catch(e => {
 							console.log('Error getting subscribers\'s individual details with axios or any exception in the get handler.');
-							this.$dialogs.passwordError(this, e);
-							// this.$router.push('/users');
-					});
+							this.$helpers.swalError(this,
+								this.$i18n.t('alerts.errorLoad.subscribers.details.title', { fieldname: this.$route.params.id }),
+								e);
+							this.$router.push('/subscribers');
+						});
 				} else {
 					this.isEditMode = false;
 				}
@@ -487,15 +492,41 @@
 					}
 					console.log('Data2Send von subscriber:');
 					console.log(this.form);
-					this.$helpers.sendData(this, 'subscribers', this.form, '');
 
-					// Trigger Reload of sidebar Icons
-					this.$root.$emit('ReloadSidebarIcons');
-					this.$router.go(-1);
+					// Send data via axios by PUT
+					this.$axios.put('subscribers', this.form)
+						.then(response => {
+							// this.$router.push('/subscribers');
+							this.$router.go(-1);
+
+							// Show Info snackbox of success
+							if (this.isEditMode) {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.editmode.subscriber.success.title', { fieldname: this.form._id }));
+							} else {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.addmode.subscriber.success.title', { fieldname: this.form._id }));
+								// Trigger Reload of sidebar Icons
+								this.$root.$emit('ReloadSidebarIcons');
+							}
+						}).catch(e => {
+							console.log('Error in Data Put in subscriber/New.vue');
+							console.log(e);
+							// Show Error SWAL2
+							if (this.isEditMode) {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.editmode.subscriber.fail.title', { fieldname: this.form._id }),
+									e);
+							} else {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.addmode.subscriber.fail.title', { fieldname: this.form._id }),
+									e);
+							}
+						});
 				}
 			},
 			abortButton(event) {
-				this.$router.go(-1);
+				this.$router.push('/subscribers');
 			}
 		}
 	};

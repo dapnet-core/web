@@ -1,6 +1,6 @@
 <template>
 	<v-container fluid fill-height>
-		<v-layout align-center justify-center>
+		<v-layout justify-center>
 			<v-flex xs12 sm9 md9>
 				<v-card class="elevation-12">
 					<!--General toolbar-->
@@ -423,7 +423,7 @@
 				this.form.coordinates[1] = this.form.latlong.absolute.longitude * this.form.latlong.westeast;
 			},
 			loadData() {
-				// Load avaiable users
+				// Load available users
 				this.isLoadingData.users = true;
 				this.$axios.get('users/_usernames')
 					.then(response => {
@@ -431,9 +431,10 @@
 						this.isLoadingData.users = false;
 					}).catch(e => {
 						console.log('Error getting user names in nodes/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.users.names.title'), e);
+					});
 
-				// Load available transmitters names
+				// Load available node names
 				this.isLoadingData.nodes = true;
 				this.$axios.get('nodes/_names')
 					.then(response => {
@@ -441,7 +442,8 @@
 						this.isLoadingData.nodes = false;
 					}).catch(e => {
 						console.log('Error getting node names in node/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.nodes.names.title'), e);
+					});
 
 				// load data of given id
 				this.isLoadingData.general = true;
@@ -460,14 +462,14 @@
 							if (response.data.coordinates &&
 								Array.isArray(response.data.coordinates) &&
 								response.data.coordinates.length === 2) {
-									this.form.coordinates = response.data.coordinates;
-									this.form.latlong.northsouth = (this.form.coordinates[0] > 0 ? 1 : -1);
-									this.form.latlong.westeast = (this.form.coordinates[1] > 0 ? 1 : -1);
-									this.form.latlong.absolute.latitude = Math.abs(this.form.coordinates[0]).toFixed(6);
-									this.form.latlong.absolute.longitude = Math.abs(this.form.coordinates[1]).toFixed(6);
-									this.map.marker.lat = this.form.coordinates[0];
-									this.map.marker.lng = this.form.coordinates[1];
-								}
+								this.form.coordinates = response.data.coordinates;
+								this.form.latlong.northsouth = (this.form.coordinates[0] > 0 ? 1 : -1);
+								this.form.latlong.westeast = (this.form.coordinates[1] > 0 ? 1 : -1);
+								this.form.latlong.absolute.latitude = Math.abs(this.form.coordinates[0]).toFixed(6);
+								this.form.latlong.absolute.longitude = Math.abs(this.form.coordinates[1]).toFixed(6);
+								this.map.marker.lat = this.form.coordinates[0];
+								this.map.marker.lng = this.form.coordinates[1];
+							}
 
 							// Format timestamp into readable version
 							if (response.data.created_on) {
@@ -492,9 +494,11 @@
 							}
 						}).catch(e => {
 							console.log('Error getting nodes\'s individual details with axios or any exception in the get handler.');
-							this.$dialogs.passwordError(this, e);
-							// this.$router.push('/users');
-					});
+							this.$helpers.swalError(this,
+								this.$i18n.t('alerts.errorLoad.nodes.details.title', { fieldname: this.$route.params.id }),
+								e);
+							this.$router.push('/nodes');
+						});
 				} else {
 					this.isEditMode = false;
 				}
@@ -520,19 +524,48 @@
 
 					console.log('Data2Send von nodes:');
 					console.log(data2Send);
-					this.$helpers.sendData(this, 'nodes', data2Send, '');
 
-					// Trigger Reload of sidebar Icons
-					this.$root.$emit('ReloadSidebarIcons');
-					this.$router.go(-1);
+					// Send data via axios by PUT
+					this.$axios.put('nodes', data2Send)
+						.then(response => {
+							// Trigger Reload of sidebar Icons
+							this.$root.$emit('ReloadSidebarIcons');
+							// this.$router.push('/nodes');
+							this.$router.go(-1);
+
+							// Show Info snackbox of success
+							if (this.isEditMode) {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.editmode.node.success.title', { fieldname: this.form._id }));
+							} else {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.addmode.node.success.title', { fieldname: this.form._id }));
+								// Trigger Reload of sidebar Icons
+								this.$root.$emit('ReloadSidebarIcons');
+							}
+						}).catch(e => {
+							console.log('Error in Data Put in node/New.vue');
+							console.log(e);
+							// Show Error SWAL2
+							if (this.isEditMode) {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.editmode.node.fail.title', { fieldname: this.form._id }),
+									e);
+							} else {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.addmode.node.fail.title', { fieldname: this.form._id }),
+									e);
+							}
+						});
 				}
 			},
 			abortButton(event) {
-				this.$router.go(-1);
+				this.$router.push('/nodes');
 			}
 		}
 	};
 </script>
+
 <style scoped>
 	.action-buttons {
 		padding: 1px;

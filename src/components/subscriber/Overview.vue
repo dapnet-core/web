@@ -306,7 +306,7 @@
 		methods: {
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('subscriber.update') === 'all') ||
-				(this.$store.getters.permission('subscriber.delete') === 'all'));
+					(this.$store.getters.permission('subscriber.delete') === 'all'));
 			},
 			getPermissionsWrapper(mypermission) {
 				return (this.$store.getters.permission(mypermission));
@@ -396,16 +396,9 @@
 					this.isLoadingData = false;
 				}).catch(e => {
 					this.isLoadingData = false;
-					this.$swal({
-						title: this.$i18n.t('alerts.errorLoadSubscribers.title'),
-						type: 'error',
-						html: this.$i18n.t('alerts.ticketlink', {
-							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
-						}) + '<br>' + e,
-						showConfirmButton: true,
-						confirmButtonText: this.$i18n.t('alerts.ok')
-					});
-				});			},
+					this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.subscribers.list.title'), e);
+				});
+			},
 			mailToOwner(element) {
 				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20Subscriber%3A%20' + element._id;
 			},
@@ -413,18 +406,33 @@
 				this.$router.push({ name: 'Edit Subscriber', params: { id: element._id } });
 			},
 			deleteElement(element) {
-				this.$dialogs.deleteElement(this, () => {
-					this.axios.delete('subscribers/' + element._id + '?revision=' + element._rev, {
-						// before(request) {
-						//	request.headers.delete('Content-Type');
-						// }
-					}).then(response => {
-						// success --> reload data
-						this.loadData();
-					}, response => {
-						// error --> show error message
-						this.$dialogs.ajaxError(this, response);
-					});
+				this.$helpers.swalDeleteConfirm(
+					this,
+					this.$i18n.t('alerts.delete.subscriber.title', { fieldname: element._id }),
+					this.$i18n.t('alerts.delete.subscriber.confirm', { fieldname: element._id })
+				).then(swalresult => {
+					if (swalresult) {
+						console.log('Deleting subscriber ' + element._id);
+						this.axios.delete('subscribers/' + element._id + '?revision=' + element._rev, {
+							// before(request) {
+							//	request.headers.delete('Content-Type');
+							// }
+						}).then(response => {
+							// success --> reload data
+							this.loadData();
+							this.$root.$emit('ReloadSidebarIcons');
+							this.$helpers.swalDeleteSuccess(
+								this,
+								this.$i18n.t('alerts.delete.subscriber.success', { fieldname: element._id })
+							);
+						}).catch(e => {
+							this.$helpers.swalDeleteFail(
+								this,
+								this.$i18n.t('alerts.delete.subscriber.error', { fieldname: element._id }),
+								e
+							);
+						});
+					}
 				});
 			}
 		}

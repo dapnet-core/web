@@ -1,6 +1,6 @@
 <template>
 	<v-container fluid fill-height>
-		<v-layout align-center justify-center>
+		<v-layout justify-center>
 			<v-flex xs12 sm9 md9>
 				<v-card class="elevation-12">
 					<!--General toolbar-->
@@ -591,7 +591,7 @@
 				this.$refs.form.validate();
 			},
 			loadData() {
-				// Load avaiable user roles
+				// Load avaiable user names
 				this.isLoadingData.users = true;
 				this.$axios.get('users/_usernames')
 					.then(response => {
@@ -599,7 +599,8 @@
 						this.isLoadingData.users = false;
 					}).catch(e => {
 						console.log('Error getting user names in transmitter/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.users.names.title'), e);
+					});
 
 				// Load available transmitters names
 				this.isLoadingData.transmitters = true;
@@ -609,7 +610,8 @@
 						this.isLoadingData.transmitters = false;
 					}).catch(e => {
 						console.log('Error getting transmitter names in transmitter/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.names.title'), e);
+					});
 
 				// Load available transmitters groups
 				this.isLoadingData.transmitter_groups = true;
@@ -619,7 +621,8 @@
 						this.isLoadingData.transmitter_groups = false;
 					}).catch(e => {
 						console.log('Error getting transmitter groups in transmitter/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.groups.title'), e);
+					});
 
 				// Load available rubrics
 				this.isLoadingData.rubrics = true;
@@ -629,7 +632,8 @@
 						this.isLoadingData.rubrics = false;
 					}).catch(e => {
 						console.log('Error getting rubric names in transmitter/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.rubrics.names.title'), e);
+					});
 
 				// load data of given id
 				this.isLoadingData.general = true;
@@ -702,7 +706,11 @@
 							this.updateTimeStampFormat();
 						}).catch(e => {
 							console.log('Error getting rubric\'s individual details with axios or any exception in the get handler.');
-					});
+							this.$helpers.swalError(this,
+								this.$i18n.t('alerts.errorLoad.transmitters.details.title', { fieldname: this.$route.params.id }),
+								e);
+							this.$router.push('/rubrics');
+						});
 				} else {
 					this.isEditMode = false;
 				}
@@ -725,15 +733,41 @@
 
 					console.log('Data2Send von rubrics:');
 					console.log(this.form);
-					this.$helpers.sendData(this, 'rubrics', this.form, '');
 
-					// Trigger Reload of sidebar Icons
-					this.$root.$emit('ReloadSidebarIcons');
-					this.$router.go(-1);
+					// Send data via axios by PUT
+					this.$axios.put('rubrics', this.form)
+						.then(response => {
+							// this.$router.push('/rubrics');
+							this.$router.go(-1);
+
+							// Show Info snackbox of success
+							if (this.isEditMode) {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.editmode.rubric.success.title', { fieldname: this.form._id }));
+							} else {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.addmode.rubric.success.title', { fieldname: this.form._id }));
+								// Trigger Reload of sidebar Icons
+								this.$root.$emit('ReloadSidebarIcons');
+							}
+						}).catch(e => {
+							console.log('Error in Data Put in rubric/New.vue');
+							console.log(e);
+							// Show Error SWAL2
+							if (this.isEditMode) {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.editmode.rubric.fail.title', { fieldname: this.form._id }),
+									e);
+							} else {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.addmode.rubric.fail.title', { fieldname: this.form._id }),
+									e);
+							}
+						});
 				}
 			},
 			abortButton(event) {
-				this.$router.go(-1);
+				this.$router.push('/rubrics');
 			}
 		}
 	};

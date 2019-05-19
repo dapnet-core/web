@@ -443,17 +443,9 @@
 					}
 					console.log('Total Calls ' + this.count_total.calls);
 					this.isReadyLoadingData.total.calls = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.my.subscribers'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.total.calls'));
 				});
 			},
 			loadTotalNodes() {
@@ -465,17 +457,9 @@
 					}
 					console.log('Total Nodes ' + this.count_total.nodes);
 					this.isReadyLoadingData.total.nodes = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.total.nodes'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.total.nodes'));
 				});
 			},
 			loadTotalRubrics() {
@@ -487,17 +471,9 @@
 					}
 					console.log('Total Rubrics ' + this.count_total.rubrics);
 					this.isReadyLoadingData.total.rubrics = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.total.rubrics'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.total.rubrics'));
 				});
 			},
 			loadTotalUsers() {
@@ -509,17 +485,9 @@
 					}
 					console.log('Total Users: ' + this.count_total.users);
 					this.isReadyLoadingData.total.users = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.total.users'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.total.users'));
 				});
 			},
 			loadTotalSubscribers() {
@@ -531,17 +499,9 @@
 					}
 					console.log('Total Subscribers: ' + this.count_total.subscribers);
 					this.isReadyLoadingData.total.subscribers = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.total.subscribers'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.total.subscribers'));
 				});
 			},
 			loadTotalTransmitters() {
@@ -553,17 +513,9 @@
 					}
 					console.log('Total Transmitters: ' + this.count_total.transmitters);
 					this.isReadyLoadingData.total.transmitters = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.total.transmitters'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.total.transmitters'));
 				});
 			},
 			loadMySubscribers() {
@@ -575,17 +527,9 @@
 					}
 					console.log('mySubscribers: ' + this.count_my.subscribers);
 					this.isReadyLoadingData.my.subscribers = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.my.subscribers'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.my.subscribers'));
 				});
 			},
 			loadMyNodes() {
@@ -597,17 +541,9 @@
 					}
 					console.log('myNodes: ' + this.count_my.nodes);
 					this.isReadyLoadingData.my.nodes = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.my.nodes'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.my.nodes'));
 				});
 			},
 			loadMyTransmitters() {
@@ -619,17 +555,9 @@
 					}
 					console.log('myTransmitters: ' + this.count_my.transmitters);
 					this.isReadyLoadingData.my.transmitters = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.my.transmitters'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.my.transmitters'));
 				});
 			},
 			loadMyRubrics() {
@@ -641,17 +569,9 @@
 					}
 					console.log('myRubrics: ' + this.count_my.rubrics);
 					this.isReadyLoadingData.my.rubrics = true;
-				}, response => {
+				}).catch(e => {
 					// error --> show error message in snackbar
-					this.$snackbar.show(this.$i18n.t('sidebar.errorLoading.my.rubrics'), {
-						closeable: false,
-						actions: [{
-							caption: this.$i18n.t('general.confirm'),
-							handler(snackbar, options) {
-								snackbar.close();
-							}
-						}]
-					});
+					this.$helpers.snackbarStackError(this, this.$i18n.t('alerts.sidebar.errorLoading.my.rubrics'));
 				});
 			}
 		}

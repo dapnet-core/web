@@ -209,7 +209,7 @@
 			*/
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('node.update') === 'all') ||
-				(this.$store.getters.permission('node.delete') === 'all'));
+					(this.$store.getters.permission('node.delete') === 'all'));
 			},
 			getPermissionsWrapper(mypermission) {
 				return (this.$store.getters.permission(mypermission));
@@ -260,15 +260,7 @@
 					this.isLoadingData = false;
 				}).catch(e => {
 					this.isLoadingData = false;
-					this.$swal({
-						title: this.$i18n.t('alerts.errorLoadNodes.title'),
-						type: 'error',
-						html: this.$i18n.t('alerts.ticketlink', {
-							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
-						}) + '<br>' + e,
-						showConfirmButton: true,
-						confirmButtonText: this.$i18n.t('alerts.ok')
-					});
+					this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.nodes.list.title'), e);
 				});
 			},
 			mailToOwner(element) {
@@ -278,17 +270,12 @@
 				this.$router.push({ name: 'Edit Node', params: { id: element._id } });
 			},
 			deleteElement(element) {
-				this.$swal({
-					title: this.$i18n.t('alerts.deletenode.title', { fieldname: element._id }),
-					text: this.$i18n.t('alerts.noUndo'),
-					showConfirmButton: true,
-					confirmButtonText: this.$i18n.t('alerts.deletenode.confirm', { fieldname: element._id }),
-					confirmButtonColor: '#F44336',
-					showCancelButton: true,
-					cancelButtonText: this.$i18n.t('alerts.cancel'),
-					type: 'question'
-				}).then((result) => {
-					if (result.value) {
+				this.$helpers.swalDeleteConfirm(
+					this,
+					this.$i18n.t('alerts.delete.node.title', { fieldname: element._id }),
+					this.$i18n.t('alerts.delete.node.confirm', { fieldname: element._id })
+				).then(swalresult => {
+					if (swalresult) {
 						console.log('Deleting Node ' + element._id);
 						this.axios.delete('nodes/' + element._id + '?revision=' + element._rev, {
 							// before(request) {
@@ -296,25 +283,18 @@
 							// }
 						}).then(response => {
 							// success --> reload data
-							this.$swal({
-								type: 'info',
-								title: this.$i18n.t('alerts.deletenode.success', { fieldname: element._id }),
-								showConfirmButton: true,
-								confirmButtonText: this.$i18n.t('alerts.ok')
-							});
 							this.loadData();
 							this.$root.$emit('ReloadSidebarIcons');
-						}, response => {
-							// error --> show error message
-							this.$swal({
-								type: 'error',
-								title: this.$i18n.t('alerts.deletenode.error', { fieldname: element._id}),
-								html: this.$i18n.t('alerts.ticketlink', {
-									htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
-								}) + '<br>' + response,
-								showConfirmButton: true,
-								confirmButtonText: this.$i18n.t('alerts.ok')
-							});
+							this.$helpers.swalDeleteSuccess(
+								this,
+								this.$i18n.t('alerts.delete.node.success', { fieldname: element._id })
+							);
+						}).catch(e => {
+							this.$helpers.swalDeleteFail(
+								this,
+								this.$i18n.t('alerts.delete.node.error', { fieldname: element._id }),
+								e
+							);
 						});
 					}
 				});

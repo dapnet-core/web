@@ -401,6 +401,7 @@
 						}).catch(e => {
 							console.log('Error getting rubric\'s individual details with axios or any exception' +
 								'in the get handler of AddRubricContent.' + e);
+							this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.rubrics.details.title'), e);
 						});
 				}
 			},
@@ -437,6 +438,7 @@
 						})
 						.catch(function(error) {
 							console.log('Error in put rubric content', error);
+							this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.nodes.list.title'), e);
 						});
 				}
 			},

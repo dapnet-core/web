@@ -172,6 +172,7 @@ const GlobalMethodsPlugin = {
 			return true;
 		};
 
+		/* UNUSED in V2
 		// checks if the given data may overwrite an existing resource and denies or sends the request
 		Vue.prototype.$helpers.checkForOverwritingAndSend = function(context, routeId, url, body, gotoUrl) {
 			if (routeId) {
@@ -188,6 +189,7 @@ const GlobalMethodsPlugin = {
 				});
 			}
 		};
+		*/
 
 		// actually sends the given data to the server
 		// Moved to axios
@@ -250,6 +252,94 @@ const GlobalMethodsPlugin = {
 				s = '0' + s;
 			}
 			return s;
+		};
+
+		// SweetAlert2 Error Dialog
+		Vue.prototype.$helpers.swalError = function(context, title, errormessage) {
+			context.$swal({
+				title: title,
+				type: 'error',
+				html: context.$i18n.t('alerts.ticketlink', {
+					htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+				}) + '<br>' + errormessage,
+				showConfirmButton: true,
+				confirmButtonText: context.$i18n.t('alerts.ok')
+			});
+		};
+
+		// SweetAlert2 Warning Dialog
+		Vue.prototype.$helpers.swalWarning = function(context, title, errormessage) {
+			context.$swal({
+				title: title,
+				type: 'error',
+				html: context.$i18n.t('alerts.ticketlink', {
+					htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+				}) + '<br>' + errormessage,
+				showConfirmButton: true,
+				confirmButtonText: context.$i18n.t('alerts.ok')
+			});
+		};
+
+		// SweetAlert2 Delete Confirm Dialog
+		Vue.prototype.$helpers.swalDeleteConfirm = function(context, title, confirmButtonText) {
+			return new Promise((resolve) => {
+				context.$swal({
+					title: title,
+					text: context.$i18n.t('alerts.noUndo'),
+					showConfirmButton: true,
+					confirmButtonText: confirmButtonText,
+					confirmButtonColor: '#F44336',
+					showCancelButton: true,
+					cancelButtonText: context.$i18n.t('alerts.cancel'),
+					type: 'question'
+				}).then((swalresult) => {
+					if (swalresult.value) {
+						resolve(true);
+					}
+				});
+			});
+		};
+
+		// SweetAlert2 Delete Success Dialog
+		Vue.prototype.$helpers.swalDeleteSuccess = function(context, title) {
+			context.$swal({
+				type: 'info',
+				title: title,
+				showConfirmButton: true,
+				confirmButtonText: context.$i18n.t('alerts.ok')
+			});
+		};
+
+		// SweetAlert2 Delete Fail Dialog
+		Vue.prototype.$helpers.swalDeleteFail = function(context, title, errormessage) {
+			context.$swal({
+				type: 'error',
+				title: title,
+				html: context.$i18n.t('alerts.ticketlink', {
+					htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
+				}) + '<br>' + errormessage,
+				showConfirmButton: true,
+				confirmButtonText: context.$i18n.t('alerts.ok')
+			});
+		};
+
+		// Snackbar Stack info message
+		Vue.prototype.$helpers.snackbarStackInfo = function(context, title) {
+			context.$snackbar.show(title, {
+				closeable: false
+			});
+		};
+		// Snackbar Stack error message
+		Vue.prototype.$helpers.snackbarStackError = function(context, title) {
+			context.$snackbar.show(title, {
+				closeable: false,
+				actions: [{
+					caption: context.$i18n.t('general.confirm'),
+					handler(snackbar, options) {
+						snackbar.close();
+					}
+				}]
+			});
 		};
 
 		Vue.prototype.$helpers.stringToColor = function(string) {

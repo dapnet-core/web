@@ -341,15 +341,7 @@
 					this.isLoadingData = false;
 				}).catch(e => {
 					this.isLoadingData = false;
-					this.$swal({
-						title: this.$i18n.t('alerts.errorLoadRubrics.title'),
-						type: 'error',
-						html: this.$i18n.t('alerts.ticketlink', {
-							htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
-						}) + '<br>' + e,
-						showConfirmButton: true,
-						confirmButtonText: this.$i18n.t('alerts.ok')
-					});
+					this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.rubrics.list.title'), e);
 				});
 			},
 			mailToOwner(element) {
@@ -365,18 +357,12 @@
 				this.$router.push({ name: 'Add Rubric Content', params: { id: element._id } });
 			},
 			deleteElement(element) {
-				this.$swal({
-					title: this.$i18n.t('alerts.deleterubric.title', { fieldname: element._id }),
-					text: this.$i18n.t('alerts.noUndo'),
-					showConfirmButton: true,
-					confirmButtonText: this.$i18n.t('alerts.deleterubric.confirm', { fieldname: element._id }),
-					confirmButtonColor: '#F44336',
-					showCancelButton: true,
-					cancelButtonText: this.$i18n.t('alerts.cancel'),
-					cancelButtonColor: '#33691E',
-					type: 'question'
-				}).then((result) => {
-					if (result.value) {
+				this.$helpers.swalDeleteConfirm(
+					this,
+					this.$i18n.t('alerts.delete.rubric.title', { fieldname: element._id }),
+					this.$i18n.t('alerts.delete.rubric.confirm', { fieldname: element._id })
+				).then(swalresult => {
+					if (swalresult) {
 						console.log('Deleting rubric ' + element._id);
 						this.axios.delete('rubrics/' + element._id + '?revision=' + element._rev, {
 							// before(request) {
@@ -384,25 +370,18 @@
 							// }
 						}).then(response => {
 							// success --> reload data
-							this.$swal({
-								type: 'info',
-								title: this.$i18n.t('alerts.deleterubric.success', { fieldname: element._id }),
-								showConfirmButton: true,
-								confirmButtonText: this.$i18n.t('alerts.ok')
-							});
 							this.loadData();
 							this.$root.$emit('ReloadSidebarIcons');
-						}, response => {
-							// error --> show error message
-							this.$swal({
-								type: 'error',
-								title: this.$i18n.t('alerts.deleterubric.error', { fieldname: element._id}),
-								html: this.$i18n.t('alerts.ticketlink', {
-									htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
-								}) + '<br>' + response,
-								showConfirmButton: true,
-								confirmButtonText: this.$i18n.t('alerts.ok')
-							});
+							this.$helpers.swalDeleteSuccess(
+								this,
+								this.$i18n.t('alerts.delete.rubric.success', { fieldname: element._id })
+							);
+						}).catch(e => {
+							this.$helpers.swalDeleteFail(
+								this,
+								this.$i18n.t('alerts.delete.rubric.error', { fieldname: element._id }),
+								e
+							);
 						});
 					}
 				});

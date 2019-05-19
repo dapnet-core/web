@@ -1,6 +1,6 @@
 <template>
 	<v-container fluid fill-height>
-		<v-layout align-center justify-center>
+		<v-layout justify-center>
 			<v-flex xs12 sm9 md9>
 				<v-card class="elevation-12">
 					<!--General toolbar-->
@@ -675,15 +675,16 @@
 				this.form.coordinates[1] = this.form.latlong.absolute.longitude * this.form.latlong.westeast;
 			},
 			loadData() {
-				// Load avaiable users
+				// Load available users
 				this.isLoadingData.users = true;
 				this.$axios.get('users/_usernames')
 					.then(response => {
 						this.formData.users = response.data;
 						this.isLoadingData.users = false;
 					}).catch(e => {
-						console.log('Error getting user names in transmitter/new.vue');
-				});
+						this.isLoadingData.users = false;
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.users.names.title'), e);
+					});
 
 				// Load available transmitters names
 				this.isLoadingData.transmitters = true;
@@ -693,7 +694,9 @@
 						this.isLoadingData.transmitters = false;
 					}).catch(e => {
 						console.log('Error getting transmitter names in transmitter/new.vue');
-				});
+						this.isLoadingData.transmitters = false;
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.names.title'), e);
+					});
 
 				// Load available transmitters groups
 				this.isLoadingData.transmitter_groups = true;
@@ -703,7 +706,8 @@
 						this.isLoadingData.transmitter_groups = false;
 					}).catch(e => {
 						console.log('Error getting transmitter groups in transmitter/new.vue');
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.groups.title'), e);
+					});
 
 				// load data of given id
 				this.isLoadingData.general = true;
@@ -744,14 +748,14 @@
 							if (response.data.coordinates &&
 								Array.isArray(response.data.coordinates) &&
 								response.data.coordinates.length === 2) {
-									this.form.coordinates = response.data.coordinates;
-									this.form.latlong.northsouth = (this.form.coordinates[0] > 0 ? 1 : -1);
-									this.form.latlong.westeast = (this.form.coordinates[1] > 0 ? 1 : -1);
-									this.form.latlong.absolute.latitude = Math.abs(this.form.coordinates[0]).toFixed(6);
-									this.form.latlong.absolute.longitude = Math.abs(this.form.coordinates[1]).toFixed(6);
-									this.map.marker.lat = this.form.coordinates[0];
-									this.map.marker.lng = this.form.coordinates[1];
-								}
+								this.form.coordinates = response.data.coordinates;
+								this.form.latlong.northsouth = (this.form.coordinates[0] > 0 ? 1 : -1);
+								this.form.latlong.westeast = (this.form.coordinates[1] > 0 ? 1 : -1);
+								this.form.latlong.absolute.latitude = Math.abs(this.form.coordinates[0]).toFixed(6);
+								this.form.latlong.absolute.longitude = Math.abs(this.form.coordinates[1]).toFixed(6);
+								this.map.marker.lat = this.form.coordinates[0];
+								this.map.marker.lng = this.form.coordinates[1];
+							}
 
 							// Format timestamp into readable version
 							if (response.data.created_on) {
@@ -800,9 +804,11 @@
 							}
 						}).catch(e => {
 							console.log('Error getting transmitter\'s individual details with axios or any exception in the get handler.');
-							this.$dialogs.passwordError(this, e);
-							// this.$router.push('/users');
-					});
+							this.$helpers.swalError(this,
+								this.$i18n.t('alerts.errorLoad.transmitters.details.title', { fieldname: this.$route.params.id }),
+								e);
+							this.$router.push('/transmitters');
+						});
 				} else {
 					this.isEditMode = false;
 				}
@@ -837,15 +843,41 @@
 
 					console.log('Data2Send von transmitter:');
 					console.log(data2Send);
-					this.$helpers.sendData(this, 'transmitters', data2Send, '');
 
-					// Trigger Reload of sidebar Icons
-					this.$root.$emit('ReloadSidebarIcons');
-					this.$router.go(-1);
+					// Send data via axios by PUT
+					this.$axios.put('transmitters', data2Send)
+						.then(response => {
+							// this.$router.push('/transmitters');
+							this.$router.go(-1);
+
+							// Show Info snackbox of success
+							if (this.isEditMode) {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.editmode.transmitter.success.title', { fieldname: this.form._id }));
+							} else {
+								this.$helpers.snackbarStackInfo(this,
+									this.$i18n.t('alerts.addmode.transmitter.success.title', { fieldname: this.form._id }));
+								// Trigger Reload of sidebar Icons
+								this.$root.$emit('ReloadSidebarIcons');
+							}
+						}).catch(e => {
+							console.log('Error in Data Put in transmitter/New.vue');
+							console.log(e);
+							// Show Error SWAL2
+							if (this.isEditMode) {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.editmode.transmitter.fail.title', { fieldname: this.form._id }),
+									e);
+							} else {
+								this.$helpers.swalError(this,
+									this.$i18n.t('alerts.addmode.transmitter.fail.title', { fieldname: this.form._id }),
+									e);
+							}
+						});
 				}
 			},
 			abortButton(event) {
-				this.$router.go(-1);
+				this.$router.push('/transmitters');
 			}
 		}
 	};

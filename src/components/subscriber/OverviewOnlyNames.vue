@@ -75,7 +75,8 @@
 						showConfirmButton: true,
 						confirmButtonText: this.$i18n.t('alerts.ok')
 					});
-				});			},
+				});
+			},
 			layoutCount: function(rows, columns) {
 				return (rows - 1) * this.numberOfColumns + columns;
 			}

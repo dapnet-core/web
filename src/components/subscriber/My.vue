@@ -87,9 +87,10 @@
 						this.mysubscribers = response.data;
 						this.isLoadingData.general = false;
 					}).catch(e => {
-						console.log('Error getting subscribers\'s individual details with axios or any exception in the get handler.');
+						console.log('Error getting my subscribers\'s details with axios or any exception in the get handler.');
 						console.log(e);
-				});
+						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.subscribers.my.title'), e);
+					});
 				console.log(this.mysubscribers);
 			},
 			editElement(element) {
