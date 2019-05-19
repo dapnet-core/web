@@ -544,7 +544,7 @@
 						}
 					},
 					aprs_broadcast: false,
-					enabled: false,
+					enabled: true,
 					auth_key: '',
 					antenna: {
 						type: '',
@@ -626,7 +626,6 @@
 				];
 			},
 			noTimeslotsSelected() {
-				console.log(this.timeslots_numeric.length <= 0);
 				return (this.timeslots_numeric.length <= 0);
 			},
 			validationRules() {
@@ -889,7 +888,7 @@
 				event.preventDefault();
 				console.log(this.form);
 
-				if (this.$refs.form.validate()) {
+				if (this.$refs.form.validate() && this.timeslots_numeric.length > 0) {
 					let data2Send = {};
 					data2Send.power = parseInt(this.form.power);
 					data2Send.antenna = this.form.antenna;
