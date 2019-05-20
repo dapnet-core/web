@@ -10,8 +10,8 @@
 					</v-card-title>
 					<v-form v-model="isFormValid" ref="form">
 						<v-card-text>
-							<!--ID-->
 							<v-layout wrap>
+								<!--ID-->
 								<v-flex xs12 sm12 lg4>
 									<v-text-field
 										name="username"
@@ -22,14 +22,13 @@
 										v-model="form._id"
 										v-bind:label="$t('general.username')"
 										type="text"
-										v-bind:readonly="userformReadonly ? true : false"
+										v-bind:readonly="userNameFixed ? true : false"
 										:loading="isLoadingData.general"
 										browser-autocomplete="false"
 									>
 										<v-progress-linear color="blue" indeterminate></v-progress-linear>
 									</v-text-field>
 								</v-flex>
-
 								<!--Email-->
 								<v-flex xs12 md12 lg4>
 									<v-text-field
@@ -54,7 +53,7 @@
 									v-if="iseditingown"
 								>
 									<v-avatar
-										v-if="this.$store.getters.avatar"
+										v-if="hasAvatar"
 										size="80"
 									>
 										<img v-bind:src="AvatarImageComputed" />
@@ -64,7 +63,7 @@
 												flat
 												icon
 												color="green"
-												@click="editavatardialog = true"
+												@click="showAvatarEditorDialog"
 											>
 												<v-icon>edit</v-icon>
 											</v-btn>
@@ -89,20 +88,9 @@
 												flat
 												icon
 												color="green"
-												@click="editavatardialog = true"
+												@click="showAvatarEditorDialog"
 											>
-												<v-icon>edit</v-icon>
-											</v-btn>
-										</div>
-										<!--Avatar Delete Icon-->
-										<div class="avatar-deleteicon-position">
-											<v-btn
-												flat
-												icon
-												color="red"
-												@click="deleteAvatar"
-											>
-												<v-icon>delete</v-icon>
+												<v-icon>add</v-icon>
 											</v-btn>
 										</div>
 									</div>
@@ -119,6 +107,7 @@
 										<v-card-text>
 													<div align="center">
 													<vue-avatar
+														:key="avatarEditorRerenders"
 														:width="400"
 														:height="400"
 														:rotation="rotation"
@@ -127,7 +116,6 @@
 														:border="0"
 														ref="vueavatar"
 														@vue-avatar-editor:image-ready="onImageReady"
-														:image="AvatarImageComputed"
 													>
 													</vue-avatar>
 													</div>
@@ -160,8 +148,19 @@
 											</v-layout>
 										</v-card-text>
 										<v-card-actions>
-											<v-btn v-on:click="avatarSaveClicked">Save changes</v-btn>
-											<v-btn color="primary" flat @click="editavatardialog=false">Close</v-btn>
+											<v-btn
+												v-on:click="avatarSaveClicked"
+												:disabled="!imageUploaded"
+											>
+												{{ $t('general.upload') }}
+											</v-btn>
+											<v-btn
+												color="primary"
+												flat
+												@click="editavatardialog=false"
+											>
+												{{ $t('general.cancel') }}
+											</v-btn>
 										</v-card-actions>
 									</v-card>
 								</v-dialog>
@@ -578,6 +577,9 @@
 				rotation: 0,
 				scale: 1,
 				editavatardialog: false,
+				hasAvatar: false,
+				imageUploaded: false,
+				avatarEditorRerenders: 0,
 				isLoadingData: {
 					general: true,
 					subscribers: true,
@@ -625,7 +627,7 @@
 				changed_on: '',
 				changed_on_iso: '',
 				changed_by: '',
-				userformReadonly: true,
+				userNameFixed: true,
 				enabledReadonly: false,
 				isEditMode: (!!(this.$route.params.id)),
 				newthridpartyrole: 'thirdparty.',
@@ -728,7 +730,7 @@
 			iseditingown() {
 				if (this.$route.params.id) {
 					console.log('params: ' + this.$route.params.id);
-					console.log('store username: ' +this.$store.getters.username);
+					console.log('store username: ' + this.$store.getters.username);
 					if (this.$store.getters.username === this.$route.params.id) {
 						return true;
 					}
@@ -807,16 +809,23 @@
 
 				return new Blob([uInt8Array], { type: contentType });
 			},
+			showAvatarEditorDialog() {
+				this.avatarEditorRerenders += 1;
+				this.editavatardialog = true;
+			},
 			avatarSaveClicked() {
 				var img = this.$refs.vueavatar.getImageScaled();
-				console.log('Stored new avatar to browser store');
+				var resizeImage = require('resize-image');
+
+				let resizedImage = resizeImage.resize2Canvas(img, 80, 80);
+				console.log('Storing new avatar to browser store');
 				this.$store.commit('changeAvatar', {
-					avatarImage: img.toDataURL('image/jpeg')
+					avatarImage: resizedImage.toDataURL('image/jpeg')
 				});
 				console.log('Storing to Couchdb');
 				let avatarPutPath = '/users/' + this.$store.getters.username + '/avatar.jpg?rev=' + this.form._rev;
 				console.log(avatarPutPath);
-				var rawImage = this.createBlob(img.toDataURL('image/jpeg'));
+				var rawImage = this.createBlob(resizedImage.toDataURL('image/jpeg'));
 
 				this.$axios.put(
 					avatarPutPath,
@@ -827,25 +836,45 @@
 						}
 					}
 				)
-					.then(r => console.log(r.status))
+					.then(r => {
+						console.log('avatar saved, Status von CouchDB: ' + r.status);
+						this.loadUserDetails();
+					})
 					.catch(e => console.log(e));
 				this.editavatardialog = false;
 			},
 			onImageReady() {
+				console.log('called onImageReady');
+				this.imageUploaded = true;
 				this.scale = 1;
 				this.rotation = 0;
 			},
 			deleteAvatar() {
-				this.$store.commit('deleteAvatar');
-				console.log('Deleting from Couchdb');
-				let avatarDeletePath = '/users/' + this.$store.getters.username + '/avatar.jpg?revision=' + this.form._rev;
-				console.log(avatarDeletePath);
+				if (this.$store.getters.hasAvatar) {
+					this.$store.commit('deleteAvatar');
+					console.log('Deleting from Couchdb');
+					let avatarDeletePath = '/users/' + this.$store.getters.username + '/avatar.jpg?revision=' + this.form._rev;
+					console.log(avatarDeletePath);
 
-				this.$axios.delete(avatarDeletePath)
-					.then(r => console.log(r.status))
-					.catch(e => console.log(e));
+					this.$axios.delete(avatarDeletePath)
+						.then(r => {
+							console.log('avatar Deleted, Status von CouchDB: ' + r.status);
+							this.loadUserDetails();
+							this.imageUploaded = false;
+						})
+						.catch(e => console.log(e));
+				}
 			},
 			loadData() {
+				this.loadUserRoles();
+				this.loadUserNames();
+				this.loadSubscriberNames();
+				this.loadSubscriberGroups();
+				this.loadTransmitterNames();
+				this.loadTransmitterGroups();
+				this.loadUserDetails();
+			},
+			loadUserRoles() {
 				// Load available user roles
 				this.isLoadingData.roles = true;
 				this.$axios.get('auth/users/roles')
@@ -861,7 +890,8 @@
 				// TODO: Load availableThirdPartyRoles from API:
 				// Workaround: Set static
 				this.availableThirdPartyRoles = ['thirdparty.brandmeister'];
-
+			},
+			loadUserNames() {
 				// Load available users
 				this.isLoadingData.users = true;
 				this.$axios.get('users/_usernames')
@@ -872,7 +902,8 @@
 						console.log('Error getting user names in transmitter/new.vue');
 						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.users.names.title'), e);
 					});
-
+			},
+			loadSubscriberNames() {
 				// Load available subscriber names
 				this.isLoadingData.subscribers = true;
 				this.$axios.get('subscribers/_names')
@@ -883,7 +914,8 @@
 						console.log('Error getting subscriber names in user/new.vue');
 						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.subscribers.names.title'), e);
 					});
-
+			},
+			loadSubscriberGroups() {
 				// Load available subscriber groups
 				this.isLoadingData.subscriber_groups = true;
 				this.$axios.get('subscribers/_groups')
@@ -894,7 +926,8 @@
 						console.log('Error getting subscriber groups in user/new.vue');
 						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.subscribers.groups.title'), e);
 					});
-
+			},
+			loadTransmitterNames() {
 				// Load available transmitter names
 				this.isLoadingData.transmitters = true;
 				this.$axios.get('transmitters/_names')
@@ -905,7 +938,8 @@
 						console.log('Error getting subscriber names in user/new.vue');
 						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.names.title'), e);
 					});
-
+			},
+			loadTransmitterGroups() {
 				// Load available transmitter groups
 				this.isLoadingData.transmitter_groups = true;
 				this.$axios.get('transmitters/_groups')
@@ -916,13 +950,20 @@
 						console.log('Error getting subscriber groups in user/new.vue');
 						this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.groups.title'), e);
 					});
-
+			},
+			loadUserDetails() {
 				// load data of given id
 				this.isLoadingData.general = true;
 				if (this.$route.params.id) {
-					this.userformReadonly = true;
+					this.userNameFixed = true;
 					this.$axios.get('users/' + this.$route.params.id)
 						.then(response => {
+							this.$store.commit('updateUser', {
+								user: response.data
+							});
+							this.hasAvatar = this.$store.getters.hasAvatar;
+							console.log('New.vue loadUserDetails hasAvatar: ' + this.hasAvatar);
+
 							this.form._id = response.data._id;
 							this.form._rev = response.data._rev;
 							this.form.email = response.data.email;
@@ -1011,7 +1052,7 @@
 							this.$router.push('/users');
 						});
 				} else {
-					this.userformReadonly = false;
+					this.userNameFixed = false;
 				}
 				this.enabledReadonly = !(this.$store.getters.permission('user.change_role'));
 

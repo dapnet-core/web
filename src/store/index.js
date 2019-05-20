@@ -30,11 +30,13 @@ export default new Vuex.Store({
 		username: state => {
 			return state.user ? state.user._id : 'Guest';
 		},
-		avatar: state => {
+		hasAvatar: state => {
+			console.log('getter hasAvatar _attachments: ' + state.user._attachments);
 			if ((state.user) && (state.user._attachments)) {
-				return state.user._attachments['avatar.jpg'] ? state.user._attachments['avatar.jpg'] : null;
+				// return state.user._attachments['avatar.jpg'] ? state.user._attachments['avatar.jpg'] : null;
+				return state.user._attachments['avatar.jpg'] ? true : false;
 			} else {
-				return null;
+				return false;
 			}
 		},
 		avatarImage: state => {
@@ -78,7 +80,7 @@ export default new Vuex.Store({
 			state.user = null;
 			state.auth = null;
 			state.permissions = [];
-			state.avatarImage = null;
+			state.avatarImage = '';
 
 			axios.defaults.headers.common['Authorization'] = '';
 		},
@@ -89,7 +91,13 @@ export default new Vuex.Store({
 			state.avatarImage = payload.avatarImage;
 		},
 		deleteAvatar(state) {
-			state.avatarImage = null;
+			state.avatarImage = '';
+			if ((state.user) && (state.user._attachments) && (state.user._attachments['avatar.jpg'])) {
+				delete (state.user._attachments['avatar.jpg']);
+			}
+		},
+		updateUser(state, payload) {
+			state.user = payload.user;
 		}
 	},
 	plugins: [

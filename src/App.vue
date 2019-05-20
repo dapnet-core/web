@@ -65,7 +65,7 @@
 						flat
 					>
 						<v-avatar
-							v-if="this.$store.getters.avatar"
+							v-if="this.$store.getters.hasAvatar"
 							size="40"
 						>
 							<img v-bind:src="AvatarImageComputed" />

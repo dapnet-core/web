@@ -101,8 +101,8 @@
 						permissions: response.data.permissions,
 						auth: btoa(this.username + ':' + this.password)
 					});
-					// But first also load the avatar image
-					if (this.$store.getters.avatar) {
+					// But first also load the avatar image if present
+					if (this.$store.getters.hasAvatar) {
 						console.log('Loading avatar');
 						console.log('Path: ' + '/users/' + this.$store.getters.username + '/avatar.jpg');
 						this.$axios.get('/users/' + this.$store.getters.username + '/avatar.jpg', {

@@ -672,6 +672,7 @@
 		"yes": "Yes",
 		"no": "No",
 		"confirm": "Confirm",
+		"cancel": "Cancel",
 		"permalink": "Permalink",
 		"duplication": "Changing this name will create a duplication and <i>not</i> change the element's name.",
 		"news": "News",
@@ -690,7 +691,8 @@
 		"generaterandomauthkey": "Generate random auth key",
 		"copyauthkeytoclipboard": "Copy auth key to clipboard",
 		"authkey": "Authentication Key",
-		"noResultsInDataTable": "No matching results ofr {fieldname} found."
+		"noResultsInDataTable": "No matching results ofr {fieldname} found.",
+		"upload": "Upload"
 	},
 	"rubrics": {
 		"number": "Number",
