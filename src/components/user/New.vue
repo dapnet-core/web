@@ -58,17 +58,54 @@
 										size="80"
 									>
 										<img v-bind:src="AvatarImageComputed" />
+										<!--Avatar Edit Icon-->
 										<div class="avatar-editicon-position">
-										<v-btn
-											flat
-											icon
-											color="red"
-											@click="editavatardialog = true"
-										>
-											<v-icon>edit</v-icon>
-										</v-btn>
+											<v-btn
+												flat
+												icon
+												color="green"
+												@click="editavatardialog = true"
+											>
+												<v-icon>edit</v-icon>
+											</v-btn>
+										</div>
+										<!--Avatar Delete Icon-->
+										<div class="avatar-deleteicon-position">
+											<v-btn
+												flat
+												icon
+												color="red"
+												@click="deleteAvatar"
+											>
+												<v-icon>delete</v-icon>
+											</v-btn>
 										</div>
 									</v-avatar>
+									<div v-else>
+										<v-icon size="80">insert_emoticon</v-icon>
+										<!--Avatar Edit Icon-->
+										<div class="avatar-editicon-position">
+											<v-btn
+												flat
+												icon
+												color="green"
+												@click="editavatardialog = true"
+											>
+												<v-icon>edit</v-icon>
+											</v-btn>
+										</div>
+										<!--Avatar Delete Icon-->
+										<div class="avatar-deleteicon-position">
+											<v-btn
+												flat
+												icon
+												color="red"
+												@click="deleteAvatar"
+											>
+												<v-icon>delete</v-icon>
+											</v-btn>
+										</div>
+									</div>
 								</div>
 								<!--Edit avatar Dialog-->
 								<v-dialog
@@ -690,7 +727,8 @@
 			},
 			iseditingown() {
 				if (this.$route.params.id) {
-					console.log('params:' + this.$route.params.id);
+					console.log('params: ' + this.$route.params.id);
+					console.log('store username: ' +this.$store.getters.username);
 					if (this.$store.getters.username === this.$route.params.id) {
 						return true;
 					}
@@ -796,6 +834,16 @@
 			onImageReady() {
 				this.scale = 1;
 				this.rotation = 0;
+			},
+			deleteAvatar() {
+				this.$store.commit('deleteAvatar');
+				console.log('Deleting from Couchdb');
+				let avatarDeletePath = '/users/' + this.$store.getters.username + '/avatar.jpg?revision=' + this.form._rev;
+				console.log(avatarDeletePath);
+
+				this.$axios.delete(avatarDeletePath)
+					.then(r => console.log(r.status))
+					.catch(e => console.log(e));
 			},
 			loadData() {
 				// Load available user roles
@@ -1051,8 +1099,15 @@
 	.avatar-editicon-position {
 		position: absolute;
 		left: 30px;
-		top: 30px;
+		top: 70px;
 	}
+
+	.avatar-deleteicon-position {
+		position: absolute;
+		left: 0px;
+		top: 70px;
+	}
+
 	.avatar-position {
 		position: relative;
 	}

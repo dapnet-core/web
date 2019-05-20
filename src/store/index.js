@@ -78,6 +78,7 @@ export default new Vuex.Store({
 			state.user = null;
 			state.auth = null;
 			state.permissions = [];
+			state.avatarImage = null;
 
 			axios.defaults.headers.common['Authorization'] = '';
 		},
@@ -86,6 +87,9 @@ export default new Vuex.Store({
 		},
 		changeAvatar(state, payload) {
 			state.avatarImage = payload.avatarImage;
+		},
+		deleteAvatar(state) {
+			state.avatarImage = null;
 		}
 	},
 	plugins: [
