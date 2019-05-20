@@ -12,6 +12,7 @@
 							v-bind:label="$t('table.search')"
 							single-line
 							hide-details
+							v-on:input="loadData"
 						>
 						</v-text-field>
 						<!-- Add Transmitter Button -->
@@ -39,29 +40,28 @@
 						:rows-per-page-items="[10, 25, 50, 100]"
 						must-sort
 						class="elevation-1"
-						:search="search"
 					>
 						<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
 						<template slot="items" slot-scope="props">
 							<!-- ID column -->
-							<td class="text-xs-right">
+							<td class="text-xs-right pa-0">
 								{{ props.item._id }}
 							</td>
 
 							<!-- Status column -->
-							<td class="text-xs-right">
+							<td class="text-xs-center pa-0">
 								<v-icon v-if="props.item.status.online" color="green">cloud_done</v-icon>
 								<v-icon v-else color ="red">cloud_off</v-icon>
 							</td>
 
 							<!-- OnAir column -->
-							<td class="text-xs-right">
+							<td class="text-xs-center pa-0">
 								<v-icon v-if="props.item.status.onair" color="green">signal_wifi_4_bar</v-icon>
 								<v-icon v-else color ="red">signal_wifi_off</v-icon>
 							</td>
 
 							<!-- Messages column -->
-							<td class="text-xs-right">
+							<td class="text-xs-center pa-0">
 								<div v-if="props.item.status.online" class="chartContainer">
 									<chart-message-queue
 										:chartData="chartDataMessageQueue(props.index)"
@@ -72,7 +72,7 @@
 							</td>
 
 							<!-- Node column -->
-							<td class="text-xs-center">
+							<td class="text-xs-center pa-0">
 								<div v-if="props.item.status.node">
 									<v-chip
 										color="grey"
@@ -86,7 +86,7 @@
 							</td>
 
 							<!-- Software column -->
-							<td class="text-xs-center">
+							<td class="text-xs-center pa-0">
 								<div v-if="props.item.status.software">
 									<v-chip
 										color="grey"
@@ -100,12 +100,12 @@
 							</td>
 
 							<!-- Usage column -->
-							<td class="text-xs-center">
+							<td class="text-xs-center pa-0">
 								<img v-bind:src="`${props.item.usage.image}`" v-bind:alt="`${props.item.usage.text}`">
 							</td>
 
 							<!-- owner column -->
-							<td class="text-xs-center">
+							<td class="text-xs-center pa-0">
 								<span v-for="(owner, index) in props.item.owners" v-bind:key="`owner-${index}`">
 									<v-chip
 										color="grey"
@@ -118,7 +118,7 @@
 							</td>
 
 							<!-- Transmitter Groups column -->
-							<td class="text-xs-left">
+							<td class="text-xs-left pa-0">
 								<span v-for="(group, index) in props.item.groups" v-bind:key="`group-${index}`">
 									<v-chip
 										color="grey"
@@ -131,12 +131,12 @@
 							</td>
 
 							<!-- Last-seen column -->
-							<td class="text-xs-center">
+							<td class="text-xs-center pa-0">
 								{{ props.item.status.last_seen_localized }}
 							</td>
 
 							<!-- Emergency Power column -->
-							<td class="text-xs-center">
+							<td class="text-xs-center pa-0">
 								<v-icon
 									v-if="props.item.emergency_power && props.item.emergency_power.available"
 									color="green"
@@ -147,13 +147,13 @@
 							</td>
 
 							<!-- Enabled column -->
-							<td class="text-xs-center">
+							<td class="text-xs-center pa-0">
 								<v-icon v-if="props.item.enabled" color="green">toggle_on</v-icon>
 								<v-icon v-else color ="red">toggle_off</v-icon>
 							</td>
 
 							<!-- Action Buttons -->
-							<td class="text-xs-center" v-if="displayActionsColumn">
+							<td class="text-xs-center pa-0" v-if="displayActionsColumn">
 								<!-- Edit -->
 								<v-tooltip bottom>
 									<v-btn class="action-buttons"
@@ -268,76 +268,89 @@
 						text: this.$i18n.t('general.name'),
 						align: 'left',
 						sortable: true,
-						value: '_id'
+						value: '_id',
+						class: 'text-xs-right pa-0'
 					},
 					{
 						text: this.$i18n.t('transmitters.status.connected'),
 						sortable: true,
 						align: 'center',
-						value: 'status.online'
+						value: 'status.online',
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('transmitters.status.onair'),
 						sortable: false,
 						align: 'center',
-						value: 'status.onair'
+						value: 'status.onair',
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('transmitters.status.messagequeue'),
 						sortable: false,
 						align: 'center',
-						value: 'status.messages.sent'
+						value: 'status.messages.sent',
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('transmitters.status.node'),
 						sortable: true,
 						align: 'center',
-						value: 'status.node'
+						value: 'status.node',
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('transmitters.status.software'),
 						sortable: true,
 						align: 'center',
-						value: 'status.software'
+						value: 'status.software',
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('transmitters.usage.title'),
 						sortable: true,
 						align: 'center',
-						value: 'usage'
+						value: 'usage',
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('general.owner'),
 						align: 'center',
-						value: 'owners'
+						value: 'owners',
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('general.transmitter_groups'),
 						align: 'center',
 						value: 'groups',
-						sortable: true
+						sortable: true,
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('transmitters.status.lastseen'),
 						align: 'center',
-						value: 'status.lastseen'
+						value: 'status.lastseen',
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('transmitters.emergency_power.title'),
 						align: 'center',
-						value: 'emergency_power.available'
+						value: 'emergency_power.available',
+						class: 'text-xs-center pa-0'
 					},
 					{
 						text: this.$i18n.t('general.enabled'),
 						align: 'center',
-						value: 'enabled'
+						value: 'enabled',
+						class: 'text-xs-center pa-0'
 					}
 				];
 				if (this.displayActionsColumn()) {
 					let actions = {
 						text: this.$i18n.t('general.actions'),
 						align: 'center',
-						sortable: false
+						sortable: false,
+						class: 'text-xs-center pa-0'
 					};
 					answer.push(actions);
 				}
@@ -505,8 +518,10 @@
 				}).then(response => {
 					// success --> save new data
 
-					// save total rows
-					if (response.data.total_rows) {
+					// save total rows of answer
+					if (this.search !== '' && response.data.rows) {
+						this.total_rows = response.data.rows.length;
+					} else if (response.data.total_rows) {
 						this.total_rows = response.data.total_rows;
 					}
 

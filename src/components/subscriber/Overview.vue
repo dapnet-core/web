@@ -12,6 +12,7 @@
 							v-bind:label="$t('table.search')"
 							single-line
 							hide-details
+							v-on:input="loadData"
 						>
 						</v-text-field>
 						<!-- Add Subscriber Button -->
@@ -40,7 +41,6 @@
 							:rows-per-page-items="[10, 25, 50, 100]"
 							must-sort
 							class="elevation-1"
-							:search="search"
 						>
 							<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
 							<template slot="items" slot-scope="props">
@@ -323,8 +323,10 @@
 				}).then(response => {
 					// success --> save new data
 
-					// save total rows
-					if (response.data.total_rows) {
+					// save total rows of answer
+					if (this.search !== '' && response.data.rows) {
+						this.total_rows = response.data.rows.length;
+					} else if (response.data.total_rows) {
 						this.total_rows = response.data.total_rows;
 					}
 
