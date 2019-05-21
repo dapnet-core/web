@@ -129,8 +129,8 @@
 										</v-card-title>
 										<v-card-text>
 											<v-layout wrap>
-												<v-flex>
-													<v-select xs3 sm1 md1
+												<v-flex xs3 sm3 md3>
+													<v-select
 														:items="northsouthSelect"
 														item-text="label"
 														item-value="value"
@@ -140,7 +140,7 @@
 													>
 													</v-select>
 												</v-flex>
-												<v-flex xs9 sm2 md2>
+												<v-flex xs9 sm3 md3>
 													<v-text-field
 														required
 														:rules="validationRules.latitude"
@@ -152,8 +152,8 @@
 													>
 													</v-text-field>
 												</v-flex>
-												<v-flex>
-													<v-select xs3 sm1 md1
+												<v-flex xs3 sm3 md3>
+													<v-select
 														:items="westeastSelect"
 														item-text="label"
 														item-value="value"
@@ -163,7 +163,7 @@
 													>
 													</v-select>
 												</v-flex>
-												<v-flex xs3 sm md2>
+												<v-flex xs9 sm3 md3>
 													<v-text-field
 														required
 														:rules="validationRules.longitude"
@@ -322,11 +322,11 @@
 					owners: [],
 					coordinates: [0, 0],
 					latlong: {
-						northsouth: '1',
-						westeast: '1',
+						northsouth: 1,
+						westeast: 1,
 						absolute: {
-							latitude: 0,
-							longitude: 0
+							latitude: 50,
+							longitude: 10
 						}
 					}
 				},
@@ -345,8 +345,8 @@
 					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
 					url: this.$store.getters.url.map,
 					marker: {
-						lat: 0,
-						lng: 0
+						lat: 50,
+						lng: 10
 					}
 				}
 			};
@@ -388,7 +388,7 @@
 							fieldname: this.$t('general.name'),
 							count: '3'
 						}),
-						v => (v && /^[a-z0-9]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumeric'),
+						v => (v && /^[a-z0-9.\-_]+$/i.test(v)) || this.$t('formvalidation.onlyalphanumerichyphenunderscorepoint'),
 						v => (v && this.isEditMode) || (v && !this.formData.nodes.includes(v)) || this.$t('formvalidation.allreadypresent', {
 							fieldname: this.$t('general.name')
 						})
