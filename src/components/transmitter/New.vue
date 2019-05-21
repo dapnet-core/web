@@ -151,7 +151,7 @@
 										<v-card-media>
 											<l-map
 												:zoom="map.zoom"
-												:center="form.coordinates"
+												:center="mapCenter"
 												@click="mapClicked"
 												style="height: 30em"
 											>
@@ -161,7 +161,7 @@
 												>
 												</l-tile-layer>
 												<l-marker
-													:lat-lng="map.marker"
+													:lat-lng="mapMarker"
 												>
 												</l-marker>
 											</l-map>
@@ -501,6 +501,7 @@
 </template>
 <script>
 	import moment from 'moment';
+	import L from 'leaflet';
 
 	export default {
 		components: {
@@ -534,7 +535,7 @@
 						infinite: false,
 						duration: 0
 					},
-					coordinates: [50, 10],
+					coordinates: [0, 0],
 					latlong: {
 						northsouth: 1,
 						westeast: 1,
@@ -568,11 +569,15 @@
 				map: {
 					zoom: this.$store.getters.map.zoom,
 					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
-					url: this.$store.getters.url.map,
-					marker: {
-						lat: 50,
-						lng: 10
-					}
+					url: this.$store.getters.url.map
+				},
+				mapMarker: {
+					lat: 50,
+					lng: 10
+				},
+				mapCenter: {
+					lat: 50,
+					lng: 10
 				}
 			};
 		},
@@ -725,16 +730,14 @@
 			updateLocationFromUserInput() {
 				this.form.coordinates[0] = this.form.latlong.absolute.latitude * this.form.latlong.northsouth;
 				this.form.coordinates[1] = this.form.latlong.absolute.longitude * this.form.latlong.westeast;
-				this.map.marker = {
+				this.mapMarker = {
 					lat: this.form.coordinates[0],
 					lng: this.form.coordinates[1]
 				};
+				this.mapCenter = this.mapMarker;
 			},
 			mapClicked(e) {
-				this.map.marker = {
-					lat: e.latlng.lat,
-					lng: e.latlng.lng
-				};
+				this.mapMarker = e.latlng;
 
 				// set position in form
 				this.form.latlong.absolute.latitude = Math.abs(e.latlng.lat).toFixed(6);
@@ -815,17 +818,19 @@
 								}
 							}
 
+							// Map and Coordinates
 							if (response.data.coordinates &&
 								Array.isArray(response.data.coordinates) &&
 								response.data.coordinates.length === 2) {
-								this.form.coordinates = response.data.coordinates;
-								this.form.latlong.northsouth = (this.form.coordinates[0] > 0 ? 1 : -1);
-								this.form.latlong.westeast = (this.form.coordinates[1] > 0 ? 1 : -1);
-								this.form.latlong.absolute.latitude = Math.abs(this.form.coordinates[0]).toFixed(6);
-								this.form.latlong.absolute.longitude = Math.abs(this.form.coordinates[1]).toFixed(6);
-								this.map.marker.lat = this.form.coordinates[0];
-								this.map.marker.lng = this.form.coordinates[1];
+								this.mapCenter = L.latLng(response.data.coordinates[0], response.data.coordinates[1]);
+
+								this.form.latlong.northsouth = (response.data.coordinates[0] > 0 ? 1 : -1);
+								this.form.latlong.westeast = (response.data.coordinates[1] > 0 ? 1 : -1);
+								this.form.latlong.absolute.latitude = Math.abs(response.data.coordinates[0]).toFixed(6);
+								this.form.latlong.absolute.longitude = Math.abs(response.data.coordinates[1]).toFixed(6);
+								this.mapMarker = this.mapCenter;
 							}
+
 
 							// Format timestamp into readable version
 							if (response.data.created_on) {

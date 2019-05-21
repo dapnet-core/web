@@ -499,7 +499,6 @@
 								Array.isArray(response.data.coordinates) &&
 								response.data.coordinates.length === 2) {
 								this.mapCenter = L.latLng(response.data.coordinates[0], response.data.coordinates[1]);
-								console.log(this.mapCenter);
 
 								this.form.latlong.northsouth = (response.data.coordinates[0] > 0 ? 1 : -1);
 								this.form.latlong.westeast = (response.data.coordinates[1] > 0 ? 1 : -1);
