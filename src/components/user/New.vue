@@ -814,34 +814,36 @@
 				this.editavatardialog = true;
 			},
 			avatarSaveClicked() {
-				var img = this.$refs.vueavatar.getImageScaled();
-				var resizeImage = require('resize-image');
+				if (this.$store.getters.username === this.$route.params.id) {
+					var img = this.$refs.vueavatar.getImageScaled();
+					var resizeImage = require('resize-image');
 
-				let resizedImage = resizeImage.resize2Canvas(img, 80, 80);
-				console.log('Storing new avatar to browser store');
-				this.$store.commit('changeAvatar', {
-					avatarImage: resizedImage.toDataURL('image/jpeg')
-				});
-				console.log('Storing to Couchdb');
-				let avatarPutPath = '/users/' + this.$store.getters.username + '/avatar.jpg?rev=' + this.form._rev;
-				console.log(avatarPutPath);
-				var rawImage = this.createBlob(resizedImage.toDataURL('image/jpeg'));
+					let resizedImage = resizeImage.resize2Canvas(img, 80, 80);
+					console.log('Storing new avatar to browser store');
+					this.$store.commit('changeAvatar', {
+						avatarImage: resizedImage.toDataURL('image/jpeg')
+					});
+					console.log('Storing to Couchdb');
+					let avatarPutPath = '/users/' + this.$store.getters.username + '/avatar.jpg?rev=' + this.form._rev;
+					console.log(avatarPutPath);
+					var rawImage = this.createBlob(resizedImage.toDataURL('image/jpeg'));
 
-				this.$axios.put(
-					avatarPutPath,
-					rawImage,
-					{
-						headers: {
-							'Content-Type': 'image/jpeg'
+					this.$axios.put(
+						avatarPutPath,
+						rawImage,
+						{
+							headers: {
+								'Content-Type': 'image/jpeg'
+							}
 						}
-					}
-				)
-					.then(r => {
-						console.log('avatar saved, Status von CouchDB: ' + r.status);
-						this.loadUserDetails();
-					})
-					.catch(e => console.log(e));
-				this.editavatardialog = false;
+					)
+						.then(r => {
+							console.log('avatar saved, Status von CouchDB: ' + r.status);
+							this.loadUserDetails();
+						})
+						.catch(e => console.log(e));
+					this.editavatardialog = false;
+				}
 			},
 			onImageReady() {
 				console.log('called onImageReady');
@@ -850,7 +852,7 @@
 				this.rotation = 0;
 			},
 			deleteAvatar() {
-				if (this.$store.getters.hasAvatar) {
+				if (this.$store.getters.hasAvatar && (this.$store.getters.username === this.$route.params.id)) {
 					this.$store.commit('deleteAvatar');
 					console.log('Deleting from Couchdb');
 					let avatarDeletePath = '/users/' + this.$store.getters.username + '/avatar.jpg?revision=' + this.form._rev;
@@ -958,11 +960,14 @@
 					this.userNameFixed = true;
 					this.$axios.get('users/' + this.$route.params.id)
 						.then(response => {
-							this.$store.commit('updateUser', {
-								user: response.data
-							});
-							this.hasAvatar = this.$store.getters.hasAvatar;
-							console.log('New.vue loadUserDetails hasAvatar: ' + this.hasAvatar);
+							// Update Browser Store only if we are editing our own user
+							if (this.$store.getters.username === this.$route.params.id) {
+								this.$store.commit('updateUser', {
+									user: response.data
+								});
+								this.hasAvatar = this.$store.getters.hasAvatar;
+								console.log('New.vue loadUserDetails hasAvatar: ' + this.hasAvatar);
+							}
 
 							this.form._id = response.data._id;
 							this.form._rev = response.data._rev;

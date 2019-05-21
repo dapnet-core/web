@@ -16,6 +16,7 @@ import store from './store';
 import VueClipboard from 'vue-clipboard2';
 import globalMethods from './global';
 import VueSweetalert2 from 'vue-sweetalert2';
+import VueAuthImage from 'vue-auth-image';
 import { L, LMap, LTileLayer, LMarker, LIcon, LPopup, LTooltip, LPolyline } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
@@ -36,6 +37,7 @@ import AppFooter from '@/components/partials/Footer';
 Vue.use(VueAxios, axios);
 Vue.use(VuetifyConfirm);
 Vue.use(VueSweetalert2);
+Vue.use(VueAuthImage);
 Vue.use(SnackbarStackPlugin, {
 	duration: 3000
 });

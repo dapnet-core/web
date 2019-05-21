@@ -59,7 +59,18 @@
 						<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
 
 						<template slot="items" slot-scope="props">
-							<td>{{ props.item._id }}</td>
+							<td>
+								<v-chip
+									small
+								>
+									<v-avatar
+										v-if="props.item._attachments && props.item._attachments['avatar.jpg']"
+									>
+										<img v-auth-image="'/users/avatar/' + props.item._id + '.jpg'">
+									</v-avatar>
+									{{ props.item._id }}
+								</v-chip>
+							</td>
 							<td class="text-xs-center">{{ props.item.email }}</td>
 							<!-- Roles column -->
 							<td class="text-xs-left">
@@ -212,6 +223,14 @@
 			}
 		},
 		methods: {
+			AvatarPresent(username) {
+				this.$axios.head('/users/avatar/' + username + '.jpg')
+					.then(response => {
+						console.info('response:', response.status === 200);
+						return (response.status === 200);
+					}).catch(e => {
+					});
+			},
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('user.update') === 'all') ||
 					(this.$store.getters.permission('user.delete') === 'all'));
@@ -284,6 +303,7 @@
 							user.roles = rolesRenderd;
 						});
 						this.userrows = response.data.rows;
+						console.log(this.userrows);
 					}
 					this.isLoadingData = false;
 				}).catch(e => {

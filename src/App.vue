@@ -69,7 +69,10 @@
 							size="40"
 						>
 							<img v-bind:src="AvatarImageComputed" />
-							<!--<img v-auth-image="'/users/' + this.$store.getters.username + '/avatar.jpg'">-->
+							<!--
+							also working, but current user image is already stored
+							<img v-auth-image="'/users/' + this.$store.getters.username + '/avatar.jpg'">
+							-->
 						</v-avatar>
 						<span>{{ this.$store.getters.username }}</span>
 					</v-btn>
