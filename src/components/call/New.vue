@@ -522,7 +522,7 @@
 				axios.post('/calls', this.form2send)
 					.then(function(response) {
 				});
-				this.$router.go(-1);
+				// this.$router.go(-1);
 			}
 		}
 	};
