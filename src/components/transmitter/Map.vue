@@ -227,6 +227,7 @@
 			ChartMessageQueue
 		},
 		created() {
+			this.setupWShandler();
 			this.createIcons();
 			this.loadTransmitterLocations();
 			this.loadNodes();
@@ -259,6 +260,13 @@
 			'checkbox.shownodes'() {
 				if (!this.checkbox.shownodes) {
 					this.checkbox.shownodeline = false;
+
+					// Unsubscribe all Nodes Telemetry subscriptions
+					if (this.subscriptions.nodes.length > 0) {
+						this.wsHandler.send(JSON.stringify({
+							unsubscribe_nodes: this.subscriptions.nodes
+						}));
+					}
 				}
 				this.updateMapContent();
 			},
@@ -300,7 +308,11 @@
 					nodes: {}
 				},
 				icons: {},
-				wsHandler: {}
+				wsHandler: null,
+				subscriptions: {
+					transmitters: [],
+					nodes: []
+				}
 			};
 		},
 		computed: {
@@ -312,12 +324,17 @@
 					'queued' in this.monitoringData.transmitters[transmittername].messages);
 			},
 			transmitterDetailsLoaded(transmittername) {
-				// return true, if transmitter is already present and details are already loaded (by existens of _rev)
+				// return true, if transmitter is already present and details are already loaded (by existence of _rev)
 				return ((transmittername in this.staticData.transmitters) &&
-				('_rev' in this.staticData.transmitters[transmittername]));
+					('_rev' in this.staticData.transmitters[transmittername]));
+			},
+			nodeDetailsLoaded(nodename) {
+				// return true, if node is already present and details are already loaded (by existence of _rev)
+				return ((nodename in this.staticData.nodes) &&
+					('_rev' in this.staticData.nodes[nodename]));
 			},
 			updateMapContent() {
-				this.updateWSConnections();
+				this.updateWSSubscriptions();
 				this.generateAllMarkersOnMap();
 				this.generateAllPolylinesOnMap();
 			},
@@ -357,11 +374,22 @@
 			transmitterInBounds(transmittername) {
 				if (transmittername in this.staticData.transmitters &&
 					'coordinates' in this.staticData.transmitters[transmittername]) {
-						let bounds = this.$refs.map.mapObject.getBounds();
-						return bounds.contains(new L.LatLng(this.staticData.transmitters[transmittername].coordinates[0],
-							this.staticData.transmitters[transmittername].coordinates[1]));
+					let bounds = this.$refs.map.mapObject.getBounds();
+					return bounds.contains(new L.LatLng(this.staticData.transmitters[transmittername].coordinates[0],
+						this.staticData.transmitters[transmittername].coordinates[1]));
 				} else {
 					console.log('Transmitter ' + transmittername + ' not found in staticData or coodinated not present');
+					return false;
+				}
+			},
+			nodeInBounds(nodename) {
+				if (nodename in this.staticData.nodes &&
+					'coordinates' in this.staticData.nodes[nodename]) {
+					let bounds = this.$refs.map.mapObject.getBounds();
+					return bounds.contains(new L.LatLng(this.staticData.nodes[nodename].coordinates[0],
+						this.staticData.nodes[nodename].coordinates[1]));
+				} else {
+					console.log('Node ' + nodename + ' not found in staticData or coodinated not present');
 					return false;
 				}
 			},
@@ -412,6 +440,7 @@
 				console.log(this.map.markers);
 			},
 			generateAllPolylinesOnMap() {
+				// TODO: Not working, maybe due to node name convention got from CouchDB
 				let polylineTransmitterToNodes = [];
 				if (this.checkbox.shownodeline) {
 					for (let transmitterID in this.monitoringData.transmitters) {
@@ -420,9 +449,9 @@
 								console.log(nodeID + ' -> ' + this.monitoringData.transmitters[transmitterID].node.name);
 								if (('node' in this.monitoringData.transmitters[transmitterID]) &&
 									('name' in this.monitoringData.transmitters[transmitterID].node) &&
-								(nodeID.search(this.monitoringData.transmitters[transmitterID].node.name) !== -1)) {
+									(nodeID.search(this.monitoringData.transmitters[transmitterID].node.name) !== -1)) {
 									if (('coordinates' in this.staticData.transmitters[transmitterID]) &&
-									('coordinates' in this.staticData.nodes[nodeID])) {
+										('coordinates' in this.staticData.nodes[nodeID])) {
 										polylineTransmitterToNodes.push({
 											latlngs: [this.staticData.transmitters[transmitterID].coordinates,
 												this.staticData.nodes[nodeID].coordinates],
@@ -435,7 +464,8 @@
 					}
 				}
 				this.map.polylines = polylineTransmitterToNodes;
-				console.log(this.map.polylines);
+				// console.log('Polylines:');
+				// console.log(this.map.polylines);
 			},
 			updateOnlineStatusOnMap(transmittername) {
 				// Find corresponding marker
@@ -465,68 +495,149 @@
 				for (let transmitterID in this.staticData.transmitters) {
 					if (this.transmitterInBounds(transmitterID)) {
 						this.loadMissingTransmitterDetail(transmitterID);
-					} else {
-						// console.log('OUT: ' + this.map.markers[i].id);
 					}
 				}
 			},
-			updateWSConnections() {
+
+			updateWSSubscriptions() {
+				// Transmitters
+				let newTXsubscriptions = [];
+				let newTXunsubscriptions = [];
+				console.log('updateWSSubscription called');
 				for (let transmitterID in this.staticData.transmitters) {
 					if (this.transmitterInBounds(transmitterID)) {
-						// Transmitter marker is on Map
-						this.addWShandler(transmitterID);
+						// Transmitter marker is on map
+						// console.log('Transmitter ID to check: ' + transmitterID);
+						// console.log('Current TX subscriptions:');
+						// console.log(this.subscriptions.transmitters);
+						if (!(this.subscriptions.transmitters.includes(transmitterID))) {
+							// Not yet subscribed, add to list to subscribe
+							console.log('adding Transmitter ' + transmitterID);
+							newTXsubscriptions.push(transmitterID);
+						}
 					} else {
-						this.removeWShandler(transmitterID);
+						// Transmitter marker is off map
+						if (this.subscriptions.transmitters.includes(transmitterID)) {
+							// Was subscribed, so add to list to unsubscribe
+							newTXunsubscriptions.push(transmitterID);
+						}
 					}
 				}
-			},
-			removeWShandler(transmittername) {
-				// console.log('try removeWS TX: ' + transmittername);
-				if (transmittername in this.wsHandler) {
-					console.log('removeWS TX: ' + transmittername);
-					this.wsHandler[transmittername].close();
-					delete this.wsHandler[transmittername];
-					if (transmittername in this.monitoringData.transmitters) {
-						delete this.monitoringData.transmitters[transmittername];
-					}
+				if (newTXsubscriptions.length > 0) {
+					// Send out subscriptions and unsubscription requests
+					this.wsHandler.send(JSON.stringify({
+						subscribe_transmitters: newTXsubscriptions
+					}));
 				}
-			},
-			addWShandler(transmittername) {
-				// console.log('try AddWS TX: ' + transmittername);
-				if (!(transmittername in this.wsHandler)) {
-					console.log('newWS TX: ' + transmittername);
-					this.wsHandler[transmittername] = new WebSocket(this.$store.getters.url.telemetry +
-						'/telemetry/transmitters/' + transmittername);
-					this.wsHandler[transmittername].addEventListener('message', e => {
-						let data = JSON.parse(e.data);
-						if (!this.$helpers.isEmpty(data)) {
-							// Useful data received, TX is online
-							console.log(transmittername);
-							console.log(data);
-							if ('messages' in data) {
-								data.messages.sent.splice(6, 4);
-								data.messages.sent.splice(0, 1);
+				if (newTXunsubscriptions.length > 0) {
+					this.wsHandler.send(JSON.stringify({
+						unsubscribe_transmitters: newTXunsubscriptions
+					}));
+				}
 
-								data.messages.queued.splice(6, 4);
-								data.messages.queued.splice(0, 1);
-							}
-							if (!(transmittername in this.monitoringData.transmitters)) {
-								// save initial copy of data
-								this.monitoringData.transmitters[transmittername] = data;
-							} else {
-								// overwrite with new chunk of data
-								this.monitoringData.transmitters[transmittername] =
-									Object.assign(this.monitoringData.transmitters[transmittername], data);
+				// Nodes
+				// Only do this if the nodes display checkbox is checked
+				if (this.checkbox.shownodes) {
+					let newNodesubscriptions = [];
+					let newNodeunsubscriptions = [];
+					for (let nodeID in this.staticData.nodes) {
+						if (this.nodeInBounds(nodeID)) {
+							// Node marker is on map
+							// console.log('Node ID to check: ' + nodeID);
+							// console.log('Current node subscriptions:');
+							// console.log(this.subscriptions.nodes);
+							if (!(this.subscriptions.nodes.includes(nodeID))) {
+								// Not yet subscribed, add to list to subscribe
+								console.log('adding Node ' + nodeID);
+								newNodesubscriptions.push(nodeID);
 							}
 						} else {
-							// Empty JSON reveiced, TX is offline
-							console.log('TX ' + transmittername + ' is offline, as the websocket answer was empty');
-							delete this.monitoringData.transmitters[transmittername];
+							// Node marker is off map
+							if (this.subscriptions.nodes.includes(nodeID)) {
+								// Was subscribed, so add to list to unsubscribe
+								newNodeunsubscriptions.push(nodeID);
+							}
 						}
-						this.updateOnlineStatusOnMap(transmittername);
-						// TODO: Only add lines from this transmitter, not all like here
-						this.generateAllPolylinesOnMap();
-					});
+					}
+					if (newNodesubscriptions.length > 0) {
+						// Send out subscriptions and unsubscription requests
+						this.wsHandler.send(JSON.stringify({
+							subscribe_nodes: newNodesubscriptions
+						}));
+					}
+					if (newNodeunsubscriptions.length > 0) {
+						this.wsHandler.send(JSON.stringify({
+							unsubscribe_nodes: newNodeunsubscriptions
+						}));
+					}
+				}
+			},
+			setupWShandler() {
+				// UPDATE: Only one WS Handler is used for all transmitters and node by a subscribe/unsubscrive
+				// procedure
+				console.log('Setting up single WS Handler');
+				this.wsHandler = new WebSocket(this.$store.getters.url.telemetry + '/telemetry/');
+				// Add incoming handler
+				this.wsHandler.addEventListener('message', e => {
+					let data = JSON.parse(e.data);
+					if (!this.$helpers.isEmpty(data)) {
+						if ('_type' in data) {
+							// Process data according to type
+							if (data._type === 'transmitter') {
+								this.processNewTXWSdata(data);
+							} else if (data._type === 'node') {
+								this.processNewNodeWSdata(data);
+							} else if (data._type === 'subscription') {
+								// Update local copy of subscriptions
+								this.subscriptions.transmitters = data.transmitters;
+								this.subscriptions.nodes = data.nodes;
+							}
+						}
+					}
+				});
+			},
+			processNewTXWSdata(data) {
+				if ('_id' in data) {
+					let transmittername = data._id;
+					if ('messages' in data) {
+						data.messages.sent.splice(6, 4);
+						data.messages.sent.splice(0, 1);
+
+						data.messages.queued.splice(6, 4);
+						data.messages.queued.splice(0, 1);
+					}
+					if (!(transmittername in this.monitoringData.transmitters)) {
+						// save initial copy of data
+						this.monitoringData.transmitters[transmittername] = data;
+					} else {
+						// overwrite with new chunk of data
+						this.monitoringData.transmitters[transmittername] =
+							Object.assign(this.monitoringData.transmitters[transmittername], data);
+					}
+					this.updateOnlineStatusOnMap(transmittername);
+					// TODO: Only add lines from this transmitter, not all like here
+					this.generateAllPolylinesOnMap();
+				} else {
+					console.log('No _id given in websocket data, Type transmitter');
+				}
+			},
+			processNewNodeWSData(data) {
+				if ('_id' in data) {
+					let nodename = data._id;
+					if (!(nodename in this.monitoringData.nodes)) {
+						// save initial copy of data
+						this.monitoringData.node[nodename] = data;
+					} else {
+						// overwrite with new chunk of data
+						this.monitoringData.nodes[nodename] =
+							Object.assign(this.monitoringData.nodes[nodename], data);
+					}
+					// TODO: update Node online status
+					// this.updateOnlineStatusOnMap(transmittername);
+					// TODO: Only add lines from this transmitter, not all like here
+					// this.generateAllPolylinesOnMap();
+				} else {
+					console.log('No _id given in websocket data, Type node');
 				}
 			},
 			loadMissingTransmitterDetail(transmittername) {
@@ -542,7 +653,7 @@
 							this.isLoadingData.transmitterdetails = false;
 						}).catch(e => {
 							console.log('Error getting transmitter details in transmitters/Map.vue');
-					});
+						});
 				}
 			},
 			getCorrespondingStaticIcon(transmittername) {
@@ -641,10 +752,13 @@
 							};
 						}
 						this.isLoadingData.transmitters = false;
+						console.log('loading of transmitterlocations done');
+						this.loadMissingTransmitterDetailsInBound();
+						this.updateMapContent();
 					})
 					.catch(e => {
 						console.log('Error getting transmitter locations in transmitters/Map.vue');
-				});
+					});
 			},
 			loadNodes() {
 				// Load avaiable users
@@ -656,10 +770,13 @@
 							delete this.staticData.nodes[response.data.rows[i]._id]._id;
 						}
 						this.isLoadingData.nodes = false;
+						this.loadMissingTransmitterDetailsInBound();
+						this.updateMapContent();
+						console.log('loading of node done');
 					})
 					.catch(e => {
 						console.log('Error getting nodes in transmitters/Map.vue');
-				});
+					});
 			}
 
 		}

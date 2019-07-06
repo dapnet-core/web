@@ -1,16 +1,18 @@
 {
   "name": "dapnet-web",
-  "version": "3.0.12",
+  "version": "3.0.13",
   "description": "The default DAPNET Web-frontend.",
   "author": "Marvin Menzerath, Ralf Wilke",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --host 192.168.56.101",
+    "serve": "vue-cli-service serve --host 44.225.164.51",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@ansur/leaflet-pulse-icon": "^0.1.1",
+    "@types/leaflet": "^1.4.4",
+    "leaflet-responsive-popup": "^0.6.4",
     "@babel/polyfill": "^7.4.4",
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
