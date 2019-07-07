@@ -63,13 +63,13 @@
 											<!-- Show and Edit Content -->
 											<v-tooltip bottom>
 												<v-btn class="action-buttons"
-													   flat
-													   icon
-													   small
-													   fab
-													   color="orange"
-													   v-on:click="editBulkContent(myrubric)"
-													   slot="activator"
+													flat
+													icon
+													small
+													fab
+													color="orange"
+													 v-on:click="editBulkContent(myrubric)"
+													slot="activator"
 												>
 													<v-icon>storage</v-icon>
 												</v-btn>

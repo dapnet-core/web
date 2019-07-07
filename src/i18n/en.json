@@ -698,6 +698,7 @@
 	},
 	"rubrics": {
 		"number": "Number",
+		"subric": "SubRIC",
 		"id": "ID",
 		"label": "Label",
 		"description": "Description",

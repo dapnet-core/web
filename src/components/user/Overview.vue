@@ -259,7 +259,8 @@
 
 					// save rows
 					if (response.data.rows) {
-						response.data.rows.forEach(user => {
+						for (let i = 0; i < response.data.rows.length; i++) {
+							let user = response.data.rows[i];
 							// add email address (if available)
 							if (user.email === undefined) {
 								user.email = '---';
@@ -267,7 +268,8 @@
 							let rolesRenderd = [];
 							// Render Roles in a beautiful way
 							user.roles.sort(function(a, b) { return (b - a); });
-							user.roles.forEach(role => {
+							for (let j = 0; j < user.roles.length; j++) {
+								let role = user.roles[j];
 								if (role === 'user') {
 									rolesRenderd.push({
 										text: 'U',
@@ -299,9 +301,9 @@
 										});
 									}
 								}
-							});
+							}
 							user.roles = rolesRenderd;
-						});
+						}
 						this.userrows = response.data.rows;
 						console.log(this.userrows);
 					}

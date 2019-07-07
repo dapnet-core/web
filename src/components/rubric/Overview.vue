@@ -54,12 +54,25 @@
 							</td>
 
 							<!--Number column-->
-							<td class="text-xs-right">
-								{{ props.item.number }}
+							<td class="text-xs-center">
+								<v-chip label small>
+									{{ props.item.number }}
+								</v-chip>
+							</td>
+
+							<!--Function column-->
+							<td class="text-xs-center">
+								<v-chip
+									label
+									small
+									:color="functionToColor(props.item.function)"
+								>
+									{{ props.item.function }}
+								</v-chip>
 							</td>
 
 							<!--Description column-->
-							<td class="text-xs-right">
+							<td class="text-xs-left">
 								{{ props.item.description }}
 							</td>
 
@@ -221,7 +234,7 @@
 				rubricrows: [],
 				isLoadingData: true,
 				pagination: {
-					sortBy: 'doc._id',
+					sortBy: '_id',
 					descending: false,
 					rowsPerPage: 10,
 					page: 1
@@ -250,6 +263,12 @@
 						value: 'number'
 					},
 					{
+						text: this.$i18n.t('rubrics.subric'),
+						sortable: true,
+						align: 'center',
+						value: 'function'
+					},
+					{
 						text: this.$i18n.t('rubrics.description'),
 						align: 'center',
 						value: 'description'
@@ -264,7 +283,7 @@
 						text: this.$i18n.t('rubrics.numberofMessages'),
 						sortable: false,
 						align: 'center',
-						value: 'getNumberofRubricContent(props.item)'
+						value: 'numberofMessages'
 					},
 					{
 						text: this.$i18n.t('general.owner'),
@@ -296,6 +315,17 @@
 			}
 		},
 		methods: {
+			functionToColor(subric) {
+				if (subric === 0) {
+					return 'red';
+				} else if (subric === 1) {
+					return 'yellow';
+				} else if (subric === 2) {
+					return 'orange';
+				} else {
+					return 'grey';
+				}
+			},
 			getNumberofRubricContent(rubric) {
 				if (!(rubric.content)) {
 					return 0;
@@ -318,14 +348,34 @@
 				return (this.$store.getters.permission(mypermission));
 			},
 			loadData() {
+				console.log(this.pagination.sortBy);
 				this.isLoadingData = true;
-				this.$axios.get('rubrics', {
-					params: {
-						descending: !!this.pagination.descending,
-						limit: this.pagination.rowsPerPage,
-						skip: (this.pagination.page - 1) * this.pagination.rowsPerPage,
-						startswith: '"' + this.search + '"'
-					}
+				let getPath = '';
+				let adaptedparams = {
+					descending: !!this.pagination.descending,
+					limit: this.pagination.rowsPerPage,
+					skip: (this.pagination.page - 1) * this.pagination.rowsPerPage,
+					startswith: '"' + this.search + '"'
+				}
+				if (this.pagination.sortBy === '_id') {
+					getPath = 'rubrics';
+				} else if (this.pagination.sortBy === 'label') {
+					getPath = 'rubrics/_view/byLabel';
+				} else if (this.pagination.sortBy === 'number') {
+					getPath = 'rubrics/_view/byNumber';
+					adaptedparams.startswith = this.search;
+					adaptedparams.numeric = true;
+				} else if (this.pagination.sortBy === 'function') {
+					getPath = 'rubrics/_view/byFunction';
+					adaptedparams.startswith = this.search;
+					adaptedparams.numeric = true;
+				} else if (this.pagination.sortBy === 'description') {
+					getPath = 'rubrics/_view/byDescription';
+				} else if (this.pagination.sortBy === 'CyclicTransmit') {
+					getPath = 'rubrics/_view/byCyclicTransmit';
+				}
+				this.$axios.get(getPath, {
+					params: adaptedparams
 				}).then(response => {
 					// success --> save new data
 

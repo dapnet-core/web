@@ -238,6 +238,20 @@
 			// Not needed, as called by pagination watcher
 			// this.loadData();
 		},
+		beforeDestroy() {
+			if (this.wsHandler != null) {
+				this.wsHandler.close();
+			}
+		},
+		mounted() {
+			if (this.wsHandler != null) {
+				this.wsHandler.close();
+			}
+			this.setupWShandler();
+			this.$root.$on('LanguageChanged', () => {
+				this.rerender_localized();
+			});
+		},
 		watch: {
 			pagination: {
 				handler() {
@@ -258,7 +272,10 @@
 					rowsPerPage: 10,
 					page: 1
 				},
-				wsHandler: []
+				wsHandler: null,
+				subscriptions: {
+					transmitters: []
+				}
 			};
 		},
 		computed: {
@@ -357,24 +374,19 @@
 				return answer;
 			}
 		},
-		mounted() {
-			this.$root.$on('LanguageChanged', () => {
-				this.rerender_localized();
-			});
-		},
 		methods: {
 			chartDataMessageQueue(transmitterindex) {
 				if (this.transmitterrows[transmitterindex] &&
 					'status' in this.transmitterrows[transmitterindex] &&
 					'messages' in this.transmitterrows[transmitterindex].status &&
 					'queued' in this.transmitterrows[transmitterindex].status.messages) {
-						return {
-							labels: ['L', '', 'M', '', 'H'],
-							datasets: [{
-								backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
-								data: this.transmitterrows[transmitterindex].status.messages.queued
-							}]
-						};
+					return {
+						labels: ['L', '', 'M', '', 'H'],
+						datasets: [{
+							backgroundColor: ['#469408', '#e0d32b', '#e08b27', '#e04530', '#d9230f'],
+							data: this.transmitterrows[transmitterindex].status.messages.queued
+						}]
+					};
 				} else {
 					return {
 						labels: ['E', 'M', 'P', 'T', 'Y'],
@@ -466,27 +478,28 @@
 					this.transmitterrows.splice(transmitterIndex, 1, object2update);
 				}
 			},
-			handleWebsocketConnetions() {
-				console.log('Starting setting up WS handler');
-				console.log(this.transmitterrows);
-				if (this.wsHandler.length !== 0) {
-					// Close active handlers
-				}
-				// Start WS connections
-				for (let i = 0; i < this.transmitterrows.length; i++) {
-					let transmittername = this.transmitterrows[i]._id;
-					this.wsHandler[i] = new WebSocket(this.$store.getters.url.telemetry + '/telemetry/transmitters/' + transmittername);
-					this.wsHandler[i].addEventListener('message', e => {
-						let data = JSON.parse(e.data);
-						if (!this.$helpers.isEmpty(data)) {
-							this.updateTableRows(data, transmittername);
-						} else {
-							let object2update = this.transmitterrows[i];
-							object2update.status.online = false;
-							this.transmitterrows.splice(i, 1, object2update);
+			setupWShandler() {
+				// UPDATE: Only one WS Handler is used for all transmitters by a subscribe/unsubscrive procedure
+				console.log('Setting up single WS Handler');
+				this.wsHandler = new WebSocket(this.$store.getters.url.telemetry + '/telemetry/');
+				// Add incoming handler
+				this.wsHandler.addEventListener('message', e => {
+					let data = JSON.parse(e.data);
+					if (!this.$helpers.isEmpty(data)) {
+						if ('_type' in data) {
+							// Process data according to type
+							if (data._type === 'transmitter') {
+								this.updateTableRows(data, data._id);
+							} else if (data._type === 'subscription') {
+								// Update local copy of subscriptions
+								this.subscriptions.transmitters = data.transmitters;
+							}
 						}
-					});
-				}
+					}
+				});
+				this.wsHandler.addEventListener('open', e => {
+					this.updateSubscriptions();
+				});
 			},
 			rerender_localized() {
 				this.transmitterrows.forEach(transmitter => {
@@ -527,7 +540,8 @@
 
 					// save rows
 					if (response.data.rows) {
-						response.data.rows.forEach(transmitter => {
+						for (let i = 0; i < response.data.rows.length; i++) {
+							let transmitter = response.data.rows[i];
 							// Render Widerange / Personal in a beautiful way
 							let usageRendered = [];
 							if (transmitter.usage === 'widerange') {
@@ -545,16 +559,55 @@
 							} else {
 								transmitter.status.last_seen_localized = '---';
 							}
-						});
-
+						}
 						this.transmitterrows = response.data.rows;
+						this.updateSubscriptions();
 					}
 					this.isLoadingData = false;
-					this.handleWebsocketConnetions();
 				}).catch(e => {
 					this.isLoadingData = false;
 					this.$helpers.swalError(this, this.$i18n.t('alerts.errorLoad.transmitters.list.title'), e);
 				});
+			},
+			updateSubscriptions() {
+				let newTXsubscriptions = [];
+				let newTXunsubscriptions = [];
+
+				// Add Transmitters that are not subscribed yet
+				for (let i = 0; i < this.transmitterrows.length; i++) {
+					if (!(this.subscriptions.transmitters.includes(this.transmitterrows[i]._id))) {
+						// Add to list to subscribe
+						newTXsubscriptions.push(this.transmitterrows[i]._id);
+					}
+				}
+				// Unsubscribe Transmitters that are not any more displayed
+				for (let subscribedIndex = 0; subscribedIndex < this.subscriptions.transmitters.length; subscribedIndex++) {
+					let found = false;
+					for (let displayedIndex = 0; displayedIndex < this.transmitterrows.length; displayedIndex++) {
+						if (this.subscriptions.transmitters[subscribedIndex] === this.transmitterrows[displayedIndex]._id) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						newTXunsubscriptions.push(this.subscriptions.transmitters[subscribedIndex]);
+					}
+				}
+				console.log(newTXsubscriptions);
+				console.log(newTXunsubscriptions);
+
+				if (newTXsubscriptions.length > 0) {
+					// Send out subscriptions and unsubscription requests
+					this.wsHandler.send(JSON.stringify({
+						subscribe_transmitters: newTXsubscriptions
+					}));
+				}
+				if (newTXunsubscriptions.length > 0) {
+					this.wsHandler.send(JSON.stringify({
+						unsubscribe_transmitters: newTXunsubscriptions
+					}));
+				}
+
 			},
 			mailToOwner(element) {
 				window.location.href = 'mailto:' + element.email + '?subject=DAPNET%20Transmitter%3A%20' + element._id;

@@ -269,27 +269,32 @@
 					{
 						text: this.$i18n.t('general.description'),
 						align: 'center',
-						value: 'description'
+						value: 'description',
+						sortable: false
 					},
 					{
 						text: this.$i18n.t('general.pagers'),
 						align: 'center',
-						value: 'pagers'
+						value: 'pagers',
+						sortable: false
 					},
 					{
 						text: this.$i18n.t('general.thirdpartyservices'),
 						align: 'center',
-						value: 'third_party_services'
+						value: 'third_party_services',
+						sortable: false
 					},
 					{
 						text: this.$i18n.t('general.owner'),
 						align: 'center',
-						value: 'owners'
+						value: 'owners',
+						sortable: false
 					},
 					{
 						text: this.$i18n.t('general.subscriber_groups'),
 						align: 'center',
-						value: 'groups'
+						value: 'groups',
+						sortable: false
 					}
 				];
 				if (this.displayActionsColumn()) {
@@ -332,14 +337,16 @@
 
 					// save rows
 					if (response.data.rows) {
-						response.data.rows.forEach(subscriber => {
+						for (let i = 0; i < response.data.rows.length; i++) {
+							let subscriber = response.data.rows[i];
 							// Set Description (if available)
 							if (subscriber.description === undefined) {
 								subscriber.description = '---';
 							}
 							// Render Pagers in a beautiful way  Rework, too much Copy here
 							let pagersRendered = [];
-							subscriber.pagers.forEach(pager => {
+							for (let j = 0; j < subscriber.pagers.length; j++) {
+								let pager = subscriber.pagers[j];
 								if (pager.type === 'alphapoc') {
 									pagersRendered.push({
 										color: 'green',
@@ -373,12 +380,13 @@
 										enabled: pager.enabled
 									});
 								}
-							});
+							}
 							subscriber.pagers = pagersRendered;
 
 							// Render Third party assignments in a beautiful way
 							let thirdspartyRendered = [];
-							subscriber.third_party_services.forEach(service => {
+							for (let j = 0; j < subscriber.third_party_services.length; j++) {
+								let service = subscriber.third_party_services[j];
 								if (service === 'APRS') {
 									thirdspartyRendered.push({
 										color: 'deep-orange',
@@ -390,9 +398,9 @@
 										text: 'Brandmeister'
 									});
 								}
-							});
+							}
 							subscriber.third_party_services = thirdspartyRendered;
-						});
+						}
 						this.subscriberrows = response.data.rows;
 					}
 					this.isLoadingData = false;

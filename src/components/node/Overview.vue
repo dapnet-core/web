@@ -263,28 +263,6 @@
 
 					// save rows
 					if (response.data.rows) {
-						/*
-						response.data.rows.forEach(nodes => {
-
-							let usageRendered = [];
-							if (transmitter.usage === 'widerange') {
-								usageRendered.image = './img/icons/transmitter_widerange.png';
-								usageRendered.text = 'Widerange';
-							} else if (transmitter.usage === 'personal') {
-								usageRendered.image = './img/icons/transmitter_personal.png';
-								usageRendered.text = 'Personal';
-							}
-							transmitter.usage = usageRendered;
-
-							// Render last seen as prosa text
-							if (transmitter.status.last_seen) {
-								transmitter.status.last_seen_localized = moment(transmitter.status.last_seen).fromNow();
-							} else {
-								transmitter.status.last_seen_localized = '---';
-							}
-						});
-						*/
-
 						this.noderows = response.data.rows;
 					}
 					this.isLoadingData = false;
