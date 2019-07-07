@@ -137,6 +137,23 @@
 					</v-flex>
 				</v-layout>
 			</v-card-text>
+			<!--Display Messages-->
+			<v-card-text>
+				<v-card
+					v-for="(thiscontent, index) in this.rubriccontent.content"
+					:key="index"
+				>
+					<v-card-text>
+						<v-avatar
+							size="26"
+							color="grey"
+						>
+							{{ index + 1 }}
+						</v-avatar>
+						{{ rubriccontent.content[index].data }}
+					</v-card-text>
+				</v-card>
+			</v-card-text>
 			<v-card-actions>
 				<v-btn
 					@click="SaveButton"
@@ -152,29 +169,6 @@
 					Close
 				</v-btn>
 			</v-card-actions>
-			<v-card-text>
-				<!--Display Messages-->
-				<v-container grid-list-md>
-				<v-layout align-center row wrap
-				>
-					<v-flex xs12 v-for="(thiscontent, index) in this.rubriccontent.content"
-							:key="index"
-					>
-						<v-card dark color="primary">
-							<v-card-text>
-								<v-avatar
-									size="22"
-									color="grey"
-								>
-									{{ index + 1 }}
-								</v-avatar>
-								{{ rubriccontent.content[index].data }}
-							</v-card-text>
-						</v-card>
-					</v-flex>
-				</v-layout>
-				</v-container>
-			</v-card-text>
 		</v-card>
 	</v-container>
 </template>

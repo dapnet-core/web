@@ -1130,7 +1130,8 @@
 				}
 			},
 			abortButton(event) {
-				this.$router.push('/users');
+				this.$router.go(-1);
+				//this.$router.push('/users');
 			}
 		}
 	};

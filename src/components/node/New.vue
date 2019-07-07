@@ -505,6 +505,7 @@
 								this.form.latlong.absolute.latitude = Math.abs(response.data.coordinates[0]).toFixed(6);
 								this.form.latlong.absolute.longitude = Math.abs(response.data.coordinates[1]).toFixed(6);
 								this.mapMarker = this.mapCenter;
+								this.form.coordinates = response.data.coordinates;
 							}
 
 							// Format timestamp into readable version
@@ -596,7 +597,8 @@
 				}
 			},
 			abortButton(event) {
-				this.$router.push('/nodes');
+				this.$router.go(-1);
+				//this.$router.push('/nodes');
 			}
 		}
 	};

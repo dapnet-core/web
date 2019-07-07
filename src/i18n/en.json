@@ -693,7 +693,8 @@
 		"copyauthkeytoclipboard": "Copy auth key to clipboard",
 		"authkey": "Authentication Key",
 		"noResultsInDataTable": "No matching results ofr {fieldname} found.",
-		"upload": "Upload"
+		"upload": "Upload",
+		"hamcloud": "Hamcloud"
 	},
 	"rubrics": {
 		"number": "Number",

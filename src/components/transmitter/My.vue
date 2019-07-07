@@ -93,13 +93,19 @@
 		created() {
 			this.loadData();
 		},
+		beforeDestroy() {
+			if (this.wsHandler != null) {
+				this.wsHandler.close();
+			}
+		},
 		data() {
 			return {
 				isLoadingData: {
 					general: true
 				},
 				mytransmitters: [],
-				wsHandler: []
+				mytransmitternames: [],
+				wsHandler: null
 			};
 		},
 		methods: {
@@ -195,27 +201,28 @@
 					this.mytransmitters.rows.splice(transmitterIndex, 1, object2update);
 				}
 			},
-			handleWebsocketConnetions() {
-				console.log('Starting setting up WS handler');
-				console.log(this.mytransmitters.rows);
-				if (this.wsHandler.length !== 0) {
-					// Close active handlers
-				}
-				// Start WS connections
-				for (let i = 0; i < this.mytransmitters.rows.length; i++) {
-					let transmittername = this.mytransmitters.rows[i]._id;
-					this.wsHandler[i] = new WebSocket(this.$store.getters.url.telemetry + '/telemetry/transmitters/' + transmittername);
-					this.wsHandler[i].addEventListener('message', e => {
-						let data = JSON.parse(e.data);
-						if (!this.$helpers.isEmpty(data)) {
-							this.updateTableRows(data, transmittername);
-						} else {
-							let object2update = this.mytransmitters.rows[i];
-							object2update.status.online = false;
-							this.mytransmitters.rows.splice(i, 1, object2update);
+
+			setupWShandler() {
+				// UPDATE: Only one WS Handler is used for all transmitters by a subscribe/unsubscrive procedure
+				console.log('Setting up single WS Handler');
+				this.wsHandler = new WebSocket(this.$store.getters.url.telemetry + '/telemetry/');
+				// Add incoming handler
+				this.wsHandler.addEventListener('message', e => {
+					let data = JSON.parse(e.data);
+					if (!this.$helpers.isEmpty(data)) {
+						if ('_type' in data) {
+							// Process data according to type
+							if (data._type === 'transmitter') {
+								this.updateTableRows(data, data._id);
+							}
 						}
-					});
-				}
+					}
+				});
+				this.wsHandler.addEventListener('open', e => {
+					this.wsHandler.send(JSON.stringify({
+						subscribe_transmitters: this.mytransmitternames
+					}));
+				});
 			},
 			loadData() {
 				// load data of given id
@@ -225,6 +232,9 @@
 						console.log(response.data);
 						this.mytransmitters = response.data;
 						for (let i = 0; i < this.mytransmitters.rows.length; i++) {
+							// Store transmitter name into array
+							this.mytransmitternames.push(this.mytransmitters.rows[i]._id);
+
 							// Make default data structure
 							if (!('status' in this.mytransmitters.rows[i])) {
 								this.mytransmitters.rows[i].status = {};
@@ -239,7 +249,7 @@
 						console.log('End of loadData');
 						console.log(this.mytransmitters.rows);
 						this.isLoadingData.general = false;
-						this.handleWebsocketConnetions();
+						this.setupWShandler();
 					}).catch(e => {
 						console.log('Error getting my transmitters\'s details with axios or any exception in the get handler.');
 						console.log(e);

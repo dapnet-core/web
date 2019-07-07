@@ -558,7 +558,8 @@
 				}
 			},
 			abortButton(event) {
-				this.$router.push('/subscribers');
+				this.$router.go(-1);
+				//this.$router.push('/subscribers');
 			}
 		}
 	};

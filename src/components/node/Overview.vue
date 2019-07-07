@@ -44,13 +44,34 @@
 						<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
 						<template slot="items" slot-scope="props">
 							<!-- ID column -->
-							<td class="text-xs-right">
+							<td class="text-xs-left">
 								{{ props.item._id }}
 							</td>
 
 							<!-- Description column -->
-							<td class="text-xs-right">
+							<td class="text-xs-left">
 								{{ props.item.description }}
+							</td>
+
+							<!-- Hamcloud column -->
+							<td class="text-xs-center">
+								<v-chip
+									v-if="props.item.hamcloud"
+									label
+									small
+									color="green"
+									text-color="white"
+								>
+									{{ $t('general.yes') }}
+								</v-chip>
+								<v-chip
+									v-else
+									label
+									small
+									color="red"
+								>
+									{{ $t('general.no') }}
+								</v-chip>
 							</td>
 
 							<!-- owner column -->
@@ -169,12 +190,19 @@
 					},
 					{
 						text: this.$i18n.t('general.description'),
-						sortable: true,
-						align: 'center',
+						sortable: false,
+						align: 'left',
 						value: 'description'
 					},
 					{
+						text: this.$i18n.t('general.hamcloud'),
+						sortable: false,
+						align: 'center',
+						value: 'hamcloud'
+					},
+					{
 						text: this.$i18n.t('general.owner'),
+						sortable: false,
 						align: 'center',
 						value: 'owners'
 					}

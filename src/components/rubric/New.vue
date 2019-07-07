@@ -767,7 +767,8 @@
 				}
 			},
 			abortButton(event) {
-				this.$router.push('/rubrics');
+				this.$router.go(-1);
+				// this.$router.push('/rubrics');
 			}
 		}
 	};

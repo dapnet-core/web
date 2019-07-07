@@ -952,7 +952,8 @@
 				}
 			},
 			abortButton(event) {
-				this.$router.push('/transmitters');
+				this.$router.go(-1);
+				//this.$router.push('/transmitters');
 			}
 		}
 	};

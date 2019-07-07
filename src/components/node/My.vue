@@ -19,11 +19,19 @@
 									<v-list-tile-title>{{ mynode._id }}</v-list-tile-title>
 									<v-list-tile-sub-title>
 										<!-- TODO: Make more informative -->
-										{{ mynode._id }}
+										{{ mynode.description }}
+										<v-chip
+											v-if="mynode.hamcloud"
+											label
+											small
+											color="green"
+											text-color="white"
+										>
+											{{ $t('general.hamcloud') }}
+										</v-chip>
 									</v-list-tile-sub-title>
 								</v-list-tile-content>
 								<v-list-tile-action>
-
 									<!-- Edit -->
 									<v-tooltip bottom>
 										<v-btn class="action-buttons"

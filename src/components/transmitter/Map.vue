@@ -1,144 +1,83 @@
 <template>
 	<v-container fluid fill-height>
-		<v-card class="elevation-12" min-width="95%">
-			<v-card-title>
-				<span class="headline">{{ $t('transmitters.map.title') }}</span>
-			</v-card-title>
-			<!--OSM Map-->
-			<v-card-media>
-				<l-map
-					ref="map"
-					:zoom="map.zoom"
-					:center="map.center"
-					style="height: 700px;"
-				>
-					<l-tile-layer
-						:url="map.url"
-						:attribution="map.attribution"
+		<v-layout justify-center>
+			<v-card class="elevation-12" min-width="95%">
+				<v-card-title>
+					<span class="headline">{{ $t('transmitters.map.title') }}</span>
+				</v-card-title>
+				<!--OSM Map-->
+				<v-card-media>
+					<l-map
+						ref="map"
+						:zoom="map.zoom"
+						:center="map.center"
+						style="height: 700px;"
 					>
-					</l-tile-layer>
-					<l-marker
-						v-for="(item, markerindex) in map.markers"
-						:key="item.name"
-						:lat-lng="item.coordinates"
-						:icon="item.icon"
-						@click="loadCoverage(item.id)"
-					>
-						<l-popup v-if="false">
-							{{ item.details.changed_on }}
-							asas
-						</l-popup>
-						<!--Transmitter Tooltip-->
-						<l-tooltip
-							v-if="item.type === 'transmitter' && transmitterDetailsLoaded(item.id)"
-							style="width: 400px;"
+						<l-tile-layer
+							:url="map.url"
+							:attribution="map.attribution"
 						>
-							<v-layout fluid>
-								<v-card flat color="green">
-									<v-card-title class="headline">
-										<v-layout align-center justify-space-between row>
-											<v-flex xs2>{{ item.id }}</v-flex>
-											<v-spacer></v-spacer>
-											<v-flex xs3>
-												<span class="align-end">
-													<div
-														v-if="transmitterQueueDataPresent(item.id)"
-														class="chartContainer"
-													>
-														<chart-message-queue
-															:chartData="chartDataMessageQueue(item.id)"
-															style="width: 100px; height: 70px;"
+						</l-tile-layer>
+						<l-marker
+							v-for="(item, markerindex) in map.markers"
+							:key="item.name"
+							:lat-lng="item.coordinates"
+							:icon="item.icon"
+							@click="loadCoverage(item.id)"
+						>
+							<l-popup v-if="false">
+								{{ item.details.changed_on }}
+								asas
+							</l-popup>
+							<!--Transmitter Tooltip-->
+							<l-tooltip
+								v-if="item.type === 'transmitter' && transmitterDetailsLoaded(item.id)"
+								style="width: 400px;"
+							>
+								<v-layout fluid>
+									<v-card flat color="green">
+										<v-card-title class="headline">
+											<v-layout align-center justify-space-between row>
+												<v-flex xs2>{{ item.id }}</v-flex>
+												<v-spacer></v-spacer>
+												<v-flex xs3>
+													<span class="align-end">
+														<div
+															v-if="transmitterQueueDataPresent(item.id)"
+															class="chartContainer"
 														>
-														</chart-message-queue>
-													</div>
-													<div v-else>No graph</div>
-												</span>
-											</v-flex>
-										</v-layout>
-									</v-card-title>
-									<v-card-text>
-										<div style="width: 350px;">
-										<v-layout row wrap>
-											<v-flex xs5>{{ $t('general.transmitter_groups') }}</v-flex>
-											<v-flex xs7>
-												<v-chip
-													v-for="(group, groupindex) in staticData.transmitters[item.id].groups"
-													:key="groupindex"
-													small
-													label
-													color="primary"
-												>
-													{{ group }}
-												</v-chip>
-											</v-flex>
-										</v-layout>
-										<v-layout wrap>
-											<v-flex xs5>{{ $t('general.owners') }}</v-flex>
-											<v-flex xs7>
-												<v-chip
-													v-for="(owner, ownerindex) in staticData.transmitters[item.id].owners"
-													:key="ownerindex"
-													small
-													label
-													color="primary"
-												>
-													{{ owner }}
-												</v-chip>
-											</v-flex>
-											<v-flex xs5>{{ $t('transmitters.new.aprs_broadcast.title') }}</v-flex>
-											<v-flex xs7>
-												<v-chip v-if="staticData.transmitters[item.id].aprs_broadcast" color="green" small>YES</v-chip>
-												<v-chip v-else color="red" small>NO</v-chip>
-											</v-flex>
-											<v-flex xs5>{{ $t('transmitters.new.emergency.available.title') }}</v-flex>
-											<v-flex xs7>
-												<v-chip v-if="staticData.transmitters[item.id].emergency_power && staticData.transmitters[item.id].available" color="green" small>YES</v-chip>
-												<v-chip v-else color="red" small>NO</v-chip>
-											</v-flex>
-											<v-flex xs5>{{ $t('transmitters.usage.title') }}</v-flex>
-											<v-flex xs7>
-												<v-chip v-if="staticData.transmitters[item.id].usage === 'widerange'" color="primary" small label>Widerange</v-chip>
-												<v-chip v-else color="red" small label>personal</v-chip>
-											</v-flex>
-											<v-flex xs5>{{ $t('transmitters.power') }}</v-flex>
-											<v-flex xs7>{{ staticData.transmitters[item.id].power }} W</v-flex>
-											<v-flex xs5>{{ $t('general.created_on') }}</v-flex>
-											<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].created_on) }}
-												{{ $t('general.byUser') }} {{ staticData.transmitters[item.id].created_by }}
-											</v-flex>
-											<v-flex xs5>{{ $t('general.changed_on') }}</v-flex>
-											<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].changed_on) }}
-												{{ $t('general.byUser') }} {{ staticData.transmitters[item.id].changed_by }}
-											</v-flex>
-										</v-layout></div>
-									</v-card-text>
-								</v-card>
-							</v-layout>
-						</l-tooltip>
-						<!--Node Tooltip-->
-						<l-tooltip
-							v-if="item.type === 'node'"
-							style="width: 400px;"
-						>
-							<v-layout fluid>
-								<v-card flat color="yellow">
-									<v-card-title class="headline">
-										<v-layout align-center justify-space-between row>
-											<v-flex xs2>{{ item.id }}</v-flex>
-										</v-layout>
-									</v-card-title>
-									<v-card-text>
-										<div style="width: 350px;">
+															<chart-message-queue
+																:chartData="chartDataMessageQueue(item.id)"
+																style="width: 100px; height: 70px;"
+															>
+															</chart-message-queue>
+														</div>
+														<div v-else>No graph</div>
+													</span>
+												</v-flex>
+											</v-layout>
+										</v-card-title>
+										<v-card-text>
+											<div style="width: 350px;">
 											<v-layout row wrap>
-												<v-flex xs5>{{ $t('general.description') }}</v-flex>
-												<v-flex xs7>{{ staticData.nodes[item.id].description }}
+												<v-flex xs5>{{ $t('general.transmitter_groups') }}</v-flex>
+												<v-flex xs7>
+													<v-chip
+														v-for="(group, groupindex) in staticData.transmitters[item.id].groups"
+														:key="groupindex"
+														small
+														label
+														color="primary"
+													>
+														{{ group }}
+													</v-chip>
 												</v-flex>
 											</v-layout>
 											<v-layout wrap>
 												<v-flex xs5>{{ $t('general.owners') }}</v-flex>
 												<v-flex xs7>
 													<v-chip
-														v-for="(owner, ownerindex) in staticData.nodes[item.id].owners"
+														v-for="(owner, ownerindex) in staticData.transmitters[item.id].owners"
 														:key="ownerindex"
 														small
 														label
@@ -147,73 +86,136 @@
 														{{ owner }}
 													</v-chip>
 												</v-flex>
-												<v-flex xs5>{{ $t('nodes.new.hamcloud.title') }}</v-flex>
+												<v-flex xs5>{{ $t('transmitters.new.aprs_broadcast.title') }}</v-flex>
 												<v-flex xs7>
-													<v-chip v-if="staticData.nodes[item.id].hamcloud" color="green" small>YES</v-chip>
+													<v-chip v-if="staticData.transmitters[item.id].aprs_broadcast" color="green" small>YES</v-chip>
 													<v-chip v-else color="red" small>NO</v-chip>
 												</v-flex>
+												<v-flex xs5>{{ $t('transmitters.new.emergency.available.title') }}</v-flex>
+												<v-flex xs7>
+													<v-chip v-if="staticData.transmitters[item.id].emergency_power && staticData.transmitters[item.id].available" color="green" small>YES</v-chip>
+													<v-chip v-else color="red" small>NO</v-chip>
+												</v-flex>
+												<v-flex xs5>{{ $t('transmitters.usage.title') }}</v-flex>
+												<v-flex xs7>
+													<v-chip v-if="staticData.transmitters[item.id].usage === 'widerange'" color="primary" small label>Widerange</v-chip>
+													<v-chip v-else color="red" small label>personal</v-chip>
+												</v-flex>
+												<v-flex xs5>{{ $t('transmitters.power') }}</v-flex>
+												<v-flex xs7>{{ staticData.transmitters[item.id].power }} W</v-flex>
+												<v-flex xs5>{{ $t('general.created_on') }}</v-flex>
+												<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].created_on) }}
+													{{ $t('general.byUser') }} {{ staticData.transmitters[item.id].created_by }}
+												</v-flex>
 												<v-flex xs5>{{ $t('general.changed_on') }}</v-flex>
-												<v-flex xs7>{{ getTimestampFormated(staticData.nodes[item.id].changed_on) }}
-													{{ $t('general.byUser') }} {{ staticData.nodes[item.id].changed_by }}
+												<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].changed_on) }}
+													{{ $t('general.byUser') }} {{ staticData.transmitters[item.id].changed_by }}
 												</v-flex>
 											</v-layout></div>
-									</v-card-text>
-								</v-card>
-							</v-layout>
-						</l-tooltip>
-					</l-marker>
-					<l-polyline
-						v-for="(polyline,index) in map.polylines"
-						:key="index"
-						:lat-lngs="polyline.latlngs"
-						:color="polyline.color"
-					>
-					</l-polyline>
-				</l-map>
-			</v-card-media>
-			<v-card-text>
-				<v-layout wrap row>
-					<v-flex xs3>
-						<v-checkbox
-							v-model="checkbox.pttstatus"
-							:label="$t('transmitters.map.checkbox.showpttstatus')"
-						>
-						</v-checkbox>
-					</v-flex>
-					<v-flex xs3>
-						<v-checkbox
-							v-model="checkbox.onlineonly"
-							:label="$t('transmitters.map.checkbox.showonlineonly')"
-						>
-						</v-checkbox>
-					</v-flex>
-					<v-flex xs3>
-						<v-checkbox
-							v-model="checkbox.widerangeonly"
-							:label="$t('transmitters.map.checkbox.showwiderangeonly')"
-						>
-						</v-checkbox>
-					</v-flex>
-				</v-layout>
-				<v-layout wrap row>
-					<v-flex xs3>
-						<v-checkbox
-							v-model="checkbox.shownodes"
-							:label="$t('transmitters.map.checkbox.shownodes')"
+										</v-card-text>
+									</v-card>
+								</v-layout>
+							</l-tooltip>
+							<!--Node Tooltip-->
+							<l-tooltip
+								v-if="item.type === 'node'"
+								style="width: 400px;"
 							>
-						</v-checkbox>
-					</v-flex>
-					<v-flex xs3>
-						<v-checkbox
-							v-model="checkbox.shownodeline"
-							:label="$t('transmitters.map.checkbox.shownodeline')"
-							:disabled="!checkbox.shownodes"
+								<v-layout fluid>
+									<v-card flat color="yellow">
+										<v-card-title class="headline">
+											<v-layout align-center justify-space-between row>
+												<v-flex xs2>{{ item.id }}</v-flex>
+											</v-layout>
+										</v-card-title>
+										<v-card-text>
+											<div style="width: 350px;">
+												<v-layout row wrap>
+													<v-flex xs5>{{ $t('general.description') }}</v-flex>
+													<v-flex xs7>{{ staticData.nodes[item.id].description }}
+													</v-flex>
+												</v-layout>
+												<v-layout wrap>
+													<v-flex xs5>{{ $t('general.owners') }}</v-flex>
+													<v-flex xs7>
+														<v-chip
+															v-for="(owner, ownerindex) in staticData.nodes[item.id].owners"
+															:key="ownerindex"
+															small
+															label
+															color="primary"
+														>
+															{{ owner }}
+														</v-chip>
+													</v-flex>
+													<v-flex xs5>{{ $t('nodes.new.hamcloud.title') }}</v-flex>
+													<v-flex xs7>
+														<v-chip v-if="staticData.nodes[item.id].hamcloud" color="green" small>YES</v-chip>
+														<v-chip v-else color="red" small>NO</v-chip>
+													</v-flex>
+													<v-flex xs5>{{ $t('general.changed_on') }}</v-flex>
+													<v-flex xs7>{{ getTimestampFormated(staticData.nodes[item.id].changed_on) }}
+														{{ $t('general.byUser') }} {{ staticData.nodes[item.id].changed_by }}
+													</v-flex>
+												</v-layout></div>
+										</v-card-text>
+									</v-card>
+								</v-layout>
+							</l-tooltip>
+						</l-marker>
+						<l-polyline
+							v-for="(polyline,index) in map.polylines"
+							:key="index"
+							:lat-lngs="polyline.latlngs"
+							:color="polyline.color"
 						>
-						</v-checkbox>
-					</v-flex>
-				</v-layout>
-			</v-card-text>
-		</v-card>
+						</l-polyline>
+					</l-map>
+				</v-card-media>
+				<v-card-text>
+					<v-layout wrap row>
+						<v-flex xs3>
+							<v-checkbox
+								v-model="checkbox.pttstatus"
+								:label="$t('transmitters.map.checkbox.showpttstatus')"
+							>
+							</v-checkbox>
+						</v-flex>
+						<v-flex xs3>
+							<v-checkbox
+								v-model="checkbox.onlineonly"
+								:label="$t('transmitters.map.checkbox.showonlineonly')"
+							>
+							</v-checkbox>
+						</v-flex>
+						<v-flex xs3>
+							<v-checkbox
+								v-model="checkbox.widerangeonly"
+								:label="$t('transmitters.map.checkbox.showwiderangeonly')"
+							>
+							</v-checkbox>
+						</v-flex>
+					</v-layout>
+					<v-layout wrap row>
+						<v-flex xs3>
+							<v-checkbox
+								v-model="checkbox.shownodes"
+								:label="$t('transmitters.map.checkbox.shownodes')"
+								>
+							</v-checkbox>
+						</v-flex>
+						<v-flex xs3>
+							<v-checkbox
+								v-model="checkbox.shownodeline"
+								:label="$t('transmitters.map.checkbox.shownodeline')"
+								:disabled="!checkbox.shownodes"
+							>
+							</v-checkbox>
+						</v-flex>
+					</v-layout>
+				</v-card-text>
+			</v-card>
+		</v-layout>
 	</v-container>
 </template>
 
@@ -245,6 +247,11 @@
 			this.map.zoom = this.$store.getters.map.zoom;
 			const map = this.$refs.map.mapObject;
 			map.addControl(new window.L.Control.Fullscreen());
+		},
+		beforeDestroy() {
+			if (this.wsHandler != null) {
+				this.wsHandler.close();
+			}
 		},
 		watch: {
 			'checkbox.pttstatus'() {
