@@ -4,32 +4,58 @@
 			<v-flex xs12>
 				<v-card>
 					<v-card-title>
-						<div class="headline">{{ $t('rubrics.overview.allrubrics') }}</div>
-						<v-spacer></v-spacer>
-						<v-text-field
-							v-model="search"
-							append-icon="search"
-							v-bind:label="$t('table.search')"
-							single-line
-							hide-details
-							v-on:input="loadData"
-						>
-						</v-text-field>
-						<!-- Add Rubric Button -->
-						<v-fab-transition v-if="this.$store.getters.permission('rubric.create')">
-							<v-tooltip bottom>
-								<v-btn
-									color="pink"
-									dark
-									icon
-									to="/rubrics/new"
-									slot="activator"
-								>
-										<v-icon>add</v-icon>
-								</v-btn>
-								<span>{{ $t('rubrics.overview.addrubric') }}</span>
-							</v-tooltip>
-						</v-fab-transition>
+						<v-layout>
+							<v-flex xs4>
+								<div class="headline">{{ $t('rubrics.overview.allrubrics') }}</div>
+							</v-flex>
+							<v-spacer></v-spacer>
+							<v-flex xs3>
+								<v-form v-model="isSearchValid" ref="searchField">
+									<v-text-field
+										v-model="search"
+										append-icon="search"
+										v-bind:label="$t('table.search')"
+										v-on:input="reloadDueToSearch"
+										:rules="validationRules.search"
+										persistent-hint
+									>
+									</v-text-field>
+								</v-form>
+							</v-flex>
+							<v-flex xs1>
+							</v-flex>
+							<v-flex xs2>
+								<v-select
+									v-model="sortByselect"
+									:items="getSortSelectItems"
+									item-text="text"
+									item-value="columnkey"
+									hint="Select which column to search"
+									append-outer-icon="sort_by_alpha"
+									persistent-hint
+									return-object
+									single-line
+									@input="sortSelectChanged"
+									:disabled="!sortByselectEnabled"
+								></v-select>
+							</v-flex>
+							<v-flex xs1></v-flex>
+							<!-- Add Rubric Button -->
+							<v-fab-transition v-if="this.$store.getters.permission('rubric.create')">
+								<v-tooltip bottom>
+									<v-btn
+										color="pink"
+										dark
+										icon
+										to="/rubrics/new"
+										slot="activator"
+									>
+											<v-icon>add</v-icon>
+									</v-btn>
+									<span>{{ $t('rubrics.overview.addrubric') }}</span>
+								</v-tooltip>
+							</v-fab-transition>
+						</v-layout>
 					</v-card-title>
 					<v-data-table
 						:headers="getHeaders"
@@ -222,13 +248,29 @@
 		watch: {
 			pagination: {
 				handler() {
-					this.loadData();
+					if (this.pagination.sortBy === '_id') {
+						this.sortByselect = { text: this.$i18n.t('rubrics.id'), columnkey: '_id', numeric: false };
+						this.sortByselectEnabled = true;
+					} else if (this.pagination.sortBy === 'label') {
+						this.sortByselect = { text: this.$i18n.t('rubrics.label'), columnkey: 'label', numeric: false };
+						this.sortByselectEnabled = true;
+					} else if (this.pagination.sortBy === 'number') {
+						this.sortByselect = { text: this.$i18n.t('rubrics.number'), columnkey: 'number', numeric: true };
+						this.sortByselectEnabled = true;
+					} else if (this.pagination.sortBy === 'function') {
+						this.sortByselect = { text: this.$i18n.t('rubrics.subric'), columnkey: 'function', numeric: true };
+						this.sortByselectEnabled = true;
+					} else {
+						this.sortByselectEnabled = false;
+					}
+					this.reloadDueToSearch();
 				},
 				deep: true
 			}
 		},
 		data() {
 			return {
+				isSearchValid: false,
 				search: '',
 				total_rows: 0,
 				rubricrows: [],
@@ -238,10 +280,20 @@
 					descending: false,
 					rowsPerPage: 10,
 					page: 1
-				}
+				},
+				sortByselect: { text: 'ID', columnkey: '_id', numeric: false },
+				sortByselectEnabled: true
 			};
 		},
 		computed: {
+			getSortSelectItems() {
+				return [
+					{ text: this.$i18n.t('rubrics.id'), columnkey: '_id', numeric: false },
+					{ text: this.$i18n.t('rubrics.label'), columnkey: 'label', numeric: false },
+					{ text: this.$i18n.t('rubrics.number'), columnkey: 'number', numeric: true },
+					{ text: this.$i18n.t('rubrics.subric'), columnkey: 'function', numeric: true }
+				];
+			},
 			getHeaders() {
 				let headings = [
 					{
@@ -288,19 +340,20 @@
 					{
 						text: this.$i18n.t('general.owner'),
 						align: 'center',
-						value: 'owners'
+						value: 'owners',
+						sortable: false
 					},
 					{
 						text: this.$i18n.t('general.transmitters'),
 						align: 'center',
 						value: 'transmitters',
-						sortable: true
+						sortable: false
 					},
 					{
 						text: this.$i18n.t('general.transmitter_groups'),
 						align: 'center',
 						value: 'transmitter_groups',
-						sortable: true
+						sortable: false
 					}
 				];
 				if (this.displayActionsColumn()) {
@@ -312,9 +365,26 @@
 					headings.push(actions);
 				}
 				return headings;
+			},
+			validationRules() {
+				return {
+					'search': [
+						v => ((!this.sortByselect.numeric) || (/^[0-9]*$/i.test(v))) || this.$t('formvalidation.onlyInteger')
+					]
+				};
 			}
 		},
 		methods: {
+			sortSelectChanged() {
+				if (this.$refs.searchField.validate()) {
+					this.pagination.sortBy = this.sortByselect.columnkey;
+				}
+			},
+			reloadDueToSearch() {
+				if (this.$refs.searchField.validate()) {
+					this.loadData();
+				}
+			},
 			functionToColor(subric) {
 				if (subric === 0) {
 					return 'red';
@@ -371,8 +441,10 @@
 					adaptedparams.numeric = true;
 				} else if (this.pagination.sortBy === 'description') {
 					getPath = 'rubrics/_view/byDescription';
-				} else if (this.pagination.sortBy === 'CyclicTransmit') {
+				} else if (this.pagination.sortBy === 'cyclic_transmit') {
 					getPath = 'rubrics/_view/byCyclicTransmit';
+					adaptedparams.startswith = '';
+					adaptedparams.numeric = true;
 				}
 				this.$axios.get(getPath, {
 					params: adaptedparams
