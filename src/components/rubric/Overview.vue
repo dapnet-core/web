@@ -18,6 +18,8 @@
 										v-on:input="reloadDueToSearch"
 										:rules="validationRules.search"
 										persistent-hint
+										:disabled="!searchEnabled"
+										:hint="searchHint"
 									>
 									</v-text-field>
 								</v-form>
@@ -30,7 +32,7 @@
 									:items="getSortSelectItems"
 									item-text="text"
 									item-value="columnkey"
-									hint="Select which column to search"
+									:hint="getSearchHint"
 									append-outer-icon="sort_by_alpha"
 									persistent-hint
 									return-object
@@ -251,17 +253,32 @@
 					if (this.pagination.sortBy === '_id') {
 						this.sortByselect = { text: this.$i18n.t('rubrics.id'), columnkey: '_id', numeric: false };
 						this.sortByselectEnabled = true;
+						this.searchEnabled = true;
+						this.searchSelectHint = this.$i18n.t('general.searchSelectHint');
+						this.searchHint = '';
 					} else if (this.pagination.sortBy === 'label') {
 						this.sortByselect = { text: this.$i18n.t('rubrics.label'), columnkey: 'label', numeric: false };
 						this.sortByselectEnabled = true;
+						this.searchEnabled = true;
+						this.searchSelectHint = this.$i18n.t('general.searchSelectHint');
+						this.searchHint = '';
 					} else if (this.pagination.sortBy === 'number') {
 						this.sortByselect = { text: this.$i18n.t('rubrics.number'), columnkey: 'number', numeric: true };
 						this.sortByselectEnabled = true;
+						this.searchEnabled = true;
+						this.searchSelectHint = this.$i18n.t('general.searchSelectHint');
+						this.searchHint = '';
 					} else if (this.pagination.sortBy === 'function') {
 						this.sortByselect = { text: this.$i18n.t('rubrics.subric'), columnkey: 'function', numeric: true };
 						this.sortByselectEnabled = true;
+						this.searchEnabled = true;
+						this.searchSelectHint = this.$i18n.t('general.searchSelectHint');
+						this.searchHint = '';
 					} else {
 						this.sortByselectEnabled = false;
+						this.searchEnabled = false;
+						this.searchSelectHint = this.$i18n.t('general.seachHintDisabled');
+						this.searchHint = this.$i18n.t('general.seachHintDisabled');
 					}
 					this.reloadDueToSearch();
 				},
@@ -282,7 +299,10 @@
 					page: 1
 				},
 				sortByselect: { text: 'ID', columnkey: '_id', numeric: false },
-				sortByselectEnabled: true
+				sortByselectEnabled: true,
+				searchEnabled: true,
+				searchHint: '',
+				searchSelectHint: this.$i18n.t('general.searchSelectHint')
 			};
 		},
 		computed: {
@@ -293,6 +313,9 @@
 					{ text: this.$i18n.t('rubrics.number'), columnkey: 'number', numeric: true },
 					{ text: this.$i18n.t('rubrics.subric'), columnkey: 'function', numeric: true }
 				];
+			},
+			getSearchHint() {
+				return this.searchSelectHint;
 			},
 			getHeaders() {
 				let headings = [
@@ -369,7 +392,7 @@
 			validationRules() {
 				return {
 					'search': [
-						v => ((!this.sortByselect.numeric) || (/^[0-9]*$/i.test(v))) || this.$t('formvalidation.onlyInteger')
+						v => ((!this.sortByselect.numeric) || (/^[0-9]*$/i.test(v))) || this.$t('formvalidation.onlyIntegerSearch')
 					]
 				};
 			}

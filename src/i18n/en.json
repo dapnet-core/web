@@ -610,6 +610,7 @@
 		"minoneowner": "At least one owner",
 		"OutOfRange": "{fieldname} must be between {min} and {max}.",
 		"onlyInteger": "Only integer numbers allowed as {fieldname}",
+		"onlyIntegerSearch": "Only integer numbers allowed in this search context.",
 		"notzeroornegative": "{fieldname} must be greater than 0.",
 		"notnegative": "{fieldname} must be not negative.",
 		"notgreateras": "{fieldname} must not be greater as {max}.",
@@ -692,9 +693,12 @@
 		"generaterandomauthkey": "Generate random auth key",
 		"copyauthkeytoclipboard": "Copy auth key to clipboard",
 		"authkey": "Authentication Key",
-		"noResultsInDataTable": "No matching results ofr {fieldname} found.",
+		"noResultsInDataTable": "No matching results for {fieldname} found.",
 		"upload": "Upload",
-		"hamcloud": "Hamcloud"
+		"hamcloud": "Hamcloud",
+		"search": "Search",
+		"searchSelectHint": "Select which column to search",
+		"seachHintDisabled": "Search disabled, click on a searchable column header."
 	},
 	"rubrics": {
 		"number": "Number",
