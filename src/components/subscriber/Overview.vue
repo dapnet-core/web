@@ -225,9 +225,6 @@
 		created() {
 			this.loadData();
 		},
-		mounted() {
-			this.$refs.searchField.validate();
-		},
 		watch: {
 			pagination: {
 				handler() {
