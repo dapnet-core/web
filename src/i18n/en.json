@@ -138,12 +138,13 @@
 			"lastseen": "Last seen",
 			"onair": "On Air",
 			"messagequeue": "Queue"
-		 },
-		 "emergency_power": {
+		},
+		"emergency_power": {
 			 "title": "Emerg. Power"
-		 },
-		 "power": "Output Power",
-		 "overview": {
+		},
+		"power": "Output Power",
+		"frequency": "Frequency",
+		"overview": {
 			"newtransmitter": "New Transmitter",
 			"table": {
 				"title": "All Transmitters",
@@ -226,6 +227,10 @@
 			"power": {
 				"title_short": "Output power",
 				"help": "Enter the transmitter output power in Watts including your cable losses."
+			},
+			"frequency": {
+				"title_short": "Frequency",
+				"help": "Enter the transmitter frequency in Hz."
 			},
 			"antennalevel": {
 				"title": "Antenna elevation over ground",
@@ -620,7 +625,8 @@
 		"allreadypresent": "{fieldname} is already present in database. Select another one.",
 		"usageSelected": "The usage of the transmitter must be selected.",
 		"antennaTypeSelected": "The antenna type of the transmitter must be selected.",
-		"noTimeslotSelected": "At least one timeslot must be selected."
+		"noTimeslotSelected": "At least one timeslot must be selected.",
+		"multipleof500Hz": "The frequency must be an integer multiple of 500 Hz."
 	},
 	"general": {
 		"callsign": "Callsign",

@@ -289,6 +289,21 @@
 										>
 										</v-switch>
 									</v-flex>
+									<!-- Transmitter Frequency -->
+									<v-flex xs12 sm6 md4>
+										<v-text-field
+											required
+											v-model="form.frequency"
+											v-bind:rules="validationRules.frequency"
+											v-bind:label="$t('transmitters.frequency')"
+											v-bind:hint="$t('transmitters.new.frequency.help')"
+											persistent-hint
+											prepend-icon="waves"
+											type="number"
+											suffix="Hz"
+										>
+										</v-text-field>
+									</v-flex>
 								</v-layout>
 								<!-- Emergency power-->
 								<v-layout wrap>
@@ -528,6 +543,7 @@
 					usage: '',
 					timeslots: [],
 					power: 0,
+					frequency: 439987500,
 					owners: [],
 					groups: [],
 					emergency_power: {
@@ -707,6 +723,10 @@
 					],
 					'power': [
 						v => (v && v > 0) || this.$t('formvalidation.notzeroornegative', { fieldname: this.$t('transmitters.new.power.title_short') })
+					],
+					'frequency': [
+						v => (v && v > 0) || this.$t('formvalidation.notzeroornegative', { fieldname: this.$t('transmitters.new.frequency.title_short') }),
+						v => (v && ((v % 500) === 0)) || this.$t('formvalidation.multipleof500Hz')
 					]
 				};
 			}
@@ -802,6 +822,10 @@
 							this.form.owners = response.data.owners;
 							this.form.groups = response.data.groups;
 
+							if ('frequency' in response.data) {
+								this.form.frequency = response.data.frequency;
+							}
+
 							// Set default values, to be overwritten eventually now:
 							this.form.emergency_power.available = false;
 							this.form.emergency_power.infinite = false;
@@ -896,6 +920,7 @@
 				if (this.$refs.form.validate() && this.timeslots_numeric.length > 0) {
 					let data2Send = {};
 					data2Send.power = parseInt(this.form.power);
+					data2Send.frequency = parseInt(this.form.frequency);
 					data2Send.antenna = this.form.antenna;
 					data2Send.antenna.gain = parseInt(this.form.antenna.gain);
 					data2Send.antenna.direction = parseInt(this.form.antenna.direction);

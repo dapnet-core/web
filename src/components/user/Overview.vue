@@ -198,16 +198,19 @@
 					{
 						text: this.$i18n.t('general.email'),
 						align: 'center',
+						sortable: false,
 						value: 'email'
 					},
 					{
 						text: this.$i18n.t('general.roles'),
 						align: 'left',
+						sortable: false,
 						value: 'roles'
 					},
 					{
 						text: this.$i18n.t('general.enabled'),
 						align: 'right',
+						sortable: false,
 						value: 'enabled'
 					}
 				];
