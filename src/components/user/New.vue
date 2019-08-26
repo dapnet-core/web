@@ -105,20 +105,20 @@
 											<span class="headline">Edit avatar picture</span>
 										</v-card-title>
 										<v-card-text>
-													<div align="center">
-													<vue-avatar
-														:key="avatarEditorRerenders"
-														:width="400"
-														:height="400"
-														:rotation="rotation"
-														:borderRadius=0
-														:scale="scale"
-														:border="0"
-														ref="vueavatar"
-														@vue-avatar-editor:image-ready="onImageReady"
-													>
-													</vue-avatar>
-													</div>
+											<div align="center">
+												<vue-avatar
+													:key="avatarEditorRerenders"
+													:width="400"
+													:height="400"
+													:rotation="rotation"
+													:borderRadius=0
+													:scale="scale"
+													:border="0"
+													ref="vueavatar"
+													@vue-avatar-editor:image-ready="onImageReady"
+												>
+												</vue-avatar>
+											</div>
 											<v-layout align-center justify-center>
 												<v-flex xs10>
 													<v-slider
@@ -230,11 +230,13 @@
 							</v-card-title>
 -->
 							<!--Roles, enabled and show third-party roles-->
-							<v-layout wrap>
-								<!-- if user is allowed to change a role, display selection box -->
-								<v-flex xs12 md12 lg6
-									v-if="this.$store.getters.permission('user.change_role')"
-								>
+							<!-- if user is allowed to change a role, display selection box -->
+							<v-layout
+								wrap
+								v-if="this.$store.getters.permission('user.change_role')"
+							>
+								<!-- Roles Selection Box -->
+								<v-flex xs12 md12 lg12>
 									<v-autocomplete
 										hide-selected
 										chips
@@ -252,7 +254,45 @@
 										<v-progress-linear color="blue" indeterminate></v-progress-linear>
 									</v-autocomplete>
 								</v-flex>
-								<!-- if user is not allowed to change a role, just display it -->
+								<!-- Add third-party roles-->
+								<v-flex xs12 md12 lg12>
+									<v-expansion-panel>
+										<v-expansion-panel-content>
+											<div slot="header">{{ $t('users.addroles.title') }}</div>
+											<v-form v-model="isAddRolesFormValid" ref="Rolesform">
+												<v-card>
+													<v-card-text>
+														<v-layout align-center>
+															<v-flex xs9 sm9 md9 lg10>
+																<v-text-field
+																	v-model="newthridpartyrole"
+																	:hint="$t('users.addroles.help')"
+																	placeholder="thirdparty."
+																	:label="$t('users.addroles.newthirdpartyrole')"
+																	persistent-hint
+																	v-bind:rules="addRolesValidationRules.newrole"
+																>
+																</v-text-field>
+															</v-flex>
+															<v-flex sx3 sm3 lm3 lg2>
+																<v-btn
+																	color="success"
+																	v-bind:disabled="!isAddRolesFormValid"
+																	v-on:click="addNewThirdPartyRole"
+																>
+																	{{ $t('users.addroles.add') }}
+																</v-btn>
+															</v-flex>
+														</v-layout>
+													</v-card-text>
+												</v-card>
+											</v-form>
+										</v-expansion-panel-content>
+									</v-expansion-panel>
+								</v-flex>
+							</v-layout>
+							<!-- if user is not allowed to change a role, just display it -->
+							<v-layout wrap v-else>
 								<v-flex xs12 md12 lg6
 									v-if="!this.$store.getters.permission('user.change_role')"
 								>
@@ -261,51 +301,6 @@
 										{{ role }}
 									</v-chip>
 								</v-flex>
-								<v-flex xs12 md12 lg6>
-									<v-checkbox
-										v-model="showthirdpartyroles"
-										hide-details
-										v-on:click.native="changeAvailableRoles"
-										:label="$t('users.showthirdpartyroles')"
-									>
-									</v-checkbox>
-								</v-flex>
-							</v-layout>
-							<v-layout>
-								<!-- Add third-party roles-->
-								<v-expansion-panel v-if="showthirdpartyroles">
-									<v-expansion-panel-content>
-										<div slot="header">{{ $t('users.addroles.title') }}</div>
-										<v-form v-model="isAddRolesFormValid" ref="Rolesform">
-											<v-card>
-												<v-card-text>
-													<v-layout align-center>
-														<v-flex xs9 sm9 md9 lg10>
-															<v-text-field
-																v-model="newthridpartyrole"
-																:hint="$t('users.addroles.help')"
-																placeholder="thirdparty."
-																:label="$t('users.addroles.newthirdpartyrole')"
-																persistent-hint
-																v-bind:rules="addRolesValidationRules.newrole"
-															>
-															</v-text-field>
-														</v-flex>
-														<v-flex sx3 sm3 lm3 lg2>
-															<v-btn
-																color="success"
-																v-bind:disabled="!isAddRolesFormValid"
-																v-on:click="addNewThirdPartyRole"
-															>
-																{{ $t('users.addroles.add') }}
-															</v-btn>
-														</v-flex>
-													</v-layout>
-												</v-card-text>
-											</v-card>
-										</v-form>
-									</v-expansion-panel-content>
-								</v-expansion-panel>
 							</v-layout>
 							<!--Enabled-->
 							<v-layout wrap>
@@ -612,7 +607,6 @@
 				form2send: '',
 				formData: {
 					roles: [],
-					roles_backup: [],
 					subscribers: [],
 					subscriber_groups: [],
 					transmitters: [],
@@ -631,7 +625,6 @@
 				enabledReadonly: false,
 				isEditMode: (!!(this.$route.params.id)),
 				newthridpartyrole: 'thirdparty.',
-				showthirdpartyroles: false,
 				availableThirdPartyRoles: [],
 				expiration_posibilities: {
 					minutes: [0, 10, 20, 30, 40, 50],
@@ -869,7 +862,7 @@
 			},
 			loadData() {
 				this.loadUserRoles();
-				this.loadUserNames();
+                this.loadUserNames();
 				this.loadSubscriberNames();
 				this.loadSubscriberGroups();
 				this.loadTransmitterNames();
@@ -882,7 +875,7 @@
 				this.$axios.get('auth/users/roles')
 					.then(response => {
 						this.formData.roles = response.data;
-						this.formData.roles_backup = Array.from(this.formData.roles);
+                        this.formData.roles.push.apply(this.formData.roles, this.availableThirdPartyRoles);
 						this.isLoadingData.roles = false;
 					}).catch(e => {
 						console.log('Error getting user\'s roles in user/new.vue');
@@ -891,7 +884,7 @@
 
 				// TODO: Load availableThirdPartyRoles from API:
 				// Workaround: Set static
-				this.availableThirdPartyRoles = ['thirdparty.brandmeister'];
+				this.availableThirdPartyRoles = ['thirdparty.brandmeister','thirdparty.aprs'];
 			},
 			loadUserNames() {
 				// Load available users
@@ -1062,13 +1055,6 @@
 				this.enabledReadonly = !(this.$store.getters.permission('user.change_role'));
 
 				this.isLoadingData.general = false;
-			},
-			changeAvailableRoles() {
-				if (this.showthirdpartyroles) {
-					this.formData.roles.push.apply(this.formData.roles, this.availableThirdPartyRoles);
-				} else {
-					this.formData.roles = Array.from(this.formData.roles_backup);
-				}
 			},
 			addNewThirdPartyRole() {
 				this.formData.roles.push(this.newthridpartyrole);
