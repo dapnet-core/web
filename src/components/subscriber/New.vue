@@ -140,24 +140,48 @@
 								</v-btn>
 
 								<!-- Third Party Service Selection -->
-								<v-layout>
-									<v-flex>
-										<v-autocomplete
-											chips
+								<v-layout wrap>
+									<!-- APRS -->
+									<v-flex xs12 sm6 md4>
+										<v-combobox
+											v-model="form.thirdparty.aprs"
+											v-bind:label="$t('subscribers.new.aprs.title')"
+											v-bind:hint="$t('subscribers.new.aprs.help')"
+											prepend-icon="mdi-crosshairs-gps"
+											multiple
+											persistent-hint
 											small-chips
 											deletable-chips
-											multiple
-											hide-selected
-											prepend-icon="cloud_upload"
-											v-model="form.third_party_services"
-											:items="formData.third_party_services_items"
-											v-bind:label="$t('general.thirdpartyservices')"
-											v-bind:hint="$t('subscribers.new.thirdpartyservices.help')"
-											persistent-hint
-											:loading="isLoadingData.general"
 										>
-											<v-progress-linear color="blue" indeterminate></v-progress-linear>
-										</v-autocomplete>
+										</v-combobox>
+									</v-flex>
+									<!-- Brandmeister -->
+									<v-flex xs12 sm6 md4>
+										<v-combobox
+											v-model="form.thirdparty.brandmeister"
+											v-bind:label="$t('subscribers.new.brandmeister.title')"
+											v-bind:hint="$t('subscribers.new.brandmeister.help')"
+											prepend-icon="mdi-radio-handheld"
+											multiple
+											persistent-hint
+											small-chips
+											deletable-chips
+										>
+										</v-combobox>
+									</v-flex>
+									<!-- Email -->
+									<v-flex xs12 sm6 md4>
+										<v-combobox
+											v-model="form.thirdparty.email"
+											v-bind:label="$t('subscribers.new.email.title')"
+											v-bind:hint="$t('subscribers.new.email.help')"
+											prepend-icon="email"
+											multiple
+											persistent-hint
+											small-chips
+											deletable-chips
+										>
+										</v-combobox>
 									</v-flex>
 								</v-layout>
 
@@ -319,15 +343,15 @@
 							enabled: true
 						}
 					],
-					third_party_services: [],
+					thirdparty: {
+						aprs: [],
+						brandmeister: [],
+						email: []
+					},
 					owners: [],
 					groups: []
 				},
 				formData: {
-					third_party_services: [
-						'APRS',
-						'Brandmeister'
-					],
 					users: [],
 					subscribers: [],
 					subscriber_groups: [],
@@ -457,7 +481,7 @@
 							this.form._rev = response.data._rev;
 							this.form.description = response.data.description;
 							this.form.pagers = response.data.pagers;
-							this.form.third_party_services = response.data.third_party_services;
+							this.form.thirdparty = response.data.thirdparty;
 							this.form.owners = response.data.owners;
 							this.form.groups = response.data.groups;
 							// Format timestamp into readable version

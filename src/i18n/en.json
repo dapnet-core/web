@@ -862,8 +862,17 @@
 			"owner": {
 				"help": "An owner of a subscriber association can edit its parameters."
 			},
-			"thirdpartyservices": {
-				"help": "Select the third party services messages directed to this subscriber shall be forwarded to."
+			"aprs": {
+				"title": "APRS Message Forward",
+				"help": "Enter APRS callsign(s) (if necessary with SSID seperated by a hyphon) to which messages directed to this subscriber shall be forwarded to."
+			},
+			"brandmeister": {
+				"title": "Brandmeister DMR SMS Message Forward",
+				"help": "Enter DMR ID(s) to which messages directed to this subscriber shall be forwarded to."
+			},
+			"email": {
+				"title": "Email Message Forward",
+				"help": "Enter email address(es) to which messages directed to this subscriber shall be forwarded to."
 			},
 			"subscriber_groups": {
 				"help": "Select one or more existing subscriber groups or create a new one by typing."

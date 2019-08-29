@@ -67,7 +67,7 @@
 								</td>
 								<!-- Third-Party-Services column -->
 								<td class="text-xs-left">
-									<span v-for="(service, index) in props.item.third_party_services" v-bind:key="`service-${index}`">
+									<span v-for="(service, index) in props.item.thirdparty" v-bind:key="`service-${index}`">
 										<v-chip
 											v-bind:color="`${service.color}`"
 											text-color="white"
@@ -281,7 +281,7 @@
 					{
 						text: this.$i18n.t('general.thirdpartyservices'),
 						align: 'center',
-						value: 'third_party_services',
+						value: 'thirdparty',
 						sortable: false
 					},
 					{
@@ -385,21 +385,20 @@
 
 							// Render Third party assignments in a beautiful way
 							let thirdspartyRendered = [];
-							for (let j = 0; j < subscriber.third_party_services.length; j++) {
-								let service = subscriber.third_party_services[j];
-								if (service === 'APRS') {
+							if ('aprs' in subscriber.thirdparty) {
 									thirdspartyRendered.push({
 										color: 'deep-orange',
 										text: 'APRS'
 									});
-								} else if (service === 'BM') {
+							}
+							if ('brandmeister' in subscriber.thirdparty) {
 									thirdspartyRendered.push({
 										color: 'purple',
 										text: 'Brandmeister'
 									});
-								}
 							}
-							subscriber.third_party_services = thirdspartyRendered;
+
+							subscriber.thirdparty = thirdspartyRendered;
 						}
 						this.subscriberrows = response.data.rows;
 					}
