@@ -397,6 +397,12 @@
 										text: 'Brandmeister'
 									});
 							}
+							if ('email' in subscriber.thirdparty) {
+								thirdspartyRendered.push({
+									color: 'amber darken-1',
+									text: 'Email'
+								});
+							}
 
 							subscriber.thirdparty = thirdspartyRendered;
 						}
