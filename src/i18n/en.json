@@ -626,7 +626,10 @@
 		"usageSelected": "The usage of the transmitter must be selected.",
 		"antennaTypeSelected": "The antenna type of the transmitter must be selected.",
 		"noTimeslotSelected": "At least one timeslot must be selected.",
-		"multipleof500Hz": "The frequency must be an integer multiple of 500 Hz."
+		"multipleof500Hz": "The frequency must be an integer multiple of 500 Hz.",
+		"invalidAPRSCallsign": "At least one of the entered APRS callsigns is invalid.",
+		"OutOfRangeAtLeastOne": "At least one of the entered {fieldname} is out of range. {fieldname} must be between {min} and {max}.",
+		"emailInvaildAtLeastOne": "At least one of the entered email adresses is invalid."
 	},
 	"general": {
 		"callsign": "Callsign",
@@ -704,7 +707,8 @@
 		"hamcloud": "Hamcloud",
 		"search": "Search",
 		"searchSelectHint": "Select which column to search",
-		"seachHintDisabled": "Search disabled, click on a searchable column header."
+		"seachHintDisabled": "Search disabled, click on a searchable column header.",
+		"DMRID": "DMR ID"
 	},
 	"rubrics": {
 		"number": "Number",
@@ -868,6 +872,10 @@
 			},
 			"brandmeister": {
 				"title": "Brandmeister DMR SMS Message Forward",
+				"help": "Enter DMR ID(s) to which messages directed to this subscriber shall be forwarded to."
+			},
+			"ipsc2": {
+				"title": "IPCS2 DMR SMS Message Forward",
 				"help": "Enter DMR ID(s) to which messages directed to this subscriber shall be forwarded to."
 			},
 			"email": {

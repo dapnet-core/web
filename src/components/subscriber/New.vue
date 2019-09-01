@@ -147,6 +147,7 @@
 											v-model="form.thirdparty.aprs"
 											v-bind:label="$t('subscribers.new.aprs.title')"
 											v-bind:hint="$t('subscribers.new.aprs.help')"
+											v-bind:rules="validationRules.aprs"
 											prepend-icon="mdi-crosshairs-gps"
 											multiple
 											persistent-hint
@@ -161,6 +162,22 @@
 											v-model="form.thirdparty.brandmeister"
 											v-bind:label="$t('subscribers.new.brandmeister.title')"
 											v-bind:hint="$t('subscribers.new.brandmeister.help')"
+											v-bind:rules="validationRules.DMRID"
+											prepend-icon="mdi-radio-handheld"
+											multiple
+											persistent-hint
+											small-chips
+											deletable-chips
+										>
+										</v-combobox>
+									</v-flex>
+									<!-- IPCS2 -->
+									<v-flex xs12 sm6 md4>
+										<v-combobox
+											v-model="form.thirdparty.ipsc2"
+											v-bind:label="$t('subscribers.new.ipsc2.title')"
+											v-bind:hint="$t('subscribers.new.ipsc2.help')"
+											v-bind:rules="validationRules.DMRID"
 											prepend-icon="mdi-radio-handheld"
 											multiple
 											persistent-hint
@@ -175,6 +192,7 @@
 											v-model="form.thirdparty.email"
 											v-bind:label="$t('subscribers.new.email.title')"
 											v-bind:hint="$t('subscribers.new.email.help')"
+											v-bind:rules="validationRules.email"
 											prepend-icon="email"
 											multiple
 											persistent-hint
@@ -427,8 +445,17 @@
 						})
 					],
 					'owners': [
-						v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('formvalidation.minoneowner') })
-					]
+                        v => (v && v.length > 0) || this.$t('formvalidation.isrequired', { fieldname: this.$t('formvalidation.minoneowner') })
+                    ],
+                    'aprs': [
+						v => this.validateThirdPartyAPRS(v)
+                    ],
+                    'DMRID': [
+                        v => this.validateThirdPartyDMRID(v)
+                    ],
+                    'email': [
+                        v => (this.validateThirdPartyEmail(v)) || this.$t('formvalidation.invalidEmail')
+                    ]
 				};
 			},
 			onlyOnePagerleft() {
@@ -436,6 +463,82 @@
 			}
 		},
 		methods: {
+            validateThirdPartyAPRS(v) {
+                console.log(v);
+                if (typeof v !== "undefined") {
+                    if (v.length > 0) {
+                        for (let i = 0; i < v.length; i++) {
+                            console.log('in for');
+                            console.log(v[i]);
+                            if (typeof v[i] !== "undefined") {
+                                // Use Regex to check APRS Callsign with optional SSID 0-15
+                                let RegExAPRSCallsign = RegExp('^([a-zA-Z0-9]{4,6})(-([0-9]|0[0-9]|1[0-5]))?$');
+                                if (RegExAPRSCallsign.test(v[i])) {
+                                    console.log(v[i]);
+                                    console.log('match');
+                                    continue;
+                                } else {
+                                    return this.$t('formvalidation.invalidAPRSCallsign');
+                                }
+                            }
+                        }
+                    }
+                }
+                // If not left before with a string, the result is true
+                return true;
+            },
+            validateThirdPartyDMRID(v) {
+                console.log(v);
+                if (typeof v !== "undefined") {
+                    if (v.length > 0) {
+                        for (let i = 0; i < v.length; i++) {
+                            console.log('in for');
+                            console.log(v[i]);
+                            if (typeof v[i] !== "undefined") {
+                                if (Number.isInteger(parseInt(v[i]))) {
+                                    console.log(v[i]);
+                                    console.log('is number');
+                                } else {
+                                    return this.$t('formvalidation.onlyInteger', { fieldname: this.$t('general.DMRID') })
+                                }
+                                if ((v[i] >= 0 && v[i] <= 9999999)) {
+                                    console.log('is in range');
+								} else {
+                                    return this.$t('formvalidation.OutOfRangeAtLeastOne', {
+                                        fieldname: this.$t('general.DMRID'),
+										min: 0,
+										max: 9999999 });
+                                }
+                            }
+                        }
+                    }
+                }
+                // If not left before with false, the result is true
+                return true;
+            },
+            validateThirdPartyEmail(v) {
+                console.log(v);
+                if (typeof v !== "undefined") {
+                    if (v.length > 0) {
+                        for (let i = 0; i < v.length; i++) {
+                            console.log('in for');
+                            console.log(v[i]);
+                            if (typeof v[i] !== "undefined") {
+                                let RegExEmail = RegExp('.+@.+\\..+');
+                                if (RegExEmail.test(v[i])) {
+                                    console.log(v[i]);
+                                    console.log('email valid');
+                                    continue;
+                                } else {
+                                    return this.$t('formvalidation.emailInvaildAtLeastOne');
+                                }
+                            }
+                        }
+                    }
+                }
+                // If not left before with false, the result is true
+                return true;
+            },
 			loadData() {
 				// Load avaiable user roles
 				this.isLoadingData.users = true;
