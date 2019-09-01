@@ -364,6 +364,7 @@
 					thirdparty: {
 						aprs: [],
 						brandmeister: [],
+						ipsc2: [],
 						email: []
 					},
 					owners: [],
@@ -464,18 +465,13 @@
 		},
 		methods: {
             validateThirdPartyAPRS(v) {
-                console.log(v);
                 if (typeof v !== "undefined") {
                     if (v.length > 0) {
                         for (let i = 0; i < v.length; i++) {
-                            console.log('in for');
-                            console.log(v[i]);
                             if (typeof v[i] !== "undefined") {
                                 // Use Regex to check APRS Callsign with optional SSID 0-15
                                 let RegExAPRSCallsign = RegExp('^([a-zA-Z0-9]{4,6})(-([0-9]|0[0-9]|1[0-5]))?$');
                                 if (RegExAPRSCallsign.test(v[i])) {
-                                    console.log(v[i]);
-                                    console.log('match');
                                     continue;
                                 } else {
                                     return this.$t('formvalidation.invalidAPRSCallsign');
@@ -488,22 +484,16 @@
                 return true;
             },
             validateThirdPartyDMRID(v) {
-                console.log(v);
                 if (typeof v !== "undefined") {
                     if (v.length > 0) {
                         for (let i = 0; i < v.length; i++) {
-                            console.log('in for');
-                            console.log(v[i]);
                             if (typeof v[i] !== "undefined") {
                                 if (Number.isInteger(parseInt(v[i]))) {
-                                    console.log(v[i]);
-                                    console.log('is number');
                                 } else {
                                     return this.$t('formvalidation.onlyInteger', { fieldname: this.$t('general.DMRID') })
                                 }
                                 if ((v[i] >= 0 && v[i] <= 9999999)) {
-                                    console.log('is in range');
-								} else {
+                          		} else {
                                     return this.$t('formvalidation.OutOfRangeAtLeastOne', {
                                         fieldname: this.$t('general.DMRID'),
 										min: 0,
@@ -517,17 +507,12 @@
                 return true;
             },
             validateThirdPartyEmail(v) {
-                console.log(v);
                 if (typeof v !== "undefined") {
                     if (v.length > 0) {
                         for (let i = 0; i < v.length; i++) {
-                            console.log('in for');
-                            console.log(v[i]);
                             if (typeof v[i] !== "undefined") {
                                 let RegExEmail = RegExp('.+@.+\\..+');
                                 if (RegExEmail.test(v[i])) {
-                                    console.log(v[i]);
-                                    console.log('email valid');
                                     continue;
                                 } else {
                                     return this.$t('formvalidation.emailInvaildAtLeastOne');
@@ -584,7 +569,20 @@
 							this.form._rev = response.data._rev;
 							this.form.description = response.data.description;
 							this.form.pagers = response.data.pagers;
-							this.form.thirdparty = response.data.thirdparty;
+							if (typeof response.data.thirdparty !== "undefined") {
+                                if (typeof response.data.thirdparty.aprs !== "undefined") {
+                                    this.form.thirdparty.aprs = response.data.thirdparty.aprs;
+                                }
+                                if (typeof response.data.thirdparty.brandmeister !== "undefined") {
+                                    this.form.thirdparty.brandmeister = response.data.thirdparty.brandmeister;
+                                }
+                                if (typeof response.data.thirdparty.ipsc2 !== "undefined") {
+                                    this.form.thirdparty.ipsc2 = response.data.thirdparty.ipsc2;
+                                }
+                                if (typeof response.data.thirdparty.email !== "undefined") {
+                                    this.form.thirdparty.email = response.data.thirdparty.email;
+                                }
+                            }
 							this.form.owners = response.data.owners;
 							this.form.groups = response.data.groups;
 							// Format timestamp into readable version
@@ -641,6 +639,7 @@
 					if (!this.isEditMode) {
 						delete this.form._rev;
 					}
+					// Convert numerical Pager entries from string of number
 					for (let pagerIndex = 0; pagerIndex < this.form.pagers.length; pagerIndex++) {
 						if (this.form.pagers[pagerIndex].ric) {
 							this.form.pagers[pagerIndex].ric = parseInt(this.form.pagers[pagerIndex].ric);
@@ -648,6 +647,34 @@
 						if (this.form.pagers[pagerIndex].function) {
 							this.form.pagers[pagerIndex].function = parseInt(this.form.pagers[pagerIndex].function);
 						}
+					}
+
+					// Convert DMR IDs entries from string of number
+					for (let DMRIDIndex = 0; DMRIDIndex < this.form.thirdparty.brandmeister.length; DMRIDIndex++) {
+					    if (this.form.thirdparty.brandmeister[DMRIDIndex]) {
+					        this.form.thirdparty.brandmeister[DMRIDIndex] = parseInt(this.form.thirdparty.brandmeister[DMRIDIndex]);
+						}
+					}
+                    for (let DMRIDIndex = 0; DMRIDIndex < this.form.thirdparty.ipsc2.length; DMRIDIndex++) {
+                        if (this.form.thirdparty.ipsc2[DMRIDIndex]) {
+                            this.form.thirdparty.ipsc2[DMRIDIndex] = parseInt(this.form.thirdparty.ipsc2[DMRIDIndex]);
+                        }
+                    }
+
+                    // Cleanup thirdparty data
+                    var thirdpartyappNames = Object.getOwnPropertyNames(this.form.thirdparty);
+                    for (var i = 0; i < thirdpartyappNames.length; i++) {
+                        var thirdpartyappName = thirdpartyappNames[i];
+                        if (this.form.thirdparty[thirdpartyappName] === null ||
+							this.form.thirdparty[thirdpartyappName] === undefined ||
+                            this.form.thirdparty[thirdpartyappName].length === 0 ) {
+                            delete this.form.thirdparty[thirdpartyappName];
+                        }
+                    }
+					console.log(this.form.thirdparty);
+					if (Object.keys(this.form.thirdparty).length === 0) {
+                        console.log('Deleting thirdparty');
+					    delete this.form.thirdparty;
 					}
 					console.log('Data2Send von subscriber:');
 					console.log(this.form);
