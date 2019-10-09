@@ -103,7 +103,7 @@
 		<main>
 			<v-content>
 				<router-view :key="$route.fullPath"></router-view>
-					<app-footer></app-footer>
+				<app-footer></app-footer>
 			</v-content>
 		</main>
 	</v-app>

@@ -43,7 +43,8 @@
 	"@mdi/font": "^4.2.95",
 	"semver": "^6.3.0",
 	"git-rev-sync": "^1.12.0",
-	"@types/leaflet": "^1.5.3"
+	"@types/leaflet": "^1.5.3",
+	"github-latest-release": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

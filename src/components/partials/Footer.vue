@@ -89,6 +89,7 @@
 							<v-btn
 								v-on="on"
 								icon
+								@click="CheckVersion"
 							>
 								<v-icon>mdi-help-circle</v-icon>
 							</v-btn>
@@ -98,6 +99,11 @@
 				</v-flex>
 			</v-layout>
 		</v-card-text>
+		<div>
+			<cookie-law theme="dark-lime" :button-text="$t('footer.cookieconsent.button')">
+				<div slot="message" v-html="$t('footer.cookieconsent.text')"></div>
+			</cookie-law>
+		</div>
 	</v-card>
 	<!--
 	<div class="container">
@@ -144,6 +150,18 @@
 			const pkg = require('../../../package.json');
 			this.version.web = pkg.version;
 			this.author = pkg.author;
+		},
+		methods: {
+		    CheckVersion() {
+		        var latest = require('github-latest-release')
+				latest('dapnet-core', 'web')
+				.then(response => {
+                   	console.log(response.tag_name);
+				})
+				.catch(e => {
+                    this.$helpers.swalError(this, this.$i18n.t('alerts.noGitHubConnection'), e);
+                });
+			}
 		},
 		data() {
 			return {

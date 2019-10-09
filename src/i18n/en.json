@@ -356,6 +356,7 @@
 		}
 	},
 	"alerts": {
+		"noGitHubConnection": "Cannot obtain the latest release information from GitHub. Maybe your device is not able to reach this website?",
 		"noUndo": "You will not be able to undo this step once it is done.",
 		"cancel": "Cancel",
 		"ok": "OK",
