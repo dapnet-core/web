@@ -271,7 +271,7 @@ const GlobalMethodsPlugin = {
 		Vue.prototype.$helpers.swalWarning = function(context, title, errormessage) {
 			context.$swal({
 				title: title,
-				type: 'error',
+				type: 'warning',
 				html: context.$i18n.t('alerts.ticketlink', {
 					htmlcode: '<a href="https://support.hampager.de" target="_blank">support.hampager.de</a>'
 				}) + '<br>' + errormessage,
@@ -297,6 +297,16 @@ const GlobalMethodsPlugin = {
 						resolve(true);
 					}
 				});
+			});
+		};
+
+		// SweetAlert2 Version to up date Dialog
+		Vue.prototype.$helpers.swalVersionUpToDate = function(context, title) {
+			context.$swal({
+				type: 'success',
+				title: title,
+				showConfirmButton: true,
+				confirmButtonText: context.$i18n.t('alerts.ok')
 			});
 		};
 

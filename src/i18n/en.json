@@ -365,6 +365,10 @@
 			"title": "Success",
 			"text": "Operation successfully executed."
 		},
+		"versioncheck": {
+			"uptodate": "This platform runs at least the latest released version on GitHub.",
+			"outdated": "This platform runs an older released version compared to the latest released one on GitHub. The latest version is:"
+		},
 		"rolesempty": {
 			"title": "No roles selected",
 			"text": "There must be at least one role selected."

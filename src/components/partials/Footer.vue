@@ -156,6 +156,16 @@
 		        var latest = require('github-latest-release')
 				latest('dapnet-core', 'web')
 				.then(response => {
+                    const semver = require('semver');
+                    if (semver.gt(response.tag_name, this.version.web)) {
+                        // Latest release on Github is newer
+						console.log('newer version');
+                        this.$helpers.swalWarning(this, this.$i18n.t('alerts.versioncheck.outdated'),response.tag_name);
+					} else
+					{
+					    // Running version is newer or equal to latest github release
+                        this.$helpers.swalVersionUpToDate(this, this.$i18n.t('alerts.versioncheck.uptodate'));
+					}
                    	console.log(response.tag_name);
 				})
 				.catch(e => {
