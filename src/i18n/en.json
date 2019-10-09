@@ -313,6 +313,7 @@
 			"title": "Versions",
 			"check": "Check"
 		},
+		"frontendcodedby" : "Frontend coded by",
 		"cookieconsent": {
 			"button": "OK",
 			"text": "This site uses cookies and your browser's local storage to deliver our services. By using our site, you acknowledge that you have read and understand our Privacy Policy."

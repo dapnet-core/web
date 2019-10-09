@@ -1,6 +1,107 @@
 <template>
+	<v-card
+		flat
+		tile
+		widht="100%"
+		class="text-center"
+	>
+		<v-card-text>
+			<v-layout>
+				<v-flex>
+					{{ $t('footer.support.title') }}:
+					<v-tooltip top>
+						<template v-slot:activator="{ on }">
+							<v-btn
+								v-on="on"
+								icon
+								href="https://github.com/dapnet-core"
+								target="_blank"
+							>
+								<v-icon>mdi-github-box</v-icon>
+							</v-btn>
+						</template>
+						<span>{{ $t('footer.support.github') }}</span>
+					</v-tooltip>
+
+					<v-tooltip top>
+						<template v-slot:activator="{ on }">
+							<v-btn
+								v-on="on"
+								icon
+								href="https://www.afu.rwth-aachen.de"
+								target="_blank"
+							>
+								<v-icon>mdi-web</v-icon>
+							</v-btn>
+						</template>
+						<span>{{ $t('footer.support.rwth-amateur-radio') }}</span>
+					</v-tooltip>
+				</v-flex>
+				<v-flex>
+					<v-tooltip top>
+						<template v-slot:activator="{ on }">
+							<v-btn
+								v-on="on"
+								icon
+								href="https://twitter.com/RWTHAmateurfunk"
+								target="_blank"
+							>
+								<v-icon>mdi-twitter</v-icon>
+							</v-btn>
+						</template>
+						<span>Twitter</span>
+					</v-tooltip>
+
+					<v-tooltip top>
+						<template v-slot:activator="{ on }">
+							<v-btn
+								v-on="on"
+								icon
+								href="https://www.facebook.com/DL0UA"
+								target="_blank"
+							>
+								<v-icon>mdi-facebook</v-icon>
+							</v-btn>
+						</template>
+						<span>Facebook</span>
+					</v-tooltip>
+
+					<v-btn
+						exact to="/impress"
+						flat
+					>
+						{{ $t('footer.contact.impress') }}
+					</v-btn>
+					<v-btn
+						exact to="/privacy"
+						flat
+					>
+						{{ $t('footer.contact.privacy') }}
+					</v-btn>
+					{{ $t('footer.frontendcodedby') }}: {{ author }}
+				</v-flex>
+				<v-spacer></v-spacer>
+
+				<v-flex>
+					{{ $t('footer.versions.title') }}: {{ version.web }}
+					<v-tooltip top>
+						<template v-slot:activator="{ on }">
+							<v-btn
+								v-on="on"
+								icon
+							>
+								<v-icon>mdi-help-circle</v-icon>
+							</v-btn>
+						</template>
+						<span>{{ $t('footer.versions.check') }}</span>
+					</v-tooltip>
+				</v-flex>
+			</v-layout>
+		</v-card-text>
+	</v-card>
+	<!--
 	<div class="container">
-		<footer>
+
 			<div class="row">
 				<div class="col-lg-12">
 					<p><b>{{ $t('footer.support.title') }}:</b></p>
@@ -26,8 +127,9 @@
 			<cookie-law theme="dark-lime" :button-text="$t('footer.cookieconsent.button')">
 				<div slot="message" v-html="$t('footer.cookieconsent.text')"></div>
 			</cookie-law>
-		</footer>
+
 	</div>
+-->
 </template>
 
 <script>
@@ -39,23 +141,18 @@
 		},
 		created() {
 			// get web version
-			let pkg = require('../../../package.json');
+			const pkg = require('../../../package.json');
 			this.version.web = pkg.version;
+			this.author = pkg.author;
 		},
 		data() {
 			return {
 				version: {
 					web: 'Unknown'
-				}
+				},
+				author: '',
+				webCommit: ''
 			};
-		},
-		methods: {
-			changeLanguage(lang) {
-				this.$root.$i18n.locale = lang;
-				this.$store.commit('changeLanguage', {
-					language: lang
-				});
-			}
 		}
 	};
 </script>

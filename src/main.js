@@ -18,7 +18,7 @@ import globalMethods from './global';
 import VueSweetalert2 from 'vue-sweetalert2';
 import VueAuthImage from 'vue-auth-image';
 import { LMap, LTileLayer, LMarker, LIcon, LPopup, LTooltip, LPolyline } from 'vue2-leaflet';
-import { Icon } from 'leaflet'
+import { Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import 'leaflet-fullscreen/dist/Leaflet.fullscreen';

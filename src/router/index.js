@@ -25,6 +25,8 @@ import RubricAddContent from '@/components/rubric/AddContent';
 import NodeOverview from '@/components/node/Overview';
 import NodeNew from '@/components/node/New';
 import NodeMy from '@/components/node/My';
+import Impress from '@/components/pages/Impress';
+import Privacy from '@/components/pages/Privacy';
 
 Vue.use(Router);
 
@@ -307,6 +309,24 @@ export default new Router({
 			meta: {
 				titleTranslationKey: 'pagetitle.node.edit',
 				requireAuthentication: true
+			}
+		},
+		{
+			path: '/impress',
+			name: 'Impress',
+			component: Impress,
+			meta: {
+				titleTranslationKey: 'pagetitle.impress',
+				requireAuthentication: false
+			}
+		},
+		{
+			path: '/privacy',
+			name: 'Privacy',
+			component: Privacy,
+			meta: {
+				titleTranslationKey: 'pagetitle.privacy',
+				requireAuthentication: false
 			}
 		}
 	]

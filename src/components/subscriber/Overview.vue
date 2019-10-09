@@ -68,13 +68,17 @@
 								<!-- Third-Party-Services column -->
 								<td class="text-xs-left">
 									<span v-for="(service, index) in props.item.thirdparty" v-bind:key="`service-${index}`">
-										<v-chip
-											v-bind:color="`${service.color}`"
-											text-color="white"
-											small
-										>
-											{{ service.text }}
-										</v-chip>
+										<v-badge right overlap>
+											<span slot="badge" v-if="service.badge">{{ service.badge }}</span>
+
+											<v-chip
+												v-bind:color="`${service.color}`"
+												text-color="white"
+												small
+											>
+												{{ service.text }}
+											</v-chip>
+										</v-badge>
 									</span>
 								</td>
 								<!-- owner column -->
@@ -385,25 +389,36 @@
 
 							// Render Third party assignments in a beautiful way
 							let thirdspartyRendered = [];
-							if ('aprs' in subscriber.thirdparty) {
-									thirdspartyRendered.push({
-										color: 'deep-orange',
-										text: 'APRS'
-									});
-							}
-							if ('brandmeister' in subscriber.thirdparty) {
-									thirdspartyRendered.push({
-										color: 'purple',
-										text: 'Brandmeister'
-									});
-							}
-							if ('email' in subscriber.thirdparty) {
-								thirdspartyRendered.push({
-									color: 'amber darken-1',
-									text: 'Email'
-								});
-							}
-
+							if (typeof subscriber.thirdparty !== "undefined") {
+                                if ('aprs' in subscriber.thirdparty) {
+                                    thirdspartyRendered.push({
+                                        color: 'deep-orange',
+                                        text: 'APRS',
+										badge: 1
+                                    });
+                                }
+                                if ('brandmeister' in subscriber.thirdparty) {
+                                    thirdspartyRendered.push({
+                                        color: 'purple',
+                                        text: 'Brandmeister',
+                                        badge: 1
+                                    });
+                                }
+                                if ('ipsc2' in subscriber.thirdparty) {
+                                    thirdspartyRendered.push({
+                                        color: 'purple',
+                                        text: 'IPCS2',
+                                        badge: 1
+                                    });
+                                }
+                                if ('email' in subscriber.thirdparty) {
+                                    thirdspartyRendered.push({
+                                        color: 'amber darken-1',
+                                        text: 'Email',
+                                        badge: 1
+                                    });
+                                }
+                            }
 							subscriber.thirdparty = thirdspartyRendered;
 						}
 						this.subscriberrows = response.data.rows;
