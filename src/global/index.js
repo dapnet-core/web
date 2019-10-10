@@ -364,7 +364,7 @@ const GlobalMethodsPlugin = {
 
 		Vue.prototype.$helpers.getDistributedColors = function(amount) {
 			let ret = [];
-			let steps = Math.floor(360 / amount);
+			const steps = Math.floor(360 / amount);
 			for (let i = 1; i <= amount; i++) {
 				ret.push('hsl(' + (i * steps) + ', 100%, 30%)');
 			}
@@ -390,17 +390,17 @@ const GlobalMethodsPlugin = {
 				if (currentID !== completeChain) {
 					// Further childs exist
 					// Get the index of the just added node
-					let justAddedEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
+					const justAddedEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
 					// Add children list
-					currentList[justAddedEntryIndex]['children'] = [];
+					currentList[justAddedEntryIndex].children = [];
 				}
 			}
 			if (currentID !== completeChain) {
 				// Further childs exist
-				let individualChainEntries = completeChain.split('.');
+				const individualChainEntries = completeChain.split('.');
 
-				let thisEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
-				let childName = individualChainEntries[level + 1];
+				const thisEntryIndex = this.getIndexOfListEntryWithID(currentList, currentID);
+				const childName = individualChainEntries[level + 1];
 				// Build childID
 				let childID = '';
 				for (let i = 0; i <= level + 1; i++) {
@@ -410,15 +410,15 @@ const GlobalMethodsPlugin = {
 						childID = childID + '.' + individualChainEntries[i];
 					}
 				}
-				let children = this.processTransmitterGroupsTreeNode(currentList[thisEntryIndex]['children'], childID, childName, completeChain, level + 1);
-				currentList[thisEntryIndex]['children'] = children;
+				const children = this.processTransmitterGroupsTreeNode(currentList[thisEntryIndex].children, childID, childName, completeChain, level + 1);
+				currentList[thisEntryIndex].children = children;
 			}
 			return currentList;
 		};
 
 		Vue.prototype.$helpers.getIndexOfListEntryWithID = function(Tree, ID) {
 			for (let i = 0; i < Tree.length; i++) {
-				if (Tree[i]['id'] === ID) {
+				if (Tree[i].id === ID) {
 					return i;
 				}
 			}
@@ -432,11 +432,11 @@ const GlobalMethodsPlugin = {
 			let groupIndex = 0;
 			// Run until all is cleaned up
 			while (groupIndex < result.length) {
-				let currentGroup = result[groupIndex];
+				const currentGroup = result[groupIndex];
 				// Find any other node, that contains this
 				let searchIndex = 0;
 				while (searchIndex < result.length) {
-					let searchGroup = result[searchIndex];
+					const searchGroup = result[searchIndex];
 					if (searchGroup.includes(currentGroup) &&
 						(searchGroup.split('.').length > currentGroup.split('.').length)) {
 						// If there are less dots in the searchGroupt than in the currentGroup, remove it
