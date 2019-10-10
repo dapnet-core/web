@@ -6,8 +6,8 @@
 		class="text-center"
 	>
 		<v-card-text>
-			<v-layout>
-				<v-flex>
+			<v-layout row wrap>
+				<v-flex xs6 sm6 md3 lg3 xl2>
 					{{ $t('footer.support.title') }}:
 					<v-tooltip top>
 						<template v-slot:activator="{ on }">
@@ -37,7 +37,7 @@
 						<span>{{ $t('footer.support.rwth-amateur-radio') }}</span>
 					</v-tooltip>
 				</v-flex>
-				<v-flex>
+				<v-flex xs6 sm6 md2 lg2 xl1>
 					<v-tooltip top>
 						<template v-slot:activator="{ on }">
 							<v-btn
@@ -65,7 +65,8 @@
 						</template>
 						<span>Facebook</span>
 					</v-tooltip>
-
+				</v-flex>
+				<v-flex xs6 sm6 md3 lg3 xl2>
 					<v-btn
 						exact to="/impress"
 						flat
@@ -78,11 +79,10 @@
 					>
 						{{ $t('footer.contact.privacy') }}
 					</v-btn>
-					{{ $t('footer.frontendcodedby') }}: {{ author }}
 				</v-flex>
+				<!--<v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>-->
 				<v-spacer></v-spacer>
-
-				<v-flex>
+				<v-flex xs6 sm6 md3 lg3 xl2>
 					{{ $t('footer.versions.title') }}: {{ version.web }}
 					<v-tooltip top>
 						<template v-slot:activator="{ on }">
@@ -105,37 +105,6 @@
 			</cookie-law>
 		</div>
 	</v-card>
-	<!--
-	<div class="container">
-
-			<div class="row">
-				<div class="col-lg-12">
-					<p><b>{{ $t('footer.support.title') }}:</b></p>
-					<ul class="list-unstyled">
-						<li><a href="https://github.com/DecentralizedAmateurPagingNetwork" target="_blank">{{ $t('footer.support.github') }}</a></li>
-						<li><a href="https://www.afu.rwth-aachen.de" target="_blank">{{ $t('footer.support.rwth-amateur-radio') }}</a></li>
-					</ul>
-					<p><b>{{ $t('footer.contact.title') }}:</b></p>
-					<ul class="list-unstyled">
-						<li><a href="https://twitter.com/RWTHAmateurfunk" target="_blank">{{ $t('footer.contact.twitter') }}</a></li>
-						<li><a href="https://www.facebook.com/DL0UA" target="_blank">{{ $t('footer.contact.facebook') }}</a></li>
-						<li><a href="https://www.afu.rwth-aachen.de/ueber-uns/kontakt">{{ $t('footer.contact.contact') }}</a></li>
-						<li>
-							<router-link to="/impress">{{ $t('footer.contact.impress') }}</router-link>
-						</li>
-						<li>
-							<router-link to="/privacy">{{ $t('footer.contact.privacy') }}</router-link>
-						</li>
-					</ul>
-					<p><b>{{ $t('footer.versions.title') }}:</b> Web: {{ version.web }} / <router-link to="/version">{{ $t('footer.versions.check') }}</router-link></p>
-				</div>
-			</div>
-			<cookie-law theme="dark-lime" :button-text="$t('footer.cookieconsent.button')">
-				<div slot="message" v-html="$t('footer.cookieconsent.text')"></div>
-			</cookie-law>
-
-	</div>
--->
 </template>
 
 <script>
@@ -150,6 +119,9 @@
 			const pkg = require('../../../package.json');
 			this.version.web = pkg.version;
 			this.author = pkg.author;
+		},
+		mounted() {
+            console.log(this.$vuetify.breakpoint.name);
 		},
 		methods: {
 		    CheckVersion() {
