@@ -51,7 +51,7 @@
 											small
 											fab
 											color="blue"
-											v-on:click="editElement(mytransmitter._id)"
+											v-on:click="editElement(mytransmitter)"
 											slot="activator"
 										>
 											<v-icon>edit</v-icon>
@@ -66,7 +66,7 @@
 											small
 											fab
 											color="pink"
-											v-on:click="deleteElement(mytransmitter._id)"
+											v-on:click="deleteElement(mytransmitter)"
 											slot="activator"
 										>
 											<v-icon>delete</v-icon>
@@ -109,6 +109,39 @@
 			};
 		},
 		methods: {
+			editElement(element) {
+				this.$router.push({ name: 'Edit Transmitter', params: { id: element._id } });
+			},
+			deleteElement(element) {
+				this.$helpers.swalDeleteConfirm(
+					this,
+					this.$i18n.t('alerts.delete.transmitter.title', { fieldname: element._id }),
+					this.$i18n.t('alerts.delete.transmitter.confirm', { fieldname: element._id })
+				).then(swalresult => {
+					if (swalresult) {
+						console.log('Deleting Transmitter ' + element._id);
+						this.axios.delete('transmitters/' + element._id + '?revision=' + element._rev, {
+							// before(request) {
+							//	request.headers.delete('Content-Type');
+							// }
+						}).then(response => {
+							// success --> reload data
+							this.loadData();
+							this.$root.$emit('ReloadSidebarIcons');
+							this.$helpers.swalDeleteSuccess(
+								this,
+								this.$i18n.t('alerts.delete.transmitter.success', { fieldname: element._id })
+							);
+						}).catch(e => {
+							this.$helpers.swalDeleteFail(
+								this,
+								this.$i18n.t('alerts.delete.transmitter.error', { fieldname: element._id }),
+								e
+							);
+						});
+					}
+				});
+			},
 			chartDataMessageQueue(transmitterindex) {
 				if (this.mytransmitters.rows[transmitterindex] &&
 					'status' in this.mytransmitters.rows[transmitterindex] &&
