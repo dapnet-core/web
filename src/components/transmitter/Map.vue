@@ -26,7 +26,7 @@
 							@click="loadCoverage(item.id)"
 						>
 							<l-popup v-if="false">
-								{{ item.details.changed_on }}
+								{{ item.details.updated_at }}
 								asas
 							</l-popup>
 							<!--Transmitter Tooltip-->
@@ -103,13 +103,13 @@
 												</v-flex>
 												<v-flex xs5>{{ $t('transmitters.power') }}</v-flex>
 												<v-flex xs7>{{ staticData.transmitters[item.id].power }} W</v-flex>
-												<v-flex xs5>{{ $t('general.created_on') }}</v-flex>
-												<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].created_on) }}
+												<v-flex xs5>{{ $t('general.created_at') }}</v-flex>
+												<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].created_at) }}
 													{{ $t('general.byUser') }} {{ staticData.transmitters[item.id].created_by }}
 												</v-flex>
-												<v-flex xs5>{{ $t('general.changed_on') }}</v-flex>
-												<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].changed_on) }}
-													{{ $t('general.byUser') }} {{ staticData.transmitters[item.id].changed_by }}
+												<v-flex xs5>{{ $t('general.updated_at') }}</v-flex>
+												<v-flex xs7>{{ getTimestampFormated(staticData.transmitters[item.id].updated_at) }}
+													{{ $t('general.byUser') }} {{ staticData.transmitters[item.id].updated_by }}
 												</v-flex>
 											</v-layout></div>
 										</v-card-text>
@@ -153,9 +153,9 @@
 														<v-chip v-if="staticData.nodes[item.id].hamcloud" color="green" small>YES</v-chip>
 														<v-chip v-else color="red" small>NO</v-chip>
 													</v-flex>
-													<v-flex xs5>{{ $t('general.changed_on') }}</v-flex>
-													<v-flex xs7>{{ getTimestampFormated(staticData.nodes[item.id].changed_on) }}
-														{{ $t('general.byUser') }} {{ staticData.nodes[item.id].changed_by }}
+													<v-flex xs5>{{ $t('general.updated_at') }}</v-flex>
+													<v-flex xs7>{{ getTimestampFormated(staticData.nodes[item.id].updated_at) }}
+														{{ $t('general.byUser') }} {{ staticData.nodes[item.id].updated_by }}
 													</v-flex>
 												</v-layout></div>
 										</v-card-text>

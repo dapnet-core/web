@@ -227,7 +227,7 @@
 				dateFormated: '',
 				hour: '',
 				newcontent_data: '',
-				newcontent_expires_on: '',
+				newcontent_expires_at: '',
 				newcontent_priority: 0,
 				selectedSlot: -1,
 				priorityBoost: false,
@@ -326,7 +326,7 @@
 					this.dateNonFormated = defaultExpirationTimeStamp.format('YYYY-MM-DD');
 					this.dateFormated = defaultExpirationTimeStamp.format('L');
 					this.hour = parseInt(defaultExpirationTimeStamp.format('HH'));
-					this.newcontent_expires_on = defaultExpirationTimeStamp.toISOString();
+					this.newcontent_expires_at = defaultExpirationTimeStamp.toISOString();
 				}
 			},
 			hoursSelect() {
@@ -411,7 +411,7 @@
 					data2Send._id = this.rubriccontent._id;
 					data2Send.data = this.newcontent_data;
 					if (this.enableExpirationTime) {
-						data2Send.expires_on = moment(this.dateNonFormated, 'YYYY-MM-DD').add(this.hour, 'hours').toISOString();
+						data2Send.expires_at = moment(this.dateNonFormated, 'YYYY-MM-DD').add(this.hour, 'hours').toISOString();
 					}
 					if (this.priorityBoost) {
 						data2Send.priority = parseInt(this.rubriccontent.default_priority + 1);

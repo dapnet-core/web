@@ -42,8 +42,8 @@ Vue.use(VueAuthImage);
 Vue.use(SnackbarStackPlugin, {
 	duration: 3000
 });
-
 Vue.use(VueClipboard);
+Vue.use(require('vue-moment'));
 
 // Leaflet
 Vue.component('l-map', LMap);
@@ -100,7 +100,7 @@ router.afterEach((to, from) => {
 axios.defaults.baseURL = store.getters.url.api;
 axios.defaults.timeout = 30000;
 if (store.getters.auth) {
-	axios.defaults.headers.common['Authorization'] = 'Basic ' + store.getters.auth;
+	axios.defaults.headers.common.Authorization = 'Basic ' + store.getters.auth;
 }
 axios.defaults.headers.common['Content-Type'] = 'application/json, text/plain, */*';
 // delete axios['Content-Type'];

@@ -480,27 +480,27 @@
 									v-if="$vuetify.breakpoint.lgAndUp"
 								>
 									<v-layout row wrap class="dark--text">
-										<v-flex lg3>{{ $t('general.created_on') }}</v-flex>
+										<v-flex lg3>{{ $t('general.created_at') }}</v-flex>
 										<v-flex lg>{{ $t('general.byUser') }}</v-flex>
-										<v-flex lg3>{{ $t('general.changed_on') }}</v-flex>
+										<v-flex lg3>{{ $t('general.updated_at') }}</v-flex>
 										<v-flex lg3>{{ $t('general.byUser') }}</v-flex>
 									</v-layout>
 									<v-layout row wrap>
-										<v-flex lg3>{{ this.created_on}}</v-flex>
+										<v-flex lg3>{{ this.created_at}}</v-flex>
 										<v-flex lg3>{{ this.created_by}}</v-flex>
-										<v-flex lg3>{{ this.changed_on}}</v-flex>
-										<v-flex lg3>{{ this.changed_by}}</v-flex>
+										<v-flex lg3>{{ this.updated_at}}</v-flex>
+										<v-flex lg3>{{ this.updated_by}}</v-flex>
 									</v-layout>
 								</v-card-text>
 								<v-card-text
 									v-if="!$vuetify.breakpoint.lgAndUp"
 								>
 									<v-layout row wrap class="dark--text">
-										<v-flex xs6>{{ $t('general.created_on') }}</v-flex>
+										<v-flex xs6>{{ $t('general.created_at') }}</v-flex>
 										<v-flex xs6>{{ $t('general.byUser') }}</v-flex>
 									</v-layout>
 									<v-layout row wrap>
-										<v-flex xs6>{{ this.created_on}}</v-flex>
+										<v-flex xs6>{{ this.created_at}}</v-flex>
 										<v-flex xs6>{{ this.created_by}}</v-flex>
 									</v-layout>
 								</v-card-text>
@@ -508,12 +508,12 @@
 									v-if="!$vuetify.breakpoint.lgAndUp"
 								>
 									<v-layout row wrap class="dark--text">
-										<v-flex xs6>{{ $t('general.changed_on') }}</v-flex>
+										<v-flex xs6>{{ $t('general.updated_at') }}</v-flex>
 										<v-flex xs6>{{ $t('general.byUser') }}</v-flex>
 									</v-layout>
 									<v-layout row wrap>
-										<v-flex xs6>{{ this.changed_on}}</v-flex>
-										<v-flex xs6>{{ this.changed_by}}</v-flex>
+										<v-flex xs6>{{ this.updated_at}}</v-flex>
+										<v-flex xs6>{{ this.updated_by}}</v-flex>
 									</v-layout>
 								</v-card-text>
 
@@ -615,12 +615,12 @@
 					users: ''
 				},
 				passwordVisible: false,
-				created_on: '',
-				created_on_iso: '',
+				created_at: '',
+				created_at_iso: '',
 				created_by: '',
-				changed_on: '',
-				changed_on_iso: '',
-				changed_by: '',
+				updated_at: '',
+				updated_at_iso: '',
+				updated_by: '',
 				userNameFixed: true,
 				enabledReadonly: false,
 				isEditMode: (!!(this.$route.params.id)),
@@ -760,8 +760,8 @@
 				this.transmitter_groupsModel = this.orig_TXGroups;
 			},
 			updateTimeStampFormat() {
-				this.created_on = moment(this.created_on_iso).format('LLL');
-				this.changed_on = moment(this.changed_on_iso).format('LLL');
+				this.created_at = moment(this.created_at_iso).format('LLL');
+				this.updated_at = moment(this.updated_at_iso).format('LLL');
 			},
 			updatePriorityColor() {
 				this.priorityColor = this.priorityNumber2Color(this.form.defaults.priority);
@@ -969,25 +969,25 @@
 							this.form.enabled = response.data.enabled;
 							this.form.email_lastchecked = response.data.email_lastchecked;
 							// Format timestamp into readable version
-							if (response.data.created_on) {
-								this.created_on_iso = response.data.created_on;
+							if (response.data.created_at) {
+								this.created_at_iso = response.data.created_at;
 							} else {
-								response.data.created_on_iso = '';
+								response.data.created_at_iso = '';
 							}
 							if (response.data.created_by) {
 								this.created_by = response.data.created_by;
 							} else {
 								this.created_by = '';
 							}
-							if (response.data.changed_on) {
-								this.changed_on_iso = response.data.changed_on;
+							if (response.data.updated_at) {
+								this.updated_at_iso = response.data.updated_at;
 							} else {
-								this.changed_on_iso = '';
+								this.updated_at_iso = '';
 							}
-							if (response.data.changed_by) {
-								this.changed_by = response.data.changed_by;
+							if (response.data.updated_by) {
+								this.updated_by = response.data.updated_by;
 							} else {
-								this.changed_by = '';
+								this.updated_by = '';
 							}
 
 							this.updateTimeStampFormat();

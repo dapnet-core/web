@@ -436,10 +436,10 @@
 			},
 			loadTotalCalls() {
 				this.isReadyLoadingData.total.calls = false;
-				axios.get('/calls').then(response => {
+				axios.get('calls/_count').then(response => {
 					// success --> save new data
 					if (response.data) {
-						this.count_total.calls = response.data.length;
+						this.count_total.calls = response.data.count;
 					}
 					console.log('Total Calls ' + this.count_total.calls);
 					this.isReadyLoadingData.total.calls = true;

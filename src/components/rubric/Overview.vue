@@ -110,11 +110,6 @@
 								<v-icon v-else color="red">sync_disabled</v-icon>
 							</td>
 
-							<!-- Number of containing messages -->
-							<td class="text-xs-center">
-								{{ getNumberofRubricContent(props.item) }}
-							</td>
-
 							<!-- owner column -->
 							<td class="text-xs-center">
 								<span v-for="(owner, index) in props.item.owners" v-bind:key="`owner-${index}`">
@@ -355,12 +350,6 @@
 						value: 'cyclic_transmit'
 					},
 					{
-						text: this.$i18n.t('rubrics.numberofMessages'),
-						sortable: false,
-						align: 'center',
-						value: 'numberofMessages'
-					},
-					{
 						text: this.$i18n.t('general.owner'),
 						align: 'center',
 						value: 'owners',
@@ -418,18 +407,6 @@
 				} else {
 					return 'grey';
 				}
-			},
-			getNumberofRubricContent(rubric) {
-				if (!(rubric.content)) {
-					return 0;
-				}
-				let n = 0;
-				for (let i = 0; i < rubric.content.length; i++) {
-					if (rubric.content[i] !== '') {
-						n++;
-					}
-				}
-				return n;
 			},
 			displayActionsColumn() {
 				return ((this.$store.getters.permission('rubric.update') === 'all') ||
