@@ -29,7 +29,7 @@
 				<v-menu offset-y>
 					<v-btn
 						slot="activator"
-						flat
+						text
 					>
 						<span :class="['flag-icon', `flag-icon-${this.$store.getters.languageFlag}`]"></span> {{ this.$store.getters.language }}
 					</v-btn>
