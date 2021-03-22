@@ -453,27 +453,27 @@
 								v-if="$vuetify.breakpoint.lgAndUp"
 							>
 								<v-layout row wrap class="dark--text">
-									<v-flex lg3>{{ $t('general.created_on') }}</v-flex>
+									<v-flex lg3>{{ $t('general.created_at') }}</v-flex>
 									<v-flex lg>{{ $t('general.byUser') }}</v-flex>
-									<v-flex lg3>{{ $t('general.changed_on') }}</v-flex>
+									<v-flex lg3>{{ $t('general.updated_at') }}</v-flex>
 									<v-flex lg3>{{ $t('general.byUser') }}</v-flex>
 								</v-layout>
 								<v-layout row wrap>
-									<v-flex lg3>{{ this.created_on}}</v-flex>
+									<v-flex lg3>{{ this.created_at}}</v-flex>
 									<v-flex lg3>{{ this.created_by}}</v-flex>
-									<v-flex lg3>{{ this.changed_on}}</v-flex>
-									<v-flex lg3>{{ this.changed_by}}</v-flex>
+									<v-flex lg3>{{ this.updated_at}}</v-flex>
+									<v-flex lg3>{{ this.updated_by}}</v-flex>
 								</v-layout>
 							</v-card-text>
 							<v-card-text
 								v-if="!$vuetify.breakpoint.lgAndUp"
 							>
 								<v-layout row wrap class="dark--text">
-									<v-flex xs6>{{ $t('general.created_on') }}</v-flex>
+									<v-flex xs6>{{ $t('general.created_at') }}</v-flex>
 									<v-flex xs6>{{ $t('general.byUser') }}</v-flex>
 								</v-layout>
 								<v-layout row wrap>
-									<v-flex xs6>{{ this.created_on}}</v-flex>
+									<v-flex xs6>{{ this.created_at}}</v-flex>
 									<v-flex xs6>{{ this.created_by}}</v-flex>
 								</v-layout>
 							</v-card-text>
@@ -481,12 +481,12 @@
 								v-if="!$vuetify.breakpoint.lgAndUp"
 							>
 								<v-layout row wrap class="dark--text">
-									<v-flex xs6>{{ $t('general.changed_on') }}</v-flex>
+									<v-flex xs6>{{ $t('general.updated_at') }}</v-flex>
 									<v-flex xs6>{{ $t('general.byUser') }}</v-flex>
 								</v-layout>
 								<v-layout row wrap>
-									<v-flex xs6>{{ this.changed_on}}</v-flex>
-									<v-flex xs6>{{ this.changed_by}}</v-flex>
+									<v-flex xs6>{{ this.updated_at}}</v-flex>
+									<v-flex xs6>{{ this.updated_by}}</v-flex>
 								</v-layout>
 							</v-card-text>
 
@@ -575,10 +575,10 @@
 					transmitters: [],
 					transmitter_groups: []
 				},
-				created_on: '',
+				created_at: '',
 				created_by: '',
-				changed_on: '',
-				changed_by: '',
+				updated_at: '',
+				updated_by: '',
 				isEditMode: (!!(this.$route.params.id)),
 				transmitterGroupSearch: null,
 				timeslots_numeric: [],
@@ -857,25 +857,25 @@
 
 
 							// Format timestamp into readable version
-							if (response.data.created_on) {
-								this.created_on = moment(response.data.created_on).format('DD.MM.YYYY HH:mm:ss');
+							if (response.data.created_at) {
+								this.created_at = moment(response.data.created_at).format('DD.MM.YYYY HH:mm:ss');
 							} else {
-								response.data.created_on = '';
+								response.data.created_at = '';
 							}
 							if (response.data.created_by) {
 								this.created_by = response.data.created_by;
 							} else {
 								this.created_by = '';
 							}
-							if (response.data.changed_on) {
-								this.changed_on = moment(response.data.changed_on).format('DD.MM.YYYY HH:mm:ss');
+							if (response.data.updated_at) {
+								this.updated_at = moment(response.data.updated_at).format('DD.MM.YYYY HH:mm:ss');
 							} else {
-								this.changed_on = '';
+								this.updated_at = '';
 							}
-							if (response.data.changed_by) {
-								this.changed_by = response.data.changed_by;
+							if (response.data.updated_by) {
+								this.updated_by = response.data.updated_by;
 							} else {
-								this.changed_by = '';
+								this.updated_by = '';
 							}
 
 							if (response.data.aprs_broadcast) {

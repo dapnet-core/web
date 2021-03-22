@@ -279,7 +279,6 @@
 						transmitters: [],
 						transmitter_groups: []
 					},
-					expires_on: '2020-01-10T18:45:44.739Z',
 					priority: 3
 				},
 				formData: {
@@ -517,7 +516,7 @@
 				console.log(this.form);
 				this.form2send = JSON.parse(JSON.stringify(this.form));
 
-				this.form2send.expires_on = moment(this.dateNonFormated).add(this.hour, 'hours').toISOString();
+				this.form2send.expires_at = moment(this.dateNonFormated).add(this.hour, 'hours').toISOString();
 				console.log(this.form2send);
 				axios.post('/calls', this.form2send)
 					.then(function(response) {

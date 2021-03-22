@@ -41,6 +41,11 @@
 						<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
 						<template slot="items" slot-scope="props">
 						<tr style="border-bottom: none;">
+							<!-- Created at column -->
+							<td class="text-xs-left">
+								{{ props.item.created_at | moment("DD.MM.YYYY hh:mm:ss") }}
+							</td>
+
 							<!-- Created by column -->
 							<td class="text-xs-left">
 								{{ props.item.created_by }}
@@ -119,7 +124,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="5">
+							<td colspan="6">
 								<v-chip
 									label
 									text-color="black"
@@ -170,7 +175,13 @@
 				return !this.isLoadingData;
 			},
 			getHeaders() {
-				let headings = [
+				return [
+					{
+						text: this.$i18n.t('general.created_at'),
+						align: 'left',
+						sortable: true,
+						value: 'created_at'
+					},
 					{
 						text: this.$i18n.t('calls.overview.from'),
 						align: 'left',
@@ -200,7 +211,6 @@
 						value: 'priority'
 					}
 				];
-				return headings;
 			}
 		},
 		methods: {
